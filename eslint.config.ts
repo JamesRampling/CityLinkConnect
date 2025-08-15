@@ -1,5 +1,8 @@
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import {
+  defineConfigWithVueTs,
+  vueTsConfigs,
+} from '@vue/eslint-config-typescript';
 import pluginVue from 'eslint-plugin-vue';
 import { globalIgnores } from 'eslint/config';
 
@@ -9,10 +12,7 @@ import { globalIgnores } from 'eslint/config';
 // More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
 
 export default defineConfigWithVueTs(
-  {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
-  },
+  { name: 'app/files-to-lint', files: ['**/*.{ts,mts,tsx,vue}'] },
   {
     // Disallow relative imports
     name: 'app/only-absolute-imports',
@@ -33,7 +33,8 @@ export default defineConfigWithVueTs(
             },
             {
               group: ['**/index'],
-              message: 'Redundant index in folder import. Remove the trailing /index.',
+              message:
+                'Redundant index in folder import. Remove the trailing /index.',
             },
           ],
         },
@@ -47,6 +48,15 @@ export default defineConfigWithVueTs(
   pluginVue.configs['flat/strongly-recommended'],
   pluginVue.configs['flat/recommended'],
 
-  vueTsConfigs.recommended,
+  vueTsConfigs.strictTypeChecked,
+  vueTsConfigs.stylisticTypeChecked,
   skipFormatting,
+
+  {
+    name: 'app/warn-unused',
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-expressions': 'warn',
+    },
+  },
 );
