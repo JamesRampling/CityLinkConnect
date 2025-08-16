@@ -14,8 +14,8 @@ import { globalIgnores } from 'eslint/config';
 export default defineConfigWithVueTs(
   { name: 'app/files-to-lint', files: ['**/*.{ts,mts,tsx,vue}'] },
   {
-    // Disallow relative imports
-    name: 'app/only-absolute-imports',
+    // Disallow non-canonical imports
+    name: 'app/only-canonical-imports',
     rules: {
       'no-restricted-imports': [
         'error',
