@@ -16,6 +16,7 @@ export default defineConfigWithVueTs(
   {
     // Disallow non-canonical imports
     name: 'app/only-canonical-imports',
+    files: ['src/**/*.{ts,vue}'],
     rules: {
       'no-restricted-imports': [
         'error',

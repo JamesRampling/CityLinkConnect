@@ -5,8 +5,6 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig, PreviewServer, ViteDevServer } from 'vite';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
-// Config files are not compiled and cannot use path aliases
-// eslint-disable-next-line no-restricted-imports
 import server from './server';
 
 // Attach an Express application to the Vite middleware stack.

@@ -8,13 +8,15 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "run-p type-check build-bin \"build-only {@}\" --",
     "preview": "vite preview",
+    "prod": "node bin/standalone.js",
     "build-only": "vite build",
+    "build-bin": "tsc -b tsconfig.server.json",
     "type-check": "vue-tsc --build",
     "lint": "eslint .",
-    "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format": "prettier --write src/ server/",
+    "format:check": "prettier --check src/ server/"
   },
   "dependencies": {
     "express": "^5.1.0",
