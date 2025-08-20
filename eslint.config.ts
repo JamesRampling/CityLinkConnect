@@ -16,7 +16,7 @@ export default defineConfigWithVueTs(
   {
     // Disallow non-canonical imports
     name: 'app/only-canonical-imports',
-    files: ['src/**/*.{ts,vue}'],
+    files: ['src/**/*.{ts,vue}', 'server/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -25,7 +25,7 @@ export default defineConfigWithVueTs(
             {
               group: ['./*', '../*'],
               message:
-                'Relative imports are not allowed. Use an absolute import starting with "@".',
+                'Relative imports are not allowed. Use an absolute import starting with "@" or "#server".',
             },
             {
               group: ['*.js', '*.ts'],

@@ -4,19 +4,21 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=23.6.0"
   },
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-bin \"build-only {@}\" --",
+    "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "prod": "node bin/standalone.js",
+    "prod": "node standalone.ts",
     "build-only": "vite build",
-    "build-bin": "tsc -b tsconfig.server.json",
     "type-check": "vue-tsc --build",
     "lint": "eslint .",
     "format": "prettier --write src/ server/",
     "format:check": "prettier --check src/ server/"
+  },
+  "imports": {
+    "#server/*": "./server/*.ts"
   },
   "dependencies": {
     "express": "^5.1.0",

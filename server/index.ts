@@ -1,11 +1,10 @@
 import express from 'express';
 
+import getNumber from '#server/getNumber';
+
 const app = express();
 
-app.get('/api/number', (req, res) => {
-  res.type('text/plain');
-  res.send(Math.round(Math.random() * 100));
-});
+app.get('/api/number', getNumber);
 
 // Do not fallback to index.html for API endpoints
 app.use('/api', (req, res) => {

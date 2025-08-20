@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'node:http';
 import path from 'node:path';
 
-import app from './server/index.js';
+import app from '#server/index';
 
 let port = process.env.PORT as string | number | undefined;
 
