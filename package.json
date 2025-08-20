@@ -18,7 +18,8 @@
     "format:check": "prettier --check src/ server/"
   },
   "imports": {
-    "#server/*": "./server/*.ts"
+    "#server/*": "./server/*.ts",
+    "#shared/*": "./shared/*.ts"
   },
   "dependencies": {
     "express": "^5.1.0",

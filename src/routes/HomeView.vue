@@ -6,7 +6,6 @@ import ApiNumber from '@/components/ApiNumber.vue';
   <h1>Hello, World!</h1>
 
   <div>
-    Here's a number:
     <suspense>
       <ApiNumber />
       <template #fallback>loading... </template>
