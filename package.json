@@ -4,24 +4,32 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=23.6.0"
   },
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
+    "prod": "node standalone.ts",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint .",
-    "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format": "prettier --write src/ server/",
+    "format:check": "prettier --check src/ server/"
+  },
+  "imports": {
+    "#server/*": "./server/*.ts",
+    "#shared/*": "./shared/*.ts"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
+    "@types/express": "^5.0.3",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",

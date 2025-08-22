@@ -1,0 +1,16 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["standalone.ts", "server/**/*"],
+  "exclude": ["server/**/__tests__/*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+
+    "rootDir": "./",
+
+    "types": ["node"]
+  }
+}

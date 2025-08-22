@@ -12,5 +12,6 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "git.rebaseWhenSync": true
+  "git.rebaseWhenSync": true,
+  "editor.renderFinalNewline": "dimmed"
 }
