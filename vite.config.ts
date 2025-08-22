@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import { defineConfig, PreviewServer, ViteDevServer } from 'vite';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
-import server from './server';
+import server from '#server/index';
 
 // Attach an Express application to the Vite middleware stack.
 function useExpress(app: express.Express) {
