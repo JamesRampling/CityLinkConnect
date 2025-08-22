@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ApiNumber from '@/components/ApiNumber.vue';
+import UserWelcome from '@/components/UserWelcome.vue';
 </script>
 
 <template>
@@ -7,7 +7,7 @@ import ApiNumber from '@/components/ApiNumber.vue';
 
   <div>
     <suspense>
-      <ApiNumber />
+      <UserWelcome />
       <template #fallback>loading... </template>
     </suspense>
   </div>

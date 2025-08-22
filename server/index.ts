@@ -1,10 +1,10 @@
 import express from 'express';
 
-import getNumber from '#server/getNumber';
+import getUser from '#server/getUser';
 
 const app = express();
 
-app.get('/api/number', getNumber);
+app.get('/api/user', getUser);
 
 // Do not fallback to index.html for API endpoints
 app.use('/api', (req, res) => {
