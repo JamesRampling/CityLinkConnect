@@ -1,39 +1,45 @@
 # CityLinkConnect
 
-This template should help get you started developing with Vue 3 in Vite.
+CityLink Connect is a local government web app written in Vue and Express.
 
-## Recommended IDE Setup
+## Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+The minimum node version for this project is v23.6.0.
 
-## Type Support for `.vue` Imports in TS
+This project comes with configurations and extension recommendations for [VSCode](https://code.visualstudio.com/).
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+To install the requisite dependencies, run:
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Development
+
+For development it is recommended to use the Vite dev server.
+The dev server has been configured to load the backend middleware,
+and needs no extra setup. Simply run:
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Linting and formatting are done with ESLint and Prettier and can be invoked with the npm scripts `lint` and `format`.
+
+## Deployment
+
+For deployment, this project ships a standalone server which hosts the backend
+and the website's static files. The frontend must first be built with Vite:
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+Then the standalone server can be deployed as such:
 
 ```sh
-npm run lint
+NODE_ENV=production npm run prod
 ```
+
+If a port other than 80 is desired, it can be set with the `PORT` environment variable.
+Currently HTTPS is not natively supported, and requires a reverse proxy such as NGINX.
