@@ -5,5 +5,9 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.server.json" },
     { "path": "./tsconfig.shared.json" }
-  ]
+  ],
+  "compilerOptions": {
+    
+    "types": ["element-plus/global"]
+  }
 }
