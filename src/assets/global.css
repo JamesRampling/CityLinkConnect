@@ -1,6 +1,39 @@
+@import 'components.css';
+@import 'variables.css';
+
+:root {
+  font-family: system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:where(a) {
+  color: var(--link-color);
+  text-decoration: none;
+
+  :where(&:hover) {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+  }
+
+  :where(&:active) {
+    color: var(--link-active-color);
+    text-decoration: underline;
+  }
 }

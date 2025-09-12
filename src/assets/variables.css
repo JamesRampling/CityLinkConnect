@@ -1,0 +1,64 @@
+:root {
+  --icon-size: 1.5rem;
+
+  --bgcolor: white;
+  --color: black;
+  --accent-color: rgb(0 126 7);
+
+  --button-filled-base-color: white;
+  --button-filled-base-bgcolor: var(--accent-color);
+  --button-outlined-base-color: var(--accent-color);
+
+  --header-color: var(--color);
+  --header-bgcolor: var(--bgcolor);
+  --header-border-color: rgb(from var(--color) r g b / 0.4);
+
+  --link-color: var(--accent-color);
+  --link-hover-color: color-mix(in oklch, var(--link-color) 80%, var(--color));
+  --link-active-color: color-mix(in oklch, var(--link-color) 70%, var(--color));
+
+  /* Buttons */
+  --button-padding: 0.375rem 1rem;
+  --button-gap: 0.5rem;
+  --button-border-radius: 2rem;
+
+  /* Filled buttons. */
+  --button-filled-border-width: 0;
+  --button-filled-bgcolor: var(--button-filled-base-bgcolor);
+  --button-filled-color: var(--button-filled-base-color);
+  --button-filled-border-color: transparent;
+
+  --button-filled-hover-bgcolor: color-mix(
+    in oklch,
+    var(--button-filled-base-bgcolor) 70%,
+    var(--button-filled-base-color)
+  );
+  --button-filled-hover-color: var(--button-filled-color);
+  --button-filled-hover-border-color: var(--button-filled-border-color);
+
+  --button-filled-active-bgcolor: color-mix(
+    in oklch,
+    var(--button-filled-base-bgcolor) 60%,
+    var(--button-filled-base-color)
+  );
+  --button-filled-active-color: var(--button-filled-color);
+  --button-filled-active-border-color: var(--button-filled-border-color);
+
+  /* Outlined buttons */
+  --button-outlined-border-width: 1px;
+  --button-outlined-bgcolor: transparent;
+  --button-outlined-color: var(--button-outlined-base-color);
+  --button-outlined-border-color: var(--button-outlined-base-color);
+
+  --button-outlined-hover-bgcolor: rgb(
+    from var(--button-outlined-base-color) r g b / 0.1
+  );
+  --button-outlined-hover-color: var(--button-outlined-color);
+  --button-outlined-hover-border-color: var(--button-outlined-border-color);
+
+  --button-outlined-active-bgcolor: rgb(
+    from var(--button-outlined-base-color) r g b / 0.2
+  );
+  --button-outlined-active-color: var(--button-outlined-color);
+  --button-outlined-active-border-color: var(--button-outlined-border-color);
+}
