@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
 import IconAccessibility from '@/components/icons/IconAccessibility.vue';
+import { ref } from 'vue';
 
-// const
+const accessibilityButton = ref<HTMLButtonElement>();
+const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
 </script>
 
 <template>
@@ -14,13 +17,21 @@ import IconAccessibility from '@/components/icons/IconAccessibility.vue';
       <router-link to="/feedback">Feedback</router-link>
     </nav>
     <div class="end-header-buttons">
-      <button class="button-outlined"><IconAccessibility />Accessiblity</button>
+      <button
+        ref="accessibilityButton"
+        class="button-outlined"
+        @click="accessibilityPopup?.show()"
+      >
+        <IconAccessibility />Accessiblity
+      </button>
       <button class="button-filled">Login</button>
     </div>
   </header>
   <main>
     <router-view />
   </main>
+
+  <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton!" />
 </template>
 
 <style scoped>
