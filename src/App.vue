@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const width = screen.width;
+
+if (width <= 400) {
+}
+</script>
 
 <template>
   <nav>
