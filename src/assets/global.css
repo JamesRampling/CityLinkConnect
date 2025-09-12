@@ -3,6 +3,7 @@
 
 :root {
   font-family: system-ui, sans-serif;
+  color-scheme: light dark;
 }
 
 * {
@@ -14,6 +15,8 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0;
+  background-color: var(--bgcolor);
+  color: var(--color);
 }
 
 button,

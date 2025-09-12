@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import IconAccessibility from '@/components/icons/IconAccessibility.vue';
+
+// const
 </script>
 
 <template>
@@ -32,6 +34,10 @@ header {
 
 .logo-image {
   width: 2.5rem;
+
+  @media (prefers-color-scheme: dark) {
+    filter: invert(1) hue-rotate(180deg) brightness(1.2);
+  }
 }
 
 nav {
