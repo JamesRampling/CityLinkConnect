@@ -10,3 +10,9 @@ defineProps<{ articleTitle: string; articleContent: string }>();
     <flex-row id="articleFlexRow">{{ article.article.result }}</flex-row>
   </flex-col>
 </template>
+<style lang="css">
+#articleFlexCol {
+}
+#articleFlexRow {
+}
+</style>
