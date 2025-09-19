@@ -1,3 +1,0 @@
-interface placeholder {
-  a: number;
-}
