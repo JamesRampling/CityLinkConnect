@@ -1,0 +1,3 @@
+interface placeholder {
+  a: number;
+}
