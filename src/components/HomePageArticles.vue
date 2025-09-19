@@ -1,10 +1,12 @@
 <script setup lang="ts">
-const articleName = '';
-const articleContent = '';
+import * as article from '#shared/randomArticle';
+
+defineProps<{ articleTitle: string; articleContent: string }>();
 </script>
 
 <template>
   <flex-col id="articleFlexCol">
-    <flex-row id="articleFlexRow"> </flex-row>
+    {{ article.article.title }}
+    <flex-row id="articleFlexRow">{{ article.article.result }}</flex-row>
   </flex-col>
 </template>

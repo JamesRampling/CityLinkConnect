@@ -12,8 +12,5 @@ for (let i = 0; i < titlelength; i++) {
   title += charaters.charAt(Math.floor(Math.random() * titlelength));
 }
 
-// export const article= ({
-//   Title =
-// });
-
-// export type User = z.infer<typeof User>;
+export const article = { title, result };
+export default { title, result };

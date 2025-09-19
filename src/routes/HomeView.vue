@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import HomepageArticle from '@/components/HomePageArticles';
 import UserWelcome from '@/components/UserWelcome.vue';
 </script>
 
@@ -9,6 +10,7 @@ import UserWelcome from '@/components/UserWelcome.vue';
     <suspense>
       <UserWelcome />
       <template #fallback>loading... </template>
+      <HomepageArticle />
     </suspense>
   </div>
 </template>
