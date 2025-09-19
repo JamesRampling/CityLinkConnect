@@ -13,7 +13,9 @@ defineExpose({ show });
 </script>
 
 <template>
-  <dialog ref="dialogElement" closedby="any">asdfhlakjhfdaf</dialog>
+  <dialog ref="dialogElement" closedby="any">
+    <h2>Accessibility Options</h2>
+  </dialog>
 </template>
 
 <style scoped>

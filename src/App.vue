@@ -24,7 +24,7 @@ const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
       >
         <IconAccessibility />Accessiblity
       </button>
-      <button class="button-filled">Login</button>
+      <router-link to="/login" class="button-filled">Login</router-link>
     </div>
   </header>
   <main>
