@@ -1,5 +1,5 @@
 <template>
-  <h1>Login!</h1>
+  <h1 id="h1LoginView">CityLinkConnect</h1>
 
   <div class="login-container">
     <input type="text" placeholder="Username" />
@@ -8,10 +8,56 @@
   </div>
 </template>
 <style lang="css">
-#login-container {
+body {
+  background: #f5f7fa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  justify-content: center;
+
+  margin: 0;
+}
+
+.login-container {
   display: flex;
   flex-direction: column;
-  width: 300px;
-  margin: 0 auto;
+  width: 500px;
+  background: #fff;
+  margin: 20px;
+  border: 1px solid black;
+  padding-top: 10px;
+  padding-bottom: 40px;
+  padding-left: 5px;
+  padding-right: 5px;
+  gap: 18px;
+}
+
+.login-container input[type='text'],
+.login-container input[type='password'] {
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: border 0.2s;
+  outline: none;
+}
+
+.login-container button {
+  padding: 12px 0;
+  background: #00ff22;
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 8px;
+}
+.login-container button:hover {
+  background: #118200;
+}
+
+#h1LoginView {
+  text-align: center;
+  color: #00ff48;
 }
 </style>
