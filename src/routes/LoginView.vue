@@ -8,13 +8,7 @@
   </div>
 </template>
 <style lang="css" scoped>
-body {
-  background: #f5f7fa;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  justify-content: center;
 
-  margin: 0;
-}
 
 .login-container {
   display: flex;
