@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import InputCheckbox from '@/components/InputCheckbox.vue';
+import InputText from '@/components/InputText.vue';
 defineProps<{ serviceId: number }>();
 </script>
 
@@ -6,20 +8,11 @@ defineProps<{ serviceId: number }>();
   <div class="page-wrapper">
     <h1>New Service Booking</h1>
     <form class="form" action="" @submit.prevent>
-      <div class="input-text">
-        <label for="email-input">Email</label>
-        <input id="email-input" type="text" name="email" />
-      </div>
+      <InputText type="email" name="email-input" label="Email" />
 
-      <div class="input-text">
-        <label for="date-input">Date</label>
-        <input id="date-input" type="date" name="date" />
-      </div>
+      <InputText type="date" name="date-input" label="asdf" />
 
-      <div class="input-checkbox">
-        <input id="checkbox-input" type="checkbox" name="checkbox-input" />
-        <label for="checkbox-input">Checkbox</label>
-      </div>
+      <InputCheckbox id="checkbox-input-2" name="asdf" label="Checkbox" />
 
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
