@@ -4,10 +4,10 @@
   <div class="login-container">
     <input type="text" placeholder="Username" />
     <input type="password" placeholder="Password" />
-    <button>Login</button>
+    <button class="button-filled">Login</button>
   </div>
 </template>
-<style lang="css">
+<style lang="css" scoped>
 body {
   background: #f5f7fa;
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -41,23 +41,10 @@ body {
   outline: none;
 }
 
-.login-container button {
-  padding: 12px 0;
-  background: #00ff22;
-  color: #fff;
-  border: none;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-top: 8px;
-}
-.login-container button:hover {
-  background: #118200;
-}
+
 
 #h1LoginView {
   text-align: center;
-  color: #00ff48;
+  color: var(--accent-color);
 }
 </style>
