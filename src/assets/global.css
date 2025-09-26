@@ -4,6 +4,7 @@
 :root {
   font-family: system-ui, sans-serif;
   color-scheme: light dark;
+  accent-color: var(--accent-color);
 }
 
 * {

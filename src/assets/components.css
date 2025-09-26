@@ -12,6 +12,14 @@
   border-radius: var(--button-border-radius);
   cursor: pointer;
   text-decoration: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.2rem;
+
+  &:focus-visible {
+    outline: var(--button-focus-outline);
+    border-color: var(--button-focus-border-color);
+  }
 }
 
 .button-filled {
@@ -50,4 +58,59 @@
     color: var(--button-outlined-active-color);
     border-color: var(--button-outlined-active-border-color);
   }
+}
+
+.page-wrapper {
+  max-width: 100ch;
+  margin: auto;
+  padding: 1rem;
+}
+
+.form {
+  display: grid;
+  gap: var(--form-gap);
+  /* justify-content: start; */
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input-text {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--input-bgcolor);
+  border: 1px solid var(--input-border-color);
+  color: var(--input-color);
+  border-radius: var(--input-border-radius);
+  cursor: text;
+  max-width: 60ch;
+
+  > label {
+    user-select: none;
+    padding: var(--input-label-padding);
+    font-size: var(--input-label-font-size);
+    color: var(--input-label-color);
+  }
+
+  > input {
+    padding: var(--input-field-padding);
+    background: transparent;
+    color: inherit;
+    border: none;
+    outline: none;
+  }
+
+  &:focus-within {
+    border-color: var(--input-focus-border-color);
+    outline: var(--input-focus-outline);
+  }
+}
+
+.input-checkbox {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  user-select: none;
 }
