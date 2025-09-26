@@ -1,4 +1,4 @@
-# CityLinkConnect
+# CityLinkConnect ![CI status](https://github.com/JamesRampling/CityLinkConnect/actions/workflows/ci.yml/badge.svg)
 
 CityLink Connect is a local government web app written in Vue and Express.
 
