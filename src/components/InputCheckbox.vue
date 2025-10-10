@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { generateRandomId } from '@/utils';
 
 // prettier-ignore
-const props = withDefaults(
+withDefaults(
   defineProps<{
     id?: string,
     name: string,
     label: string,
   }>(),
   {
-    id: undefined,
+    id: () => `input-${generateRandomId()}`,
   }
 );
-
-const htmlId = computed(() => props.id ?? '');
 
 const model = defineModel<boolean>();
 </script>
 
 <template>
   <div class="input-checkbox">
-    <input :id="htmlId" v-model="model" type="checkbox" :name="name" />
-    <label :for="htmlId">{{ label }}</label>
+    <input :id="id" v-model="model" type="checkbox" :name="name" />
+    <label :for="id">{{ label }}</label>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.input-checkbox {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  user-select: none;
+}
+</style>
