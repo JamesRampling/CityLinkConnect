@@ -5,6 +5,12 @@
   --color: light-dark(black, white);
   --accent-color: light-dark(rgb(0 126 7), rgb(100, 211, 106));
   --on-accent-color: light-dark(white, black);
+  --border-color: light-dark(#888, #666);
+  --field-bgcolor: light-dark(white, #303030);
+  --field-color: light-dark(black, white);
+
+  --focus-outline: 5px solid rgb(from var(--accent-color) r g b / 0.5);
+  --focus-border-color: var(--accent-color);
 
   --header-color: var(--color);
   --header-bgcolor: var(--bgcolor);
@@ -17,10 +23,12 @@
   /* Buttons */
   --button-padding: 0.375rem 1rem;
   --button-gap: 0.5rem;
-  --button-border-radius: 2rem;
+  --button-border-radius: 0.5rem;
   --button-filled-base-color: var(--on-accent-color);
   --button-filled-base-bgcolor: var(--accent-color);
   --button-outlined-base-color: var(--accent-color);
+  --button-focus-outline: var(--focus-outline);
+  --button-focus-border-color: var(--focus-border-color);
 
   /* Filled buttons. */
   --button-filled-border-width: 0;
@@ -61,4 +69,17 @@
   );
   --button-outlined-active-color: var(--button-outlined-color);
   --button-outlined-active-border-color: var(--button-outlined-border-color);
+
+  --form-gap: 1rem;
+
+  --input-bgcolor: var(--field-bgcolor);
+  --input-color: var(--field-color);
+  --input-border-color: var(--border-color);
+  --input-border-radius: 0.5rem;
+  --input-label-font-size: 0.9em;
+  --input-label-padding: 0.5rem 0.5rem 0rem;
+  --input-label-color: rgb(from var(--field-color) r g b / 0.75);
+  --input-field-padding: 0.5rem 0.5rem;
+  --input-focus-outline: var(--focus-outline);
+  --input-focus-border-color: var(--focus-border-color);
 }
