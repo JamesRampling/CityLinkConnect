@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InputCheckbox from '@/components/InputCheckbox.vue';
 import InputText from '@/components/InputText.vue';
+import InputTextarea from '@/components/InputTextarea.vue';
 defineProps<{ serviceId: number }>();
 </script>
 
@@ -13,6 +14,8 @@ defineProps<{ serviceId: number }>();
       <InputText type="date" name="date-input" label="asdf" />
 
       <InputCheckbox id="checkbox-input-2" name="asdf" label="Checkbox" />
+
+      <InputTextarea name="service-information" label="Service information" />
 
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
