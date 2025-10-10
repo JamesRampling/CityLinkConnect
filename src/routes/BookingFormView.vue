@@ -9,7 +9,7 @@ defineProps<{ serviceId: number }>();
 <template>
   <div class="page-wrapper">
     <h1>New Service Booking</h1>
-    <form class="form" action="" @submit.prevent="onSubmit">
+    <form class="form" action="" @submit.prevent>
       <InputText type="email" name="email-input" label="Email" />
 
       <InputText type="date" name="date-input" label="asdf" />
