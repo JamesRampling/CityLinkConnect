@@ -1,6 +1,9 @@
+import bookingsRoute from '#server/routes/bookings';
 import express from 'express';
 
 const app = express();
+
+app.use('/bookings', bookingsRoute);
 
 // Do not fallback to index.html for API endpoints
 app.use('/api', (req, res) => {
