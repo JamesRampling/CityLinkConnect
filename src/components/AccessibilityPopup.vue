@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-defineProps<{ target: HTMLElement }>();
+defineProps<{ target?: HTMLElement }>();
 
 const dialogElement = ref<HTMLDialogElement>();
 

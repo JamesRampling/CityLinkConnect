@@ -15,6 +15,7 @@ const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
       <router-link to="/about">About</router-link>
       <router-link to="/bookings">Service Bookings</router-link>
       <router-link to="/feedback">Feedback</router-link>
+      <router-link to="/call-everything-testing">Testing Page</router-link>
     </nav>
     <div class="end-header-buttons">
       <button
@@ -31,7 +32,7 @@ const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
     <router-view />
   </main>
 
-  <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton!" />
+  <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton" />
 </template>
 
 <style scoped>
