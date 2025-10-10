@@ -1,12 +1,15 @@
 <template>
-<div id="Popout" ref="dialogEditInfo" closedby="any">
+  <div id="Popout" ref="dialogEditInfo" closedby="any">
     <h1>Please input your changes</h1>
+    <input type="text" placeholder="Name" />
+    <input type="text" placeholder="Email" />
+    <button>Save</button>
+    <button>Cancel</button>
     // eslint-disable-next-line vue/no-parsing-error
-    <input>Enter your input here</input>
-</div>
+  </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue';
 defineProps<{ target: HTMLElement }>();
 
@@ -17,7 +20,6 @@ function show() {
 }
 
 defineExpose({ show });
-
 </script>
 
 <style lang="css" scoped>

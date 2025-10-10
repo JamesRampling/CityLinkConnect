@@ -2,7 +2,6 @@
 defineProps<{ id: number }>();
 
 import AnnouncementArticle from '@/components/AnnouncementArticle.vue';
-import EditInfo from '@/components/EditInfo.vue';
 </script>
 
 <template>
@@ -26,7 +25,6 @@ import EditInfo from '@/components/EditInfo.vue';
       summary="Join us for the CityLinkConnect Annual Meetup! Network with fellow community members, share ideas, and celebrate our achievements over the past year."
     />
   </div>
-  <EditInfo />
 </template>
 
 <style lang="css" scoped>
