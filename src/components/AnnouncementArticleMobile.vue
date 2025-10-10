@@ -4,7 +4,7 @@
     <p class="meta">By {{ author }} on {{ date }}</p>
     <p class="summary">{{ summary }}</p>
     <img
-      src="@/assets/announcement-image.jpg"
+      src="/favicon.svg"
       alt="Announcement Image"
       class="announcement-image"
     />

@@ -4,6 +4,7 @@ import AboutView from '@/routes/AboutView.vue';
 import AnnouncementView from '@/routes/AnnouncementView.vue';
 import BookingFormView from '@/routes/BookingFormView.vue';
 import BookingsView from '@/routes/BookingsView.vue';
+
 import FeedbackFormView from '@/routes/FeedbackFormView.vue';
 import HomeView from '@/routes/HomeView.vue';
 import LoginView from '@/routes/LoginView.vue';
