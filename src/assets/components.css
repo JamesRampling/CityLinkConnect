@@ -12,6 +12,14 @@
   border-radius: var(--button-border-radius);
   cursor: pointer;
   text-decoration: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.2rem;
+
+  &:focus-visible {
+    outline: var(--button-focus-outline);
+    border-color: var(--button-focus-border-color);
+  }
 }
 
 .button-filled {
@@ -50,4 +58,20 @@
     color: var(--button-outlined-active-color);
     border-color: var(--button-outlined-active-border-color);
   }
+}
+
+.page-wrapper {
+  max-width: 100ch;
+  margin: auto;
+  padding: 1rem;
+}
+
+.form {
+  display: grid;
+  gap: var(--form-gap);
+}
+
+.button-row {
+  display: flex;
+  gap: 0.5rem;
 }
