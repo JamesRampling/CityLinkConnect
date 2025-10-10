@@ -15,6 +15,7 @@ const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
       <router-link to="/about">About</router-link>
       <router-link to="/bookings">Service Bookings</router-link>
       <router-link to="/feedback">Feedback</router-link>
+      <router-link to="/announcements">Announcements</router-link>
     </nav>
     <div class="end-header-buttons">
       <button
