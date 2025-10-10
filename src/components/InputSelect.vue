@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { generateRandomId } from '@/utils';
 
 // prettier-ignore
@@ -7,40 +7,37 @@ withDefaults(
     id?: string,
     name: string,
     label: string,
+    options?: InputSelectOption[],
   }>(),
   {
-    id: () => `textarea-${generateRandomId()}`,
+    id: () => `select-${generateRandomId()}`,
+    options: () => [],
   }
 );
 
-const model = defineModel<string>();
-
-function onInput(event: Event) {
-  const textarea = event.target;
-
-  if (textarea instanceof HTMLTextAreaElement) {
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight.toString()}px`;
-  }
+interface InputSelectOption {
+  id?: string;
+  text?: string;
+  value?: T;
 }
+
+const model = defineModel<T>();
 </script>
 
 <template>
-  <div class="input-textarea">
+  <div class="input-select">
     <label :for="id">{{ label }}</label>
-    <textarea
-      :id="id"
-      ref="textareaElement"
-      v-model="model"
-      :name="name"
-      rows="4"
-      @input="onInput"
-    />
+    <select :id="id" v-model="model" :name="name">
+      <option :value="undefined">None</option>
+      <option v-for="opt in options" :key="opt.id" :value="opt.value">
+        {{ opt.text ?? opt.value }}
+      </option>
+    </select>
   </div>
 </template>
 
 <style scoped>
-.input-textarea {
+.input-select {
   display: flex;
   flex-direction: column;
   background-color: var(--input-bgcolor);
@@ -57,13 +54,16 @@ function onInput(event: Event) {
     color: var(--input-label-color);
   }
 
-  > textarea {
+  > select {
     padding: var(--input-field-padding);
     background: transparent;
     color: inherit;
     border: none;
     outline: none;
-    resize: none;
+
+    > option {
+      background-color: var(--input-bgcolor);
+    }
   }
 
   &:focus-within {
