@@ -1,5 +1,4 @@
-import { SqLiteDatabaseCollection } from '#server/database/DatabaseCollection';
-import { Booking } from '#shared/models';
+import { BookingsCollection } from '#server/database/BookingsCollection';
 import { DatabaseSync } from 'node:sqlite';
 
 export const database = new DatabaseSync(':memory:');
@@ -7,7 +6,7 @@ export const database = new DatabaseSync(':memory:');
 database.exec(/*sql*/ `
 CREATE TABLE Services (
   service_id INTEGER PRIMARY KEY NOT NULL,
-  config BLOB NOT NULL
+  config TEXT NOT NULL
 );
 
 CREATE TABLE Users (
@@ -35,39 +34,9 @@ CREATE TABLE Feedback (
 
 CREATE TABLE Announcements (
   announcement_id INTEGER PRIMARY KEY NOT NULL,
-  sort_date TEXT NOT NULL,
-  config BLOB NOT NULL
+  sort_datetime TEXT NOT NULL,
+  config TEXT NOT NULL
 );
-
-INSERT INTO Bookings (booking_id, user_id, service_id, booking_datetime, notes) VALUES (1, NULL, NULL, '2025-10-10', 'note');
 `);
 
-export const bookings = new SqLiteDatabaseCollection({
-  database,
-  zodType: Booking,
-  getSingleStatement: database.prepare(
-    `SELECT * FROM Bookings WHERE booking_id = ?;`,
-  ),
-  getAllStatement: database.prepare(`SELECT * FROM Bookings;`),
-  updateStatement: database.prepare(`
-    UPDATE Bookings
-    SET
-      user_id = $userId,
-      service_id = $serviceId,
-      booking_datetime = $bookingDateTime,
-      notes = $notes
-    WHERE booking_id = $booking_id;
-  `),
-  insertStatement: database.prepare(`
-    INSERT INTO Bookings (booking_id, user_id, service_id, booking_datetime, notes) VALUES (
-      $booking_id,
-      $userId,
-      $serviceId,
-      $bookingDateTime,
-      $notes
-    );
-  `),
-  deleteStatement: database.prepare(
-    `DELETE FROM Bookings WHERE booking_id = ?;`,
-  ),
-});
+export const Bookings = new BookingsCollection(database);
