@@ -1,0 +1,18 @@
+@host = http://localhost:5173
+
+###
+
+GET {{host}}/api/bookings
+Accept: application/json
+
+###
+
+POST {{host}}/api/bookings
+Content-Type: application/json
+
+{
+  "booking_datetime": "2024-06-20T10:00:00Z",
+  "user_id": null,
+  "service_id": null,
+  "notes": null
+}
