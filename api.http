@@ -16,3 +16,25 @@ Content-Type: application/json
   "service_id": null,
   "notes": null
 }
+
+###
+
+GET {{host}}/api/bookings/1
+Accept: application/json
+
+###
+
+PUT {{host}}/api/bookings/1
+Content-Type: application/json
+
+{
+  "booking_datetime": "2024-06-21T10:00:00Z",
+  "user_id": null,
+  "service_id": null,
+  "notes": "Updated notes"
+}
+
+###
+
+DELETE {{host}}/api/bookings/1
+Accept: application/json
