@@ -14,21 +14,30 @@ export class BookingsCollection
     >
 {
   constructor(database: DatabaseSync) {
-    this.database = database;
-    this.getAllStatement = this.database.prepare(/*sql*/ `
+    this.getAllStatement = database.prepare(/*sql*/ `
       SELECT * FROM Bookings
-        JOIN Users ON Bookings.user_id = Users.user_id
-        JOIN Services ON Bookings.service_id = Services.service_id;
+        LEFT JOIN Users ON Bookings.user_id = Users.user_id
+        LEFT JOIN Services ON Bookings.service_id = Services.service_id;
     `);
 
-    this.getSingleStatement = this.database.prepare(/*sql*/ `
+    this.getSingleStatement = database.prepare(/*sql*/ `
       SELECT * FROM Bookings
-        JOIN Users ON Bookings.user_id = Users.user_id
-        JOIN Services ON Bookings.service_id = Services.service_id;
+        LEFT JOIN Users ON Bookings.user_id = Users.user_id
+        LEFT JOIN Services ON Bookings.service_id = Services.service_id
         WHERE booking_id = $id;
     `);
 
-    this.updateStatement = this.database.prepare(/*sql*/ `
+    this.insertStatement = database.prepare(/*sql*/ `
+      INSERT INTO Bookings (booking_id, user_id, service_id, booking_datetime, notes) VALUES (
+        NULL,
+        $user_id,
+        $service_id,
+        $booking_datetime,
+        $notes
+      );
+    `);
+
+    this.updateStatement = database.prepare(/*sql*/ `
       UPDATE Bookings
       SET
         user_id = $user_id,
@@ -38,31 +47,27 @@ export class BookingsCollection
       WHERE booking_id = $booking_id;
     `);
 
-    this.insertStatement = this.database.prepare(/*sql*/ `
-      INSERT INTO Bookings (booking_id, user_id, service_id, booking_datetime, notes) VALUES (
-        $booking_id,
-        $user_id,
-        $service_id,
-        $booking_datetime,
-        $notes
-      );
-    `);
-
-    this.deleteStatement = this.database.prepare(/*sql*/ `
+    this.deleteStatement = database.prepare(/*sql*/ `
       DELETE FROM Bookings WHERE booking_id = $id;
     `);
+
+    this.insertStatement.setAllowBareNamedParameters(true);
+    this.insertStatement.setAllowUnknownNamedParameters(true);
+    this.updateStatement.setAllowBareNamedParameters(true);
+    this.updateStatement.setAllowUnknownNamedParameters(true);
+    this.deleteStatement.setAllowBareNamedParameters(true);
+    this.deleteStatement.setAllowUnknownNamedParameters(true);
   }
 
-  private database: DatabaseSync;
   private getAllStatement: StatementSync;
   private getSingleStatement: StatementSync;
-  private updateStatement: StatementSync;
   private insertStatement: StatementSync;
+  private updateStatement: StatementSync;
   private deleteStatement: StatementSync;
 
   getAll(): z.infer<typeof BookingWithRelations>[] {
     const data = this.getAllStatement.all().map(mapToBookingWithRelations);
-    return BookingWithRelations.array().parse(data);
+    return z.array(BookingWithRelations).parse(data);
   }
 
   getSingle(id: number): z.infer<typeof BookingWithRelations> | undefined {
@@ -71,22 +76,23 @@ export class BookingsCollection
     return BookingWithRelations.parse(mapToBookingWithRelations(data));
   }
 
+  insert(entry: z.infer<typeof Booking>): number | undefined {
+    const input = Booking.safeParse(entry);
+    if (!input.success) return;
+
+    const inputValues = filterNonSQLInputValues(input.data);
+    const result = this.insertStatement.run(inputValues);
+    if (result.changes === 0) return;
+
+    return Number(result.lastInsertRowid);
+  }
+
   update(entry: z.infer<typeof Booking>): boolean {
     const input = Booking.safeParse(entry);
     if (!input.success) return false;
 
     const inputValues = filterNonSQLInputValues(input.data);
     const result = this.updateStatement.run(inputValues);
-
-    return result.changes > 0;
-  }
-
-  insert(entry: z.infer<typeof Booking>): boolean {
-    const input = Booking.safeParse(entry);
-    if (!input.success) return false;
-
-    const inputValues = filterNonSQLInputValues(input.data);
-    const result = this.insertStatement.run(inputValues);
 
     return result.changes > 0;
   }

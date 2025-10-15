@@ -3,8 +3,8 @@ import type { SQLInputValue } from 'node:sqlite';
 export interface DatabaseCollection<TIn, TOut = TIn> {
   getAll(): TOut[];
   getSingle(id: number): TOut | undefined;
+  insert(entry: TIn): number | undefined;
   update(entry: TIn): boolean;
-  insert(entry: TIn): boolean;
   delete(id: number): boolean;
 }
 
