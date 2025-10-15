@@ -38,3 +38,10 @@ Content-Type: application/json
 
 DELETE {{host}}/api/bookings/1
 Accept: application/json
+
+###
+
+GET {{host}}/api/users
+Accept: application/json
+
+###

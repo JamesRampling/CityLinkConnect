@@ -34,13 +34,17 @@ export const Announcement = z.object({
   config: z.string(),
 });
 
+/**
+ * Extended Booking model that includes the User and Service type.
+ */
 export const BookingWithRelations = Booking.extend({
   user: User.nullish(),
   service: Service.nullish(),
 });
 
-export const UserWithRelations = User.extend({ bookings: Booking.array() });
-
-export const ServiceWithRelations = Service.extend({
-  bookings: Booking.array(),
+/**
+ * Extended User model that includes their Bookings (with Service type).
+ */
+export const UserWithRelations = User.extend({
+  bookings: Booking.extend({ service: Service.nullish() }).array(),
 });
