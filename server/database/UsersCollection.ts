@@ -6,15 +6,38 @@ export const UsersCollectionConfig = {
   outZodSchema: UserWithRelations,
 
   getAllSQL: /*sql*/ `
-    SELECT * FROM Users
-      LEFT JOIN Bookings ON Users.user_id = Bookings.user_id
-      LEFT JOIN Services ON Bookings.service_id = Services.service_id;
+    SELECT
+      Users.user_id,
+      Users.given_names,
+      Users.last_name,
+      Users.email,
+      Users.phone,
+      Bookings.booking_id,
+      Bookings.service_id,
+      Bookings.booking_datetime,
+      Bookings.notes,
+      Services.config
+    FROM Users
+    LEFT JOIN Bookings ON Users.user_id = Bookings.user_id
+    LEFT JOIN Services ON Bookings.service_id = Services.service_id;
   `,
 
   getSingleSQL: /*sql*/ `
-    SELECT * FROM Users
-      LEFT JOIN Bookings ON Users.user_id = Bookings.user_id
-      WHERE Users.user_id = $id;
+    SELECT
+      Users.user_id,
+      Users.given_names,
+      Users.last_name,
+      Users.email,
+      Users.phone,
+      Bookings.booking_id,
+      Bookings.service_id,
+      Bookings.booking_datetime,
+      Bookings.notes,
+      Services.config
+    FROM Users
+    LEFT JOIN Bookings ON Users.user_id = Bookings.user_id
+    LEFT JOIN Services ON Bookings.service_id = Services.service_id
+    WHERE Users.user_id = $id;
   `,
 
   insertSQL: /*sql*/ `
