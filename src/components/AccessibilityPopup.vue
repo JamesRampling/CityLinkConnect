@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import InputSelect from '@/components/InputSelect.vue';
 import { ref } from 'vue';
-
 defineProps<{ target?: HTMLElement }>();
 
 const dialogElement = ref<HTMLDialogElement>();
@@ -15,6 +15,31 @@ defineExpose({ show });
 <template>
   <dialog ref="dialogElement" closedby="any">
     <h2>Accessibility Options</h2>
+    <p>Here you can set your accessibility options.</p>
+    <div>
+      <InputSelect
+        name="Text size"
+        label="Text size"
+        :options="[
+          { text: 'Small', value: 'small' },
+          { text: 'Medium', value: 'medium' },
+          { text: 'Large', value: 'large' },
+        ]"
+      />
+    </div>
+    <div>
+      <InputSelect
+        name="Style"
+        label="Mode"
+        :options="[
+          { text: 'Normal', value: 'normal' },
+          { text: 'Dark mode', value: 'black' },
+        ]"
+      />
+    </div>
+    <div>
+      <button>Close</button>
+    </div>
   </dialog>
 </template>
 
