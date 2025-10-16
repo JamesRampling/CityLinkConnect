@@ -16,7 +16,7 @@ defineExpose({ show });
   <dialog ref="dialogElement" closedby="any">
     <h2>Accessibility Options</h2>
     <p>Here you can set your accessibility options.</p>
-    <div>
+    <div id="options">
       <InputSelect
         name="Text size"
         label="Text size"
@@ -27,7 +27,7 @@ defineExpose({ show });
         ]"
       />
     </div>
-    <div>
+    <div id="options">
       <InputSelect
         name="Style"
         label="Mode"
@@ -38,7 +38,10 @@ defineExpose({ show });
       />
     </div>
     <div>
-      <button>Close</button>
+      <div class="button-row">
+        <button type="submit" class="button-filled">Submit</button>
+        <button type="reset" class="button-outlined">Reset</button>
+      </div>
     </div>
   </dialog>
 </template>
@@ -49,5 +52,8 @@ dialog {
   inset: 0 0 0 auto;
   height: 100%;
   width: min(100%, 40ch);
+}
+#options {
+  margin-bottom: 1rem;
 }
 </style>
