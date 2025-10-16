@@ -59,4 +59,119 @@
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+h1 {
+  color: #2c3e50;
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+h2 {
+  color: #34495e;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.ContentClass {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ContentClass-Horizontal {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.ContentClass-Horizontal p {
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+}
+
+.ContentClass img {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.ContentClass-Horizontal img {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  align-self: center;
+}
+
+/* First ContentClass specific styling */
+.ContentClass:first-of-type .ContentClass-Horizontal {
+  flex-direction: column;
+}
+
+.ContentClass:first-of-type img {
+  flex-shrink: 0;
+}
+
+/* Second ContentClass specific styling */
+.ContentClass:last-of-type .ContentClass-Horizontal {
+  flex-direction: row;
+}
+
+.ContentClass:last-of-type .ContentClass-Horizontal > div {
+  flex: 1;
+}
+
+.ContentClass:last-of-type .ContentClass-Horizontal img {
+  flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ContentClass {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .ContentClass-Horizontal {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .ContentClass:last-of-type .ContentClass-Horizontal {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ContentClass {
+    padding: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .ContentClass-Horizontal p {
+    font-size: 1rem;
+  }
+}
+</style>
