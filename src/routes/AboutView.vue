@@ -3,35 +3,59 @@
 <template>
   <div class="page-wrapper">
     <h1>About CityLink Connect</h1>
-    <h2>What is CityLink Connect?</h2>
-    <p>
-      CityLink Connect is the website powering CityLink Initiatives' digital
-      transformation. CityLink Connect provides access to local announcements,
-      council service bookings, and feedback & enquiries.
-    </p>
-    <h2>Our values</h2>
-    <p>
-      CityLink Connect prides itself on the pioneering that takes place and the
-      innovation that we seek to enrich the community we stand with.
-    </p>
-    <p>
-      We want this website to be an accessible domain for everyone regardless of
-      socioeconomic status or disabilities.
-    </p>
-    <p>That is CityLink Connect, connecting each other one person at a time.</p>
-    <h2>What services does CityLink Connect provide?</h2>
-    <p>Through our platform you can:</p>
-    <ul>
-      <li>
-        Book services such as waste collection, facilty rentals and permits.
-      </li>
-      <li>Stay informed through our announcements page.</li>
-      <li>
-        Connect with us via feedback to report any issues with services or
-        website issues.
-      </li>
-    </ul>
-    <p>Thank you for making our mission possible.</p>
+
+    <div class="ContentClass">
+      <div>
+        <img
+          src="@/assets/citylink-logo.png"
+          alt="CityLink Connect Logo"
+          width="200"
+        />
+      </div>
+      <div class="ContentClass-Horizontal">
+        <p>
+          CityLink Connect is a platform that connects users with various city
+          services. Our mission is to make it easier for residents to access and
+          book services such as waste management, public transportation, and
+          community events.
+        </p>
+        <p>
+          We believe in fostering a connected community by providing a seamless
+          experience for service bookings and information dissemination. Our
+          platform is designed to be user-friendly and accessible to all
+          residents.
+        </p>
+        <p>
+          Whether you're looking to schedule a pickup for bulky waste, find out
+          about upcoming local events, or get information on public transit
+          schedules, CityLink Connect is here to help you stay informed and
+          engaged with your city.
+        </p>
+      </div>
+    </div>
+    <div class="ContentClass">
+      <div>
+        <h2>Our Team</h2>
+        <div class="ContentClass-Horizontal">
+          <div>
+            <p>
+              Our team is composed of dedicated professionals passionate about
+              improving urban living through technology. We work closely with
+              city officials and community members to ensure our platform meets
+              the needs of our users.
+            </p>
+            <p>
+              From software developers to customer support specialists, each
+              member of our team plays a crucial role in delivering a
+              high-quality service experience. We are committed to continuous
+              improvement and innovation to better serve our community.
+            </p>
+          </div>
+
+          <img src="@/assets/team-photo.jpg" alt="Our Team" width="300" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
