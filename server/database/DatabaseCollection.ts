@@ -6,11 +6,38 @@ import type {
 } from 'node:sqlite';
 import z from 'zod';
 
+export type ChangeResult<T> =
+  | ChangeSuccess
+  | ChangeNoAction
+  | ValidationError<T>
+  | NodeSQLiteError
+  | { type: 'error'; error: unknown };
+
+interface ChangeSuccess {
+  type: 'success';
+  changes: number;
+  rowId: number;
+}
+
+interface ChangeNoAction {
+  type: 'no-action';
+}
+
+interface ValidationError<T> {
+  type: 'validation-error';
+  issues?: { [P in keyof T]?: string[] };
+}
+
+interface NodeSQLiteError {
+  type: 'sqlite-error';
+  errcode: number;
+}
+
 export interface DatabaseCollection<TIn, TOut = TIn> {
   getAll(): TOut[];
   getSingle(id: number): TOut | undefined;
-  insert(entry: TIn): number | undefined;
-  update(entry: TIn): boolean;
+  insert(entry: TIn): ChangeResult<TIn>;
+  update(entry: TIn): ChangeResult<TIn>;
   delete(id: number): boolean;
 }
 
@@ -88,38 +115,81 @@ export class SQLiteDatabaseCollection<
     return this.outZodSchema.parse(data[0]);
   }
 
-  insert(entry: z.infer<TIn>): number | undefined {
-    const input = this.inZodSchema.safeParse(entry);
-    if (!input.success) return;
+  insert(entry: z.infer<TIn>): ChangeResult<z.infer<TIn>> {
+    try {
+      const input = this.inZodSchema.safeParse(entry);
+      if (!input.success) {
+        return {
+          type: 'validation-error',
+          issues: z.flattenError(input.error).fieldErrors,
+        };
+      }
 
-    let inputValues = this.mapObjectToRow?.(input.data) ?? input.data;
-    inputValues = filterNonSQLInputValues(inputValues);
+      const inputValues = convertObjectToSQLInputParams(
+        this.mapObjectToRow?.(input.data) ?? input.data,
+      );
 
-    const result = this.insertStatement.run(inputValues);
-    if (result.changes === 0) return;
+      const { changes, lastInsertRowid } =
+        this.insertStatement.run(inputValues);
 
-    return Number(result.lastInsertRowid);
+      return changes
+        ? {
+            type: 'success',
+            changes: Number(changes),
+            rowId: Number(lastInsertRowid),
+          }
+        : { type: 'no-action' };
+    } catch (e) {
+      const errcode = getNodeSQLiteErrorCode(e);
+      return errcode !== undefined
+        ? { type: 'sqlite-error', errcode }
+        : { type: 'error', error: e };
+    }
   }
 
-  update(entry: z.infer<TIn>): boolean {
-    const input = this.inZodSchema.safeParse(entry);
-    if (!input.success) return false;
+  update(entry: z.infer<TIn>): ChangeResult<z.infer<TIn>> {
+    try {
+      const input = this.inZodSchema.safeParse(entry);
+      if (!input.success) {
+        return {
+          type: 'validation-error',
+          issues: z.flattenError(input.error).fieldErrors,
+        };
+      }
 
-    let inputValues = this.mapObjectToRow?.(input.data) ?? input.data;
-    inputValues = filterNonSQLInputValues(inputValues);
+      const inputValues = convertObjectToSQLInputParams(
+        this.mapObjectToRow?.(input.data) ?? input.data,
+      );
 
-    const result = this.updateStatement.run(inputValues);
+      const { changes, lastInsertRowid } =
+        this.updateStatement.run(inputValues);
 
-    return result.changes > 0;
+      return changes
+        ? {
+            type: 'success',
+            changes: Number(changes),
+            rowId: Number(lastInsertRowid),
+          }
+        : { type: 'no-action' };
+    } catch (e) {
+      const errcode = getNodeSQLiteErrorCode(e);
+      return errcode !== undefined
+        ? { type: 'sqlite-error', errcode }
+        : { type: 'error', error: e };
+    }
   }
 
   delete(id: number): boolean {
-    const result = this.deleteStatement.run({ id });
-    return result.changes > 0;
+    try {
+      const result = this.deleteStatement.run({ id });
+      return result.changes > 0;
+    } catch (_e) {
+      return !!_e && false;
+    }
   }
 }
 
-export function filterNonSQLInputValues(
+export function convertObjectToSQLInputParams(
   obj: Record<string, unknown>,
 ): Record<string, SQLInputValue> {
   const entries: [string, SQLInputValue][] = [];
@@ -144,4 +214,17 @@ export function filterNonSQLInputValues(
   }
 
   return Object.fromEntries(entries);
+}
+
+function getNodeSQLiteErrorCode(e: unknown): number | undefined {
+  if (
+    typeof e === 'object' &&
+    e !== null &&
+    'code' in e &&
+    e.code === 'ERR_SQLITE_ERROR' &&
+    'errcode' in e &&
+    typeof e.errcode === 'number'
+  ) {
+    return e.errcode;
+  }
 }

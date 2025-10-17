@@ -31,6 +31,7 @@ export const ServerError = z.object({
   type: z.literal('server-error'),
   title: z.string(),
   status: z.literal(500),
+  details: z.any().optional(),
 });
 
 export const ApiError = z.discriminatedUnion('type', [
