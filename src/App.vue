@@ -134,8 +134,4 @@ nav {
   display: flex;
   gap: 1rem;
 }
-
-main {
-  padding-block-start: 0.5rem;
-}
 </style>
