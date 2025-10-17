@@ -1,3 +1,9 @@
+export const schemaVersion = 1;
+
+export default /*sql*/ `
+-- Increment version when the schema changes
+PRAGMA user_version = ${schemaVersion};
+
 CREATE TABLE Services (
   service_id INTEGER PRIMARY KEY NOT NULL,
   config TEXT NOT NULL
@@ -31,3 +37,4 @@ CREATE TABLE Announcements (
   sort_datetime TEXT NOT NULL,
   config TEXT NOT NULL
 );
+`;

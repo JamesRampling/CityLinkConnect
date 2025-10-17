@@ -1,3 +1,4 @@
+export default /*sql*/`
 -- Seed with some example data
 INSERT INTO Services (config) VALUES
   ('{"name":"Service 1"}'),
@@ -20,3 +21,4 @@ INSERT INTO Announcements (sort_datetime, config) VALUES
 INSERT INTO Feedback (email, subject, message) VALUES
   ('example@example.com', 'Feedback Subject', 'This is a feedback message.'),
   ('example2@example.com', 'Feedback Subject 2', 'This is a feedback message 2.');
+`;

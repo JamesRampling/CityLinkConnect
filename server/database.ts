@@ -2,17 +2,31 @@ import { AnnouncementsCollectionConfig } from '#server/database/AnnouncementsCol
 import { BookingsCollectionConfig } from '#server/database/BookingsCollection';
 import { SQLiteDatabaseCollection } from '#server/database/DatabaseCollection';
 import { FeedbackCollectionConfig } from '#server/database/FeedbackCollection';
+import schema, { schemaVersion } from '#server/database/schema';
+import seed_test_data from '#server/database/seed_test_data';
 import { ServicesCollectionConfig } from '#server/database/ServicesCollection';
 import { UsersCollectionConfig } from '#server/database/UsersCollection';
-import { readFile } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
 
-export const database = new DatabaseSync(':memory:');
+const database =
+  process.env.NODE_ENV === 'production'
+    ? new DatabaseSync(process.env.DATABASE_PATH ?? 'database.sqlite')
+    : new DatabaseSync(':memory:');
 
-database.exec(await readFile('./schema.sql', { encoding: 'utf-8' }));
+const actualSchemaVersion =
+  database.prepare(`PRAGMA user_version;`).get()?.user_version ?? 0;
+
+if (actualSchemaVersion === 0) {
+  database.exec(schema);
+} else if (actualSchemaVersion !== schemaVersion) {
+  process.stderr.write(
+    `Loaded schema version ${actualSchemaVersion} not compatible with ${schemaVersion}.\n`,
+  );
+  process.exit(1);
+}
 
 if (process.env.NODE_ENV !== 'production') {
-  database.exec(await readFile('./seed_test_data.sql', { encoding: 'utf-8' }));
+  database.exec(seed_test_data);
 }
 
 export const db = {
