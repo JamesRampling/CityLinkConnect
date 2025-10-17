@@ -2,7 +2,12 @@
 import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
 import IconAccessibility from '@/components/icons/IconAccessibility.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
+import IconUser from '@/components/icons/IconUser.vue';
+
+import { useUser } from '@/user';
 import { ref } from 'vue';
+
+const userState = useUser();
 
 const accessibilityButton = ref<HTMLButtonElement>();
 const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
@@ -39,7 +44,16 @@ const hamburgerMenuExpanded = ref(false);
       >
         <IconAccessibility />Accessiblity
       </button>
-      <router-link to="/login" class="button-filled">Login</router-link>
+
+      <span v-if="userState === undefined">
+        <router-link to="/login" class="button-filled">Login</router-link>
+      </span>
+      <span v-else>
+        <router-link :to="`/user/${userState.id}`" class="button-outlined">
+          <IconUser />
+          {{ userState.display_name }}
+        </router-link>
+      </span>
     </div>
   </header>
   <main>
