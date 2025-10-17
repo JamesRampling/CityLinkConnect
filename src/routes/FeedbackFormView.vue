@@ -10,7 +10,7 @@ import InputTextarea from '@/components/InputTextarea.vue';
       <form class="form" action="" @submit.prevent>
         <InputText type="email" name="email-input" label="Email" />
 
-        <InputTextarea name="feedback" label="Your feedback" />
+        <InputTextarea type="feedback" name="feedback" label="Your feedback" />
 
         <div class="button-row">
           <button type="submit" class="button-filled">Submit</button>
@@ -45,5 +45,9 @@ h1 {
 }
 #flex-Content {
   flex-direction: row;
+}
+#flex-item {
+  flex-direction: column;
+  padding: 1rem;
 }
 </style>
