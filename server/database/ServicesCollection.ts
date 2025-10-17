@@ -15,8 +15,8 @@ export const ServicesCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Services (service_id, config)
-      VALUES (NULL, $config);
+    INSERT INTO Services (config)
+      VALUES ($config);
   `,
 
   updateSQL: /*sql*/ `

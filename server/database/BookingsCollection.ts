@@ -20,8 +20,8 @@ export const BookingsCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Bookings (booking_id, user_id, service_id, booking_datetime, notes)
-      VALUES (NULL, $user_id, $service_id, $booking_datetime, $notes);
+    INSERT INTO Bookings (user_id, service_id, booking_datetime, notes)
+      VALUES ($user_id, $service_id, $booking_datetime, $notes);
   `,
 
   updateSQL: /*sql*/ `

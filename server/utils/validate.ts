@@ -11,7 +11,6 @@ type AcceptsUnknown<T> = unknown extends z.input<T> ? T : never;
 
 export function validate<
   RouteParamsSchema extends Record<string, z.ZodType>,
-  QueryParamsSchema extends Record<string, z.ZodType>,
   ReqBodySchema extends z.ZodType,
 >({
   route,
@@ -22,8 +21,7 @@ export function validate<
 }): RequestHandler<
   InferParams<RouteParamsSchema>,
   unknown,
-  z.infer<ReqBodySchema>,
-  InferParams<QueryParamsSchema>
+  z.infer<ReqBodySchema>
 > {
   return (req, res, next) => {
     let routeError: z.ZodError | undefined;
@@ -31,7 +29,7 @@ export function validate<
       const routeSchema = z.looseObject(route);
       const result = routeSchema.safeParse(req.params);
       if (result.success) {
-        req.route = result.data;
+        req.params = result.data as InferParams<RouteParamsSchema>;
       } else {
         routeError = result.error;
       }
