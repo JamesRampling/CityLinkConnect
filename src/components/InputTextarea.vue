@@ -20,7 +20,7 @@ function onInput(event: Event) {
 
   if (textarea instanceof HTMLTextAreaElement) {
     textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight.toString()}px`;
+    textarea.style.height = `${textarea.scrollHeight}px`;
   }
 }
 </script>

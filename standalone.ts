@@ -16,4 +16,6 @@ app.use(express.static(path.join(process.cwd(), '/dist')));
 
 const server = http.createServer(app);
 
-server.listen(Number(port));
+server.listen(Number(port), () => {
+  console.log(`Server running on port ${port}`);
+});
