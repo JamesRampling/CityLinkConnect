@@ -25,16 +25,16 @@ route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
 
 route.post('/', validate({ body: Announcement }), (req, res) => {
   const announcement = { ...req.body, announcement_id: 0 };
-  const id = db.Announcements.insert(announcement);
+  const result = db.Announcements.insert(announcement);
 
-  if (id) {
-    Responses.created(res, { ...announcement, announcement_id: id });
+  if (result.type === 'success') {
+    Responses.created(res, { ...announcement, announcement_id: result.rowId });
   } else {
-    Responses.error(res, {
-      type: 'server-error',
-      status: 500,
-      title: 'An error occurred while creating the announcement.',
-    });
+    Responses.serverError(
+      res,
+      'An error occurred while updating the item.',
+      result,
+    );
   }
 });
 
@@ -44,13 +44,18 @@ route.put(
   (req, res) => {
     const { id } = req.params;
     const announcement = { ...req.body, announcement_id: id };
+    const result = db.Announcements.update(announcement);
 
-    if (db.Announcements.update(announcement)) {
+    if (result.type === 'success') {
       Responses.noContent(res);
-      return;
-    } else {
+    } else if (result.type === 'no-action') {
       Responses.notFound(res);
-      return;
+    } else {
+      Responses.serverError(
+        res,
+        'An error occurred while updating the item.',
+        result,
+      );
     }
   },
 );

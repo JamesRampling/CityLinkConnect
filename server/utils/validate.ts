@@ -102,7 +102,6 @@ export function validate<
     }
 
     if (!routeError && !bodyError) {
-      console.log(req.params);
       next();
       return;
     }

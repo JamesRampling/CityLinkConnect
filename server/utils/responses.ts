@@ -27,7 +27,15 @@ export const Responses = {
     res.status(details.status).json(details).end();
   },
 
-  notFound(res: Response, message = 'The requested item was not found.') {
-    this.error(res, { type: 'not-found', status: 404, title: message });
+  notFound(res: Response, title = 'The requested item was not found.') {
+    this.error(res, { type: 'not-found', status: 404, title });
+  },
+
+  serverError(
+    res: Response,
+    title = 'An internal server error occurred.',
+    details?: unknown,
+  ) {
+    this.error(res, { type: 'server-error', status: 500, title, details });
   },
 };
