@@ -3,7 +3,6 @@ import { Responses } from '#server/utils/responses';
 import { validate } from '#server/utils/validate';
 import { Announcement } from '#shared/models';
 import { Router } from 'express';
-import z from 'zod';
 
 const route = Router();
 
@@ -12,21 +11,17 @@ route.get('/', (_req, res) => {
   Responses.ok(res, announcements);
 });
 
-route.get(
-  '/:id',
-  validate({ route: { id: z.coerce.number() } }),
-  (req, res) => {
-    const { id } = req.params;
+route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
+  const { id } = req.params;
 
-    const announcement = db.Announcements.getSingle(id);
+  const announcement = db.Announcements.getSingle(id);
 
-    if (announcement) {
-      Responses.ok(res, announcement);
-    } else {
-      Responses.notFound(res, 'The announcement was not found.');
-    }
-  },
-);
+  if (announcement) {
+    Responses.ok(res, announcement);
+  } else {
+    Responses.notFound(res, 'The announcement was not found.');
+  }
+});
 
 route.post('/', validate({ body: Announcement }), (req, res) => {
   const announcement = { ...req.body, announcement_id: 0 };
@@ -45,7 +40,7 @@ route.post('/', validate({ body: Announcement }), (req, res) => {
 
 route.put(
   '/:id',
-  validate({ route: { id: z.coerce.number() }, body: Announcement }),
+  validate({ route: { id: 'int' }, body: Announcement }),
   (req, res) => {
     const { id } = req.params;
     const announcement = { ...req.body, announcement_id: id };
@@ -60,14 +55,10 @@ route.put(
   },
 );
 
-route.delete(
-  '/:id',
-  validate({ route: { id: z.coerce.number() } }),
-  (req, res) => {
-    const { id } = req.params;
-    db.Announcements.delete(id);
-    Responses.noContent(res);
-  },
-);
+route.delete('/:id', validate({ route: { id: 'int' } }), (req, res) => {
+  const { id } = req.params;
+  db.Announcements.delete(id);
+  Responses.noContent(res);
+});
 
 export default route;
