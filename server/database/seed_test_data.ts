@@ -1,4 +1,4 @@
-export default /*sql*/`
+export default /*sql*/ `
 -- Seed with some example data
 INSERT INTO Services (config) VALUES
   ('{"name":"Service 1"}'),
