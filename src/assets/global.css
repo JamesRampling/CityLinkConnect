@@ -27,6 +27,10 @@ textarea {
   font: inherit;
 }
 
+img {
+  max-width: 100%;
+}
+
 :where(a) {
   color: var(--link-color);
   text-decoration: none;

@@ -69,6 +69,8 @@ const hamburgerMenuExpanded = ref(false);
 
 <style scoped>
 header {
+  /* TODO: Add responsive header (e.g. hamburger) */
+  overflow-x: scroll;
   display: flex;
   gap: 1rem;
   align-items: center;
