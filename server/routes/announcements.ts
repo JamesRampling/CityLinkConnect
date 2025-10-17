@@ -1,63 +1,73 @@
 import { db } from '#server/database';
-import { numberOrUndefined } from '#server/utils/numberOrUndefined';
+import { Responses } from '#server/utils/responses';
+import { validate } from '#server/utils/validate';
 import { Announcement } from '#shared/models';
 import { Router } from 'express';
+import z from 'zod';
 
-const router = Router();
+const route = Router();
 
-router.get('/', (req, res) => {
+route.get('/', (_req, res) => {
   const announcements = db.Announcements.getAll();
-  res.send(announcements);
+  Responses.ok(res, announcements);
 });
 
-router.get('/:id', (req, res) => {
-  const id = numberOrUndefined(req.params.id);
-  if (!id) {
-    res.statusCode = 400;
-    res.send({ message: 'Id parameter is invalid.' });
-    return;
-  }
+route.get(
+  '/:id',
+  validate({ route: { id: z.coerce.number() } }),
+  (req, res) => {
+    const { id } = req.params;
 
-  const announcement = db.Announcements.getSingle(id);
+    const announcement = db.Announcements.getSingle(id);
 
-  if (announcement) {
-    res.send(announcement);
-  } else {
-    res.statusCode = 404;
-    res.send({ message: 'The announcement was not found.' });
-  }
-});
-
-router.post('/', (req, res) => {
-  const result = Announcement.safeParse(req.body);
-
-  if (result.success) {
-    result.data.announcement_id = 0;
-    const id = db.Announcements.insert(result.data);
-
-    if (id) {
-      res.statusCode = 201;
-      res.send(db.Announcements.getSingle(id));
-      return;
+    if (announcement) {
+      Responses.ok(res, announcement);
+    } else {
+      Responses.notFound(res, 'The announcement was not found.');
     }
+  },
+);
 
-    res.statusCode = 500;
-    res.send({ message: 'An error occurred while creating the announcement.' });
+route.post('/', validate({ body: Announcement }), (req, res) => {
+  const announcement = { ...req.body, announcement_id: 0 };
+  const id = db.Announcements.insert(announcement);
+
+  if (id) {
+    Responses.created(res, { ...announcement, announcement_id: id });
   } else {
-    res.statusCode = 400;
-    res.send({
-      message: 'Announcement is not valid.',
-      details: result.error.issues,
+    Responses.error(res, {
+      type: 'server-error',
+      status: 500,
+      title: 'An error occurred while creating the announcement.',
     });
   }
 });
 
-router.put('/:id', (req, res) => {
-  const id = numberOrUndefined(req.params.id);
-});
+route.put(
+  '/:id',
+  validate({ route: { id: z.coerce.number() }, body: Announcement }),
+  (req, res) => {
+    const { id } = req.params;
+    const announcement = { ...req.body, announcement_id: id };
 
-router.delete('/:id', (req, res) => {
-  const id = numberOrUndefined(req.params.id);
-});
+    if (db.Announcements.update(announcement)) {
+      Responses.noContent(res);
+      return;
+    } else {
+      Responses.notFound(res);
+      return;
+    }
+  },
+);
 
-export default router;
+route.delete(
+  '/:id',
+  validate({ route: { id: z.coerce.number() } }),
+  (req, res) => {
+    const { id } = req.params;
+    db.Announcements.delete(id);
+    Responses.noContent(res);
+  },
+);
+
+export default route;

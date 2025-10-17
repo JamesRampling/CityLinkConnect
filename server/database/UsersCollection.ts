@@ -41,8 +41,8 @@ export const UsersCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Users (user_id, given_names, last_name, email, phone)
-      VALUES (NULL, $given_names, $last_name, $email, $phone);
+    INSERT INTO Users (given_names, last_name, email, phone)
+      VALUES ($given_names, $last_name, $email, $phone);
   `,
 
   updateSQL: /*sql*/ `

@@ -14,8 +14,8 @@ export const AnnouncementsCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Announcements (announcement_id, sort_datetime, config)
-      VALUES (NULL, $sort_datetime, $config);
+    INSERT INTO Announcements (sort_datetime, config)
+      VALUES ($sort_datetime, $config);
   `,
 
   updateSQL: /*sql*/ `

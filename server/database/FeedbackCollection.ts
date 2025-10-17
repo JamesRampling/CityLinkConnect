@@ -14,8 +14,8 @@ export const FeedbackCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Feedback (feedback_id, email, subject, message)
-      VALUES (NULL, $email, $subject, $message);
+    INSERT INTO Feedback (email, subject, message)
+      VALUES ($email, $subject, $message);
   `,
 
   updateSQL: /*sql*/ `

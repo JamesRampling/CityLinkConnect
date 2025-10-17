@@ -17,8 +17,23 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "sort_datetime": "2025-10-17T12:27:00Z",
-    "config": ""
+  "sort_datetime": "2025-10-17T12:27:00Z",
+  "config": ""
 }
 
 ###
+
+PUT {{host}}/api/announcements/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "sort_datetime": "2025-10-17T12:27:00Z",
+  "config": "updated"
+}
+
+###
+
+DELETE {{host}}/api/announcements/1
+Accept: application/json
+
