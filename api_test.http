@@ -1,0 +1,24 @@
+@host = http://localhost:5173
+
+###
+
+GET {{host}}/api/announcements
+Accept: application/json
+
+###
+
+GET {{host}}/api/announcements/1
+Accept: application/json
+
+###
+
+POST {{host}}/api/announcements
+Accept: application/json
+Content-Type: application/json
+
+{
+    "sort_datetime": "2025-10-17T12:27:00Z",
+    "config": ""
+}
+
+###
