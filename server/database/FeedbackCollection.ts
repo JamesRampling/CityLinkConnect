@@ -2,14 +2,13 @@ import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCo
 import { Feedback } from '#shared/models';
 
 export const FeedbackCollectionConfig = {
-  inZodSchema: Feedback,
-  outZodSchema: Feedback,
+  zodSchema: Feedback,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
     SELECT * FROM Feedback;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
     SELECT * FROM Feedback WHERE feedback_id = $id;
   `,
 
