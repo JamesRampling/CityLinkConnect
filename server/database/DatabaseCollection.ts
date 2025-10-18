@@ -33,45 +33,56 @@ interface NodeSQLiteError {
   errcode: number;
 }
 
-export interface DatabaseCollection<TIn, TOut = TIn> {
-  getAll(): TOut[];
-  getSingle(id: number): TOut | undefined;
-  insert(entry: TIn): ChangeResult<TIn>;
-  update(entry: TIn): ChangeResult<TIn>;
+export interface DatabaseCollection<In, Out = In> {
+  all(): Out[];
+  single(id: number): Out | undefined;
+  insert(entry: In): ChangeResult<In>;
+  update(entry: In): ChangeResult<In>;
   delete(id: number): boolean;
 }
 
+export interface JoinedDatabaseCollection<Table, JoinedTable>
+  extends DatabaseCollection<Table> {
+  allJoined(): JoinedTable[];
+  singleJoined(id: number): JoinedTable | undefined;
+}
+
 export interface SQLiteDatabaseCollectionConfig<
-  TIn extends z.ZodObject,
-  TOut extends z.ZodObject = TIn,
+  TableSchema extends z.ZodObject,
 > {
-  inZodSchema: TIn;
-  outZodSchema: TOut;
-  getAllSQL: string;
-  getSingleSQL: string;
+  zodSchema: TableSchema;
+  allSQL: string;
+  singleSQL: string;
   insertSQL: string;
   updateSQL: string;
   deleteSQL: string;
-  mapObjectToRow?: (obj: z.infer<TIn>) => Record<string, SQLInputValue>;
-  mapRowsToObjects?: (
-    queryOutput: Record<string, SQLOutputValue>[],
+  mapObjectToRow?: (obj: z.infer<TableSchema>) => Record<string, SQLInputValue>;
+  mapRowsToObjects?: (query: Record<string, SQLOutputValue>[]) => unknown[];
+}
+
+export interface SQLiteJoinedDatabaseCollectionConfig<
+  TableSchema extends z.ZodObject,
+  JoinedTableSchema extends z.ZodObject,
+> extends SQLiteDatabaseCollectionConfig<TableSchema> {
+  joinedZodSchema: JoinedTableSchema;
+  allJoinedSQL: string;
+  singleJoinedSQL: string;
+  mapRowsToJoinedObjects?: (
+    query: Record<string, SQLOutputValue>[],
   ) => unknown[];
 }
 
-export class SQLiteDatabaseCollection<
-  TIn extends z.ZodObject,
-  TOut extends z.ZodObject = TIn,
-> implements DatabaseCollection<z.infer<TIn>, z.infer<TOut>>
+export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
+  implements DatabaseCollection<z.infer<TableSchema>>
 {
   constructor(
     database: DatabaseSync,
-    config: SQLiteDatabaseCollectionConfig<TIn, TOut>,
+    config: SQLiteDatabaseCollectionConfig<TableSchema>,
   ) {
-    this.inZodSchema = config.inZodSchema;
-    this.outZodSchema = config.outZodSchema;
+    this.zodSchema = config.zodSchema;
 
-    this.getAllStatement = database.prepare(config.getAllSQL);
-    this.getSingleStatement = database.prepare(config.getSingleSQL);
+    this.allStatement = database.prepare(config.allSQL);
+    this.singleStatement = database.prepare(config.singleSQL);
     this.insertStatement = database.prepare(config.insertSQL);
     this.updateStatement = database.prepare(config.updateSQL);
     this.deleteStatement = database.prepare(config.deleteSQL);
@@ -87,37 +98,38 @@ export class SQLiteDatabaseCollection<
     this.deleteStatement.setAllowUnknownNamedParameters(true);
   }
 
-  private mapRowsToObjects?: (
-    queryOutput: Record<string, SQLOutputValue>[],
+  protected mapRowsToObjects?: (
+    query: Record<string, SQLOutputValue>[],
   ) => unknown[];
 
-  private mapObjectToRow?: (obj: z.infer<TIn>) => Record<string, SQLInputValue>;
+  protected mapObjectToRow?: (
+    obj: z.infer<TableSchema>,
+  ) => Record<string, SQLInputValue>;
 
-  private inZodSchema: TIn;
-  private outZodSchema: TOut;
+  protected zodSchema: TableSchema;
 
-  private getAllStatement: StatementSync;
-  private getSingleStatement: StatementSync;
+  private allStatement: StatementSync;
+  private singleStatement: StatementSync;
   private insertStatement: StatementSync;
   private updateStatement: StatementSync;
   private deleteStatement: StatementSync;
 
-  getAll(): z.infer<TOut>[] {
-    const rows = this.getAllStatement.all();
+  all(): z.infer<TableSchema>[] {
+    const rows = this.allStatement.all();
     const data = this.mapRowsToObjects?.(rows) ?? rows;
-    return z.array(this.outZodSchema).parse(data);
+    return z.array(this.zodSchema).parse(data);
   }
 
-  getSingle(id: number): z.infer<TOut> | undefined {
-    const rows = this.getSingleStatement.all({ id });
+  single(id: number): z.infer<TableSchema> | undefined {
+    const rows = this.singleStatement.all({ id });
     const data = this.mapRowsToObjects?.(rows) ?? rows;
     if (!data.length) return undefined;
-    return this.outZodSchema.parse(data[0]);
+    return this.zodSchema.parse(data[0]);
   }
 
-  insert(entry: z.infer<TIn>): ChangeResult<z.infer<TIn>> {
+  insert(entry: z.infer<TableSchema>): ChangeResult<z.infer<TableSchema>> {
     try {
-      const input = this.inZodSchema.safeParse(entry);
+      const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
         return {
           type: 'validation-error',
@@ -147,9 +159,9 @@ export class SQLiteDatabaseCollection<
     }
   }
 
-  update(entry: z.infer<TIn>): ChangeResult<z.infer<TIn>> {
+  update(entry: z.infer<TableSchema>): ChangeResult<z.infer<TableSchema>> {
     try {
-      const input = this.inZodSchema.safeParse(entry);
+      const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
         return {
           type: 'validation-error',
@@ -186,6 +198,52 @@ export class SQLiteDatabaseCollection<
     } catch (_e) {
       return !!_e && false;
     }
+  }
+}
+
+export class SQLiteJoinedDatabaseCollection<
+    TableSchema extends z.ZodObject,
+    JoinedTableSchema extends z.ZodObject,
+  >
+  extends SQLiteDatabaseCollection<TableSchema>
+  implements
+    JoinedDatabaseCollection<z.infer<TableSchema>, z.infer<JoinedTableSchema>>
+{
+  constructor(
+    database: DatabaseSync,
+    config: SQLiteJoinedDatabaseCollectionConfig<
+      TableSchema,
+      JoinedTableSchema
+    >,
+  ) {
+    super(database, config);
+    this.joinedZodSchema = config.joinedZodSchema;
+    this.allJoinedStatement = database.prepare(config.allJoinedSQL);
+    this.singleJoinedStatement = database.prepare(config.singleJoinedSQL);
+    this.mapRowsToJoinedObjects = config.mapRowsToJoinedObjects;
+  }
+
+  private joinedZodSchema: JoinedTableSchema;
+
+  private allJoinedStatement: StatementSync;
+  private singleJoinedStatement: StatementSync;
+
+  private mapRowsToJoinedObjects?: (
+    query: Record<string, SQLOutputValue>[],
+  ) => unknown[];
+
+  allJoined(): z.infer<JoinedTableSchema>[] {
+    const rows = this.allJoinedStatement.all();
+    const data = this.mapRowsToJoinedObjects?.(rows) ?? rows;
+    console.log(data);
+    return z.array(this.joinedZodSchema).parse(data);
+  }
+
+  singleJoined(id: number): z.infer<JoinedTableSchema> | undefined {
+    const rows = this.singleJoinedStatement.all({ id });
+    const data = this.mapRowsToJoinedObjects?.(rows) ?? rows;
+    if (!data.length) return;
+    return this.joinedZodSchema.parse(data[0]);
   }
 }
 

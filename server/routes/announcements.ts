@@ -7,14 +7,14 @@ import { Router } from 'express';
 const route = Router();
 
 route.get('/', (_req, res) => {
-  const announcements = db.Announcements.getAll();
+  const announcements = db.Announcements.all();
   Responses.ok(res, announcements);
 });
 
 route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
   const { id } = req.params;
 
-  const announcement = db.Announcements.getSingle(id);
+  const announcement = db.Announcements.single(id);
 
   if (announcement) {
     Responses.ok(res, announcement);

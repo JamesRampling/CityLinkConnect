@@ -1,11 +1,15 @@
-import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
+import type { SQLiteJoinedDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
 import { User, UserWithRelations } from '#shared/models';
 
 export const UsersCollectionConfig = {
-  inZodSchema: User,
-  outZodSchema: UserWithRelations,
+  zodSchema: User,
+  joinedZodSchema: UserWithRelations,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
+    SELECT * FROM Users;
+  `,
+
+  allJoinedSQL: /*sql*/ `
     SELECT
       Users.user_id,
       Users.given_names,
@@ -22,7 +26,12 @@ export const UsersCollectionConfig = {
     LEFT JOIN Services ON Bookings.service_id = Services.service_id;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
+    SELECT * FROM Users
+      WHERE user_id = $id;
+  `,
+
+  singleJoinedSQL: /*sql*/ `
     SELECT
       Users.user_id,
       Users.given_names,
@@ -63,7 +72,7 @@ export const UsersCollectionConfig = {
    * Groups bookings under their respective users, collecting them into each
    * user's object.
    */
-  mapRowsToObjects: (rows) => [
+  mapRowsToJoinedObjects: (rows) => [
     ...rows
       .reduce((acc, row) => {
         const {
@@ -113,7 +122,7 @@ export const UsersCollectionConfig = {
       }, new Map<number, Record<string, unknown> & { bookings: unknown[] }>())
       .values(),
   ],
-} satisfies SQLiteDatabaseCollectionConfig<
+} satisfies SQLiteJoinedDatabaseCollectionConfig<
   typeof User,
   typeof UserWithRelations
 >;

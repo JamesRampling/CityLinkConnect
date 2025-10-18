@@ -2,14 +2,13 @@ import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCo
 import { Service } from '#shared/models';
 
 export const ServicesCollectionConfig = {
-  inZodSchema: Service,
-  outZodSchema: Service,
+  zodSchema: Service,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
     SELECT * FROM Services;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
     SELECT * FROM Services
       WHERE Services.service_id = $id;
   `,

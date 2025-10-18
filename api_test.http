@@ -1,6 +1,8 @@
 @host = http://localhost:5173
 
 ###
+### Announcements
+###
 
 GET {{host}}/api/announcements
 Accept: application/json
@@ -37,3 +39,9 @@ Content-Type: application/json
 DELETE {{host}}/api/announcements/1
 Accept: application/json
 
+###
+### Bookings
+###
+
+GET {{host}}/api/bookings
+Accept: application/json

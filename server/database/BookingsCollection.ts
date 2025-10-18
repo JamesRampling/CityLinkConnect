@@ -1,18 +1,27 @@
-import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
+import type { SQLiteJoinedDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
 import { Booking, BookingWithRelations } from '#shared/models';
 import type { SQLOutputValue } from 'node:sqlite';
 
 export const BookingsCollectionConfig = {
-  inZodSchema: Booking,
-  outZodSchema: BookingWithRelations,
+  zodSchema: Booking,
+  joinedZodSchema: BookingWithRelations,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
+    SELECT * FROM Bookings;
+  `,
+
+  allJoinedSQL: /*sql*/ `
     SELECT * FROM Bookings
       LEFT JOIN Users ON Bookings.user_id = Users.user_id
       LEFT JOIN Services ON Bookings.service_id = Services.service_id;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
+    SELECT * FROM Bookings
+      WHERE booking_id = $id;
+  `,
+
+  singleJoinedSQL: /*sql*/ `
     SELECT * FROM Bookings
       LEFT JOIN Users ON Bookings.user_id = Users.user_id
       LEFT JOIN Services ON Bookings.service_id = Services.service_id
@@ -38,7 +47,7 @@ export const BookingsCollectionConfig = {
     DELETE FROM Bookings WHERE booking_id = $id;
   `,
 
-  mapRowsToObjects: (rows) =>
+  mapRowsToJoinedObjects: (rows) =>
     rows.map((row: Record<string, SQLOutputValue>) => {
       const {
         // Bookings fields
@@ -74,7 +83,7 @@ export const BookingsCollectionConfig = {
         service,
       };
     }),
-} satisfies SQLiteDatabaseCollectionConfig<
+} satisfies SQLiteJoinedDatabaseCollectionConfig<
   typeof Booking,
   typeof BookingWithRelations
 >;

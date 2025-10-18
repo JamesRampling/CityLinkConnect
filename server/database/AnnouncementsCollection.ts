@@ -2,14 +2,13 @@ import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCo
 import { Announcement } from '#shared/models';
 
 export const AnnouncementsCollectionConfig = {
-  inZodSchema: Announcement,
-  outZodSchema: Announcement,
+  zodSchema: Announcement,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
     SELECT * FROM Announcements ORDER BY sort_datetime DESC;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
     SELECT * FROM Announcements WHERE announcement_id = $id;
   `,
 
