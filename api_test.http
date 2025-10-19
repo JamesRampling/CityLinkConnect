@@ -45,3 +45,100 @@ Accept: application/json
 
 GET {{host}}/api/bookings
 Accept: application/json
+
+###
+
+GET {{host}}/api/bookings/1
+Accept: application/json
+
+###
+
+POST {{host}}/api/bookings
+Accept: application/json
+Content-Type: application/json
+
+{
+  "user_id": null,
+  "service_id": null,
+  "booking_datetime": "2025-10-20T08:00:00Z",
+  "notes": "...created..."
+}
+
+###
+
+PUT {{host}}/api/bookings/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "user_id": null,
+  "service_id": null,
+  "booking_datetime": "2025-10-20T08:00:00Z",
+  "notes": "...updated..."
+}
+
+###
+
+DELETE {{host}}/api/bookings/1
+Accept: application/json
+
+###
+### Services
+###
+
+GET {{host}}/api/services
+Accept: application/json
+
+###
+
+GET {{host}}/api/services/1
+Accept: application/json
+
+###
+
+POST {{host}}/api/services
+Accept: application/json
+Content-Type: application/json
+
+{
+  "config": "service config"
+}
+
+###
+
+PUT {{host}}/api/services/1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "config": "updated service config"
+}
+
+###
+
+DELETE {{host}}/api/services/1
+Accept: application/json
+
+###
+### Feedback
+###
+
+GET {{host}}/api/feedback
+Accept: application/json
+
+###
+
+GET {{host}}/api/feedback/1
+Accept: application/json
+
+###
+
+POST {{host}}/api/feedback
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "abc@example.com",
+  "subject": "new feedback",
+  "message": "feedback message"
+}

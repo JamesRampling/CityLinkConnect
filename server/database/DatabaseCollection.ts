@@ -1,3 +1,4 @@
+import { Result } from '#shared/utils/Result';
 import type {
   DatabaseSync,
   SQLInputValue,
@@ -6,21 +7,37 @@ import type {
 } from 'node:sqlite';
 import z from 'zod';
 
-export type ChangeResult<T> =
-  | ChangeSuccess
-  | ChangeNoAction
-  | ValidationError<T>
-  | NodeSQLiteError
-  | { type: 'error'; error: unknown };
+export interface DatabaseCollection<Table> {
+  all(): Table[];
+  single(id: number): Table | undefined;
+  insert(entry: Table): ChangeResult<Table>;
+  update(entry: Table): ChangeResult<Table>;
+  delete(id: number): DeleteResult;
+}
 
-interface ChangeSuccess {
-  type: 'success';
+export interface JoinedDatabaseCollection<Table, JoinedTable>
+  extends DatabaseCollection<Table> {
+  allJoined(): JoinedTable[];
+  singleJoined(id: number): JoinedTable | undefined;
+}
+
+export type DeleteResult = Result<undefined, DeleteError>;
+type DeleteError = NonExistentIdError | NodeSQLiteError | UnknownError;
+
+export type ChangeResult<T> = Result<ChangeOk, ChangeError<T>>;
+type ChangeError<T> =
+  | ValidationError<T>
+  | NonExistentIdError
+  | NodeSQLiteError
+  | UnknownError;
+
+interface ChangeOk {
   changes: number;
   rowId: number;
 }
 
-interface ChangeNoAction {
-  type: 'no-action';
+interface NonExistentIdError {
+  type: 'non-existent-id';
 }
 
 interface ValidationError<T> {
@@ -33,18 +50,9 @@ interface NodeSQLiteError {
   errcode: number;
 }
 
-export interface DatabaseCollection<In, Out = In> {
-  all(): Out[];
-  single(id: number): Out | undefined;
-  insert(entry: In): ChangeResult<In>;
-  update(entry: In): ChangeResult<In>;
-  delete(id: number): boolean;
-}
-
-export interface JoinedDatabaseCollection<Table, JoinedTable>
-  extends DatabaseCollection<Table> {
-  allJoined(): JoinedTable[];
-  singleJoined(id: number): JoinedTable | undefined;
+interface UnknownError {
+  type: 'unknown-error';
+  error?: unknown;
 }
 
 export interface SQLiteDatabaseCollectionConfig<
@@ -56,9 +64,20 @@ export interface SQLiteDatabaseCollectionConfig<
   insertSQL: string;
   updateSQL: string;
   deleteSQL: string;
-  mapObjectToRow?: (obj: z.infer<TableSchema>) => Record<string, SQLInputValue>;
-  mapRowsToObjects?: (query: Record<string, SQLOutputValue>[]) => unknown[];
 }
+
+type MappedField<T, Destination> = T extends object
+  ? MappedObject<T, Destination>
+  : Destination;
+
+/**
+ * Map an object's property types to the {@link Destination} type.
+ */
+export type MappedObject<Obj, Destination> = {
+  [Key in keyof Obj]: Obj[Key] extends (infer T)[]
+    ? MappedField<T, Destination>[]
+    : MappedField<Obj[Key], Destination>;
+};
 
 export interface SQLiteJoinedDatabaseCollectionConfig<
   TableSchema extends z.ZodObject,
@@ -69,7 +88,7 @@ export interface SQLiteJoinedDatabaseCollectionConfig<
   singleJoinedSQL: string;
   mapRowsToJoinedObjects?: (
     query: Record<string, SQLOutputValue>[],
-  ) => unknown[];
+  ) => MappedObject<z.input<JoinedTableSchema>, SQLOutputValue>[];
 }
 
 export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
@@ -87,9 +106,6 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
     this.updateStatement = database.prepare(config.updateSQL);
     this.deleteStatement = database.prepare(config.deleteSQL);
 
-    this.mapObjectToRow = config.mapObjectToRow;
-    this.mapRowsToObjects = config.mapRowsToObjects;
-
     this.insertStatement.setAllowBareNamedParameters(true);
     this.insertStatement.setAllowUnknownNamedParameters(true);
     this.updateStatement.setAllowBareNamedParameters(true);
@@ -97,14 +113,6 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
     this.deleteStatement.setAllowBareNamedParameters(true);
     this.deleteStatement.setAllowUnknownNamedParameters(true);
   }
-
-  protected mapRowsToObjects?: (
-    query: Record<string, SQLOutputValue>[],
-  ) => unknown[];
-
-  protected mapObjectToRow?: (
-    obj: z.infer<TableSchema>,
-  ) => Record<string, SQLInputValue>;
 
   protected zodSchema: TableSchema;
 
@@ -116,46 +124,43 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
 
   all(): z.infer<TableSchema>[] {
     const rows = this.allStatement.all();
-    const data = this.mapRowsToObjects?.(rows) ?? rows;
-    return z.array(this.zodSchema).parse(data);
+    return z.array(this.zodSchema).parse(rows);
   }
 
   single(id: number): z.infer<TableSchema> | undefined {
-    const rows = this.singleStatement.all({ id });
-    const data = this.mapRowsToObjects?.(rows) ?? rows;
-    if (!data.length) return undefined;
-    return this.zodSchema.parse(data[0]);
+    const rows = this.singleStatement.get({ id });
+    if (!rows) return undefined;
+    return this.zodSchema.parse(rows);
   }
 
   insert(entry: z.infer<TableSchema>): ChangeResult<z.infer<TableSchema>> {
     try {
       const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
-        return {
+        return Result.error({
           type: 'validation-error',
           issues: z.flattenError(input.error).fieldErrors,
-        };
+        });
       }
 
-      const inputValues = convertObjectToSQLInputParams(
-        this.mapObjectToRow?.(input.data) ?? input.data,
-      );
+      const inputValues = convertObjectToSQLInputParams(input.data);
 
       const { changes, lastInsertRowid } =
         this.insertStatement.run(inputValues);
 
       return changes
-        ? {
-            type: 'success',
+        ? Result.ok({
             changes: Number(changes),
             rowId: Number(lastInsertRowid),
-          }
-        : { type: 'no-action' };
+          })
+        : Result.error({ type: 'non-existent-id' });
     } catch (e) {
       const errcode = getNodeSQLiteErrorCode(e);
-      return errcode !== undefined
-        ? { type: 'sqlite-error', errcode }
-        : { type: 'error', error: e };
+      return Result.error(
+        errcode !== undefined
+          ? { type: 'sqlite-error', errcode }
+          : { type: 'unknown-error', error: e },
+      );
     }
   }
 
@@ -163,40 +168,47 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
     try {
       const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
-        return {
+        return Result.error({
           type: 'validation-error',
           issues: z.flattenError(input.error).fieldErrors,
-        };
+        });
       }
 
-      const inputValues = convertObjectToSQLInputParams(
-        this.mapObjectToRow?.(input.data) ?? input.data,
-      );
+      const inputValues = convertObjectToSQLInputParams(input.data);
 
       const { changes, lastInsertRowid } =
         this.updateStatement.run(inputValues);
 
       return changes
-        ? {
-            type: 'success',
+        ? Result.ok({
             changes: Number(changes),
             rowId: Number(lastInsertRowid),
-          }
-        : { type: 'no-action' };
+          })
+        : Result.error({ type: 'non-existent-id' });
     } catch (e) {
       const errcode = getNodeSQLiteErrorCode(e);
-      return errcode !== undefined
-        ? { type: 'sqlite-error', errcode }
-        : { type: 'error', error: e };
+      return Result.error(
+        errcode !== undefined
+          ? { type: 'sqlite-error', errcode }
+          : { type: 'unknown-error', error: e },
+      );
     }
   }
 
-  delete(id: number): boolean {
+  delete(id: number): DeleteResult {
     try {
       const result = this.deleteStatement.run({ id });
-      return result.changes > 0;
-    } catch (_e) {
-      return !!_e && false;
+      return result.changes > 0
+        ? Result.ok(undefined)
+        : Result.error({ type: 'non-existent-id' });
+    } catch (e) {
+      console.log(e?.toString());
+      const errcode = getNodeSQLiteErrorCode(e);
+      return Result.error(
+        errcode !== undefined
+          ? { type: 'sqlite-error', errcode }
+          : { type: 'unknown-error', error: e },
+      );
     }
   }
 }
@@ -235,7 +247,6 @@ export class SQLiteJoinedDatabaseCollection<
   allJoined(): z.infer<JoinedTableSchema>[] {
     const rows = this.allJoinedStatement.all();
     const data = this.mapRowsToJoinedObjects?.(rows) ?? rows;
-    console.log(data);
     return z.array(this.joinedZodSchema).parse(data);
   }
 

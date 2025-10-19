@@ -1,5 +1,5 @@
 import { db } from '#server/database';
-import { Responses } from '#server/utils/responses';
+import { Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { Announcement } from '#shared/models';
 import { Router } from 'express';
@@ -25,15 +25,16 @@ route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
 
 route.post('/', validate({ body: Announcement }), (req, res) => {
   const announcement = { ...req.body, announcement_id: 0 };
-  const result = db.Announcements.insert(announcement);
 
-  if (result.type === 'success') {
-    Responses.created(res, { ...announcement, announcement_id: result.rowId });
+  const { ok, data, error } = db.Announcements.insert(announcement);
+
+  if (ok) {
+    Responses.created(res, { ...announcement, announcement_id: data.rowId });
   } else {
     Responses.serverError(
       res,
-      'An error occurred while updating the item.',
-      result,
+      'An error occurred while updating the announcement.',
+      error,
     );
   }
 });
@@ -44,17 +45,18 @@ route.put(
   (req, res) => {
     const { id } = req.params;
     const announcement = { ...req.body, announcement_id: id };
-    const result = db.Announcements.update(announcement);
 
-    if (result.type === 'success') {
-      Responses.noContent(res);
-    } else if (result.type === 'no-action') {
+    const { ok, error } = db.Announcements.update(announcement);
+
+    if (ok) {
+      Responses.ok(res, announcement);
+    } else if (error.type === 'non-existent-id') {
       Responses.notFound(res);
     } else {
       Responses.serverError(
         res,
-        'An error occurred while updating the item.',
-        result,
+        'An error occurred while updating the announcement.',
+        error,
       );
     }
   },
@@ -62,8 +64,17 @@ route.put(
 
 route.delete('/:id', validate({ route: { id: 'int' } }), (req, res) => {
   const { id } = req.params;
-  db.Announcements.delete(id);
-  Responses.noContent(res);
+  const { ok, error } = db.Announcements.delete(id);
+
+  if (ok || error.type === 'non-existent-id') {
+    Responses.noContent(res);
+  } else {
+    Responses.serverError(
+      res,
+      'An error occurred while deleting the service.',
+      error,
+    );
+  }
 });
 
 export default route;

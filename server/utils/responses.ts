@@ -1,17 +1,13 @@
-import type { ApiError } from '#shared/errors';
+import type { ApiError, NotFoundError, ServerError } from '#shared/errors';
 import { type Response } from 'express';
 import type z from 'zod';
 
 export const Responses = {
-  ok(res: Response, data?: unknown) {
-    if (data === undefined) {
-      this.noContent(res);
-    } else {
-      res.status(200).json(data).end();
-    }
+  ok<T>(res: Response<T>, data: T) {
+    res.status(200).json(data).end();
   },
 
-  created(res: Response, data?: unknown) {
+  created<T>(res: Response<T>, data?: T) {
     if (data === undefined) {
       res.status(201).end();
     } else {
@@ -23,16 +19,19 @@ export const Responses = {
     res.status(204).end();
   },
 
-  error(res: Response, details: z.infer<typeof ApiError>) {
+  error<T extends z.infer<typeof ApiError>>(res: Response<T>, details: T) {
     res.status(details.status).json(details).end();
   },
 
-  notFound(res: Response, title = 'The requested item was not found.') {
+  notFound(
+    res: Response<z.infer<typeof NotFoundError>>,
+    title = 'The requested item was not found.',
+  ) {
     this.error(res, { type: 'not-found', status: 404, title });
   },
 
   serverError(
-    res: Response,
+    res: Response<z.infer<typeof ServerError>>,
     title = 'An internal server error occurred.',
     details?: unknown,
   ) {

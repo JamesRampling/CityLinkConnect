@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const tableId = z.number().int().nonnegative();
+const tableId = z.int().nonnegative();
 
 export const Service = z.object({
   service_id: tableId.default(0),
@@ -40,13 +40,13 @@ export const Announcement = z.object({
  * Extended Booking model that includes the User and Service type.
  */
 export const BookingWithRelations = Booking.extend({
-  user: User.nullish(),
-  service: Service.nullish(),
+  user: User.nullable(),
+  service: Service.nullable(),
 });
 
 /**
  * Extended User model that includes their Bookings (with Service type).
  */
 export const UserWithRelations = User.extend({
-  bookings: Booking.extend({ service: Service.nullish() }).array(),
+  bookings: Booking.extend({ service: Service.nullable() }).array(),
 });
