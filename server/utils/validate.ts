@@ -1,4 +1,4 @@
-import { Responses } from '#server/utils/responses';
+import { Responses } from '#server/utils/Responses';
 import type { RequestHandler } from 'express';
 import z from 'zod';
 
@@ -32,10 +32,10 @@ export function jsonCodec<T extends z.ZodType>(
  * Built-in transforms aliased with their key, e.g. 'string' or 'number'.
  */
 const typeTransforms = {
-  string: z.transform((v: string) => v),
-  number: z.transform((v: string) => Number(v)),
-  int: z.transform((v: string) => Number.parseInt(v, 10)),
-};
+  string: z.string(),
+  number: z.coerce.number(),
+  int: z.coerce.number<string>().int(),
+} satisfies Record<string, z.ZodType<unknown, string>>;
 
 /** A list of available aliased types, e.g. 'string', 'number'. */
 type TypeTransformOptions = keyof typeof typeTransforms;
@@ -75,7 +75,7 @@ export function validate<
   return (req, res, next) => {
     let routeError: z.ZodError | undefined;
     if (route) {
-      const routeSchema = z.looseObject(
+      const routeSchema = z.object(
         Object.fromEntries(
           Object.entries(route).map(([p, t]) => [
             p,

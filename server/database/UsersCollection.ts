@@ -1,5 +1,10 @@
-import type { SQLiteJoinedDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
+import type {
+  MappedObject,
+  SQLiteJoinedDatabaseCollectionConfig,
+} from '#server/database/DatabaseCollection';
 import { User, UserWithRelations } from '#shared/models';
+import type { SQLOutputValue } from 'node:sqlite';
+import z from 'zod';
 
 export const UsersCollectionConfig = {
   zodSchema: User,
@@ -106,7 +111,7 @@ export const UsersCollectionConfig = {
 
         if (row.booking_id) {
           const service =
-            typeof service_id === 'number' ? { service_id, config } : undefined;
+            typeof service_id === 'number' ? { service_id, config } : null;
           acc
             .get(id)
             ?.bookings.push({
@@ -119,7 +124,7 @@ export const UsersCollectionConfig = {
             });
         }
         return acc;
-      }, new Map<number, Record<string, unknown> & { bookings: unknown[] }>())
+      }, new Map<number, MappedObject<z.input<typeof UserWithRelations>, SQLOutputValue>>())
       .values(),
   ],
 } satisfies SQLiteJoinedDatabaseCollectionConfig<

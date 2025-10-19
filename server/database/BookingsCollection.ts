@@ -68,10 +68,10 @@ export const BookingsCollectionConfig = {
       const user =
         typeof user_id === 'number'
           ? { user_id, given_names, last_name, email, phone }
-          : undefined;
+          : null;
 
       const service =
-        typeof service_id === 'number' ? { service_id, config } : undefined;
+        typeof service_id === 'number' ? { service_id, config } : null;
 
       return {
         booking_id,
