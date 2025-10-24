@@ -33,8 +33,20 @@ export const Responses = {
   serverError(
     res: Response<z.infer<typeof ServerError>>,
     title = 'An internal server error occurred.',
-    details?: unknown,
+    err?: unknown,
   ) {
-    this.error(res, { type: 'server-error', status: 500, title, details });
+    // Fix JSON serialization not writing non-enumerable properties such as
+    // Error properties.
+    const details =
+      err instanceof Object
+        ? JSON.stringify(err, Object.getOwnPropertyNames(err))
+        : JSON.stringify(err);
+
+    this.error(res, {
+      type: 'server-error',
+      status: 500,
+      title,
+      details: JSON.parse(details),
+    });
   },
 };
