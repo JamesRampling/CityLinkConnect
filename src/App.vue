@@ -1,20 +1,35 @@
 <script setup lang="ts">
 import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
 import IconAccessibility from '@/components/icons/IconAccessibility.vue';
+import IconMenu from '@/components/icons/IconMenu.vue';
 import { ref } from 'vue';
 
 const accessibilityButton = ref<HTMLButtonElement>();
 const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
+
+const hamburgerMenuExpanded = ref(false);
 </script>
 
 <template>
-  <header>
+  <header class="">
     <img class="logo-image" src="/favicon.svg" alt="" />
     <nav>
-      <router-link to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
-      <router-link to="/bookings">Service Bookings</router-link>
-      <router-link to="/feedback">Feedback</router-link>
+      <div
+        class="nav-list"
+        :data-expanded="hamburgerMenuExpanded || undefined"
+        @click="hamburgerMenuExpanded = false"
+      >
+        <router-link to="/">Home</router-link>
+        <router-link to="/about">About</router-link>
+        <router-link to="/bookings">Service Bookings</router-link>
+        <router-link to="/feedback">Feedback</router-link>
+      </div>
+      <button
+        class="nav-toggle-button button-outlined"
+        @click="hamburgerMenuExpanded = !hamburgerMenuExpanded"
+      >
+        <IconMenu />
+      </button>
     </nav>
     <div class="end-header-buttons">
       <button
@@ -30,7 +45,11 @@ const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
   <main>
     <router-view />
   </main>
-
+  <div
+    class="nav-menu-backdrop"
+    :data-expanded="hamburgerMenuExpanded || undefined"
+    @click="hamburgerMenuExpanded = false"
+  ></div>
   <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton!" />
 </template>
 
@@ -41,6 +60,10 @@ header {
   align-items: center;
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--header-border-color);
+
+  position: relative;
+  z-index: 1000;
+  background: var(--header-bgcolor);
 }
 
 .logo-image {
@@ -57,6 +80,51 @@ nav {
 
   a {
     color: var(--header-color);
+  }
+}
+
+.nav-list {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-toggle-button {
+  display: none;
+}
+
+.nav-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgb(0 0 0 / 0.25);
+  display: none;
+  z-index: 100;
+}
+
+@media (width < 100ch) {
+  .nav-toggle-button {
+    display: flex;
+  }
+
+  .nav-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--header-bgcolor);
+    border-bottom: 1px solid var(--header-border-color);
+    padding: 1rem;
+    z-index: 1000;
+
+    flex-direction: column;
+  }
+
+  .nav-list[data-expanded] {
+    display: flex;
+  }
+
+  .nav-menu-backdrop[data-expanded] {
+    display: block;
   }
 }
 
