@@ -22,7 +22,7 @@
   --header-border-color: var(--border-color);
 
   --card-color: var(--color);
-  --card-bgcolor: light-dark(white, hsl(0 0% 12%));
+  --card-bgcolor: light-dark(rgb(240, 240, 240), hsl(0 0% 12%));
   --card-border-color: var(--border-color);
 
   --link-color: var(--accent-color);
