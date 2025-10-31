@@ -1,11 +1,20 @@
-import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCollection';
+import type {
+  MappedObject,
+  SQLiteJoinedDatabaseCollectionConfig,
+} from '#server/database/DatabaseCollection';
 import { User, UserWithRelations } from '#shared/models';
+import type { SQLOutputValue } from 'node:sqlite';
+import z from 'zod';
 
 export const UsersCollectionConfig = {
-  inZodSchema: User,
-  outZodSchema: UserWithRelations,
+  zodSchema: User,
+  joinedZodSchema: UserWithRelations,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
+    SELECT * FROM Users;
+  `,
+
+  allJoinedSQL: /*sql*/ `
     SELECT
       Users.user_id,
       Users.given_names,
@@ -22,7 +31,12 @@ export const UsersCollectionConfig = {
     LEFT JOIN Services ON Bookings.service_id = Services.service_id;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
+    SELECT * FROM Users
+      WHERE user_id = $id;
+  `,
+
+  singleJoinedSQL: /*sql*/ `
     SELECT
       Users.user_id,
       Users.given_names,
@@ -41,8 +55,8 @@ export const UsersCollectionConfig = {
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Users (user_id, given_names, last_name, email, phone)
-      VALUES (NULL, $given_names, $last_name, $email, $phone);
+    INSERT INTO Users (given_names, last_name, email, phone)
+      VALUES ($given_names, $last_name, $email, $phone);
   `,
 
   updateSQL: /*sql*/ `
@@ -63,7 +77,7 @@ export const UsersCollectionConfig = {
    * Groups bookings under their respective users, collecting them into each
    * user's object.
    */
-  mapRowsToObjects: (rows) => [
+  mapRowsToJoinedObjects: (rows) => [
     ...rows
       .reduce((acc, row) => {
         const {
@@ -97,7 +111,7 @@ export const UsersCollectionConfig = {
 
         if (row.booking_id) {
           const service =
-            typeof service_id === 'number' ? { service_id, config } : undefined;
+            typeof service_id === 'number' ? { service_id, config } : null;
           acc
             .get(id)
             ?.bookings.push({
@@ -110,10 +124,10 @@ export const UsersCollectionConfig = {
             });
         }
         return acc;
-      }, new Map<number, Record<string, unknown> & { bookings: unknown[] }>())
+      }, new Map<number, MappedObject<z.input<typeof UserWithRelations>, SQLOutputValue>>())
       .values(),
   ],
-} satisfies SQLiteDatabaseCollectionConfig<
+} satisfies SQLiteJoinedDatabaseCollectionConfig<
   typeof User,
   typeof UserWithRelations
 >;

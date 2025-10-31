@@ -2,20 +2,19 @@ import type { SQLiteDatabaseCollectionConfig } from '#server/database/DatabaseCo
 import { Announcement } from '#shared/models';
 
 export const AnnouncementsCollectionConfig = {
-  inZodSchema: Announcement,
-  outZodSchema: Announcement,
+  zodSchema: Announcement,
 
-  getAllSQL: /*sql*/ `
+  allSQL: /*sql*/ `
     SELECT * FROM Announcements ORDER BY sort_datetime DESC;
   `,
 
-  getSingleSQL: /*sql*/ `
+  singleSQL: /*sql*/ `
     SELECT * FROM Announcements WHERE announcement_id = $id;
   `,
 
   insertSQL: /*sql*/ `
-    INSERT INTO Announcements (announcement_id, sort_datetime, config)
-      VALUES (NULL, $sort_datetime, $config);
+    INSERT INTO Announcements (sort_datetime, config)
+      VALUES ($sort_datetime, $config);
   `,
 
   updateSQL: /*sql*/ `

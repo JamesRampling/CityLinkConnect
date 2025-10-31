@@ -1,6 +1,9 @@
 import { AnnouncementsCollectionConfig } from '#server/database/AnnouncementsCollection';
 import { BookingsCollectionConfig } from '#server/database/BookingsCollection';
-import { SQLiteDatabaseCollection } from '#server/database/DatabaseCollection';
+import {
+  SQLiteDatabaseCollection,
+  SQLiteJoinedDatabaseCollection,
+} from '#server/database/DatabaseCollection';
 import { FeedbackCollectionConfig } from '#server/database/FeedbackCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
@@ -30,7 +33,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export const db = {
-  Bookings: new SQLiteDatabaseCollection(database, BookingsCollectionConfig),
+  Bookings: new SQLiteJoinedDatabaseCollection(
+    database,
+    BookingsCollectionConfig,
+  ),
 
   Announcements: new SQLiteDatabaseCollection(
     database,
@@ -41,5 +47,5 @@ export const db = {
 
   Services: new SQLiteDatabaseCollection(database, ServicesCollectionConfig),
 
-  Users: new SQLiteDatabaseCollection(database, UsersCollectionConfig),
+  Users: new SQLiteJoinedDatabaseCollection(database, UsersCollectionConfig),
 };
