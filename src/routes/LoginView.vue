@@ -8,8 +8,6 @@
   </div>
 </template>
 <style lang="css" scoped>
-
-
 .login-container {
   display: flex;
   flex-direction: column;
@@ -34,8 +32,6 @@
   transition: border 0.2s;
   outline: none;
 }
-
-
 
 #h1LoginView {
   text-align: center;
