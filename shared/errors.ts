@@ -34,10 +34,18 @@ export const ServerError = z.object({
   details: z.any().optional(),
 });
 
+export const AlreadyExistsError = z.object({
+  type: z.literal('already-exists'),
+  title: z.string(),
+  status: z.literal(409),
+  details: z.any().optional(),
+});
+
 export const ApiError = z.discriminatedUnion('type', [
   ValidationError,
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
   ServerError,
+  AlreadyExistsError,
 ]);

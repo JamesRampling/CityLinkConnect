@@ -1,4 +1,5 @@
 import '#server/database';
+import accountRoute from '#server/routes/account';
 import announcementsRoute from '#server/routes/announcements';
 import bookingsRoute from '#server/routes/bookings';
 import feedbackRoute from '#server/routes/feedback';
@@ -20,7 +21,8 @@ app.use(
     .use('/announcements', announcementsRoute)
     .use('/bookings', bookingsRoute)
     .use('/feedback', feedbackRoute)
-    .use('/services', servicesRoute),
+    .use('/services', servicesRoute)
+    .use('/account', accountRoute),
 
   // Do not fallback to index.html for API endpoints
   ((req, res) => {
