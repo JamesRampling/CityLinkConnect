@@ -70,7 +70,6 @@
 .form {
   display: grid;
   gap: var(--form-gap);
-  /* XXX: this could probably be done in a cleaner way */
   width: min(60ch, 90vw);
 }
 
