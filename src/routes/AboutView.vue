@@ -6,11 +6,7 @@
 
     <div class="ContentClass">
       <div>
-        <img
-          src="@/assets/citylink-logo.png"
-          alt="CityLink Connect Logo"
-          width="200"
-        />
+        <img src="/favicon.svg" alt="CityLink Connect Logo" width="200" />
       </div>
       <div class="ContentClass-Horizontal">
         <p>
@@ -52,7 +48,7 @@
             </p>
           </div>
 
-          <img src="@/assets/team-photo.jpg" alt="Our Team" width="300" />
+          <img src="@/assets/Images/team.jpg" alt="Our Team" width="300" />
         </div>
       </div>
     </div>

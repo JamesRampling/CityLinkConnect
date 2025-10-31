@@ -19,7 +19,7 @@ import InputTextarea from '@/components/InputTextarea.vue';
       </form>
     </div>
     <div id="img-Content">
-      <img src="@/components/Images/feedback.png" alt="Feedback" width="400" />
+      <img src="@/assets/Images/feedback.png" alt="Feedback" width="400" />
     </div>
   </dev>
 </template>
