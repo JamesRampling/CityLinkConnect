@@ -31,7 +31,7 @@
   <div></div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 /**
   let slideIndex = 0;
   showSlides();
@@ -47,7 +47,7 @@
     slides[slideIndex-1].style.display = "block";
     setTimeout(showSlides, 2000); // Change image every 2 seconds
   }
-  **/
+**/
 </script>
 
 <style lang="css" scoped>
