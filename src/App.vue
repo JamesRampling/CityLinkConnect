@@ -107,7 +107,7 @@ nav {
 .nav-menu-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgb(0 0 0 / 0.25);
+  background-color: var(--backdrop-color);
   display: none;
   z-index: 100;
 }
@@ -121,8 +121,8 @@ nav {
     display: none;
     background: var(--header-bgcolor);
     z-index: 1000;
-
     flex-direction: column;
+    padding-bottom: 0.5rem;
   }
 
   .nav-list[data-expanded] {
