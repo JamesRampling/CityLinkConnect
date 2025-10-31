@@ -1,20 +1,29 @@
 :root {
   --icon-size: 1.5rem;
 
-  --bgcolor: light-dark(white, black);
+  --bgcolor: light-dark(white, hsl(0 0% 8%));
   --color: light-dark(black, white);
   --accent-color: light-dark(rgb(0 126 7), rgb(100, 211, 106));
   --on-accent-color: light-dark(white, black);
-  --border-color: light-dark(#888, #666);
+  --border-color: light-dark(
+    rgb(from var(--color) r g b / 0.25),
+    rgb(from var(--color) r g b / 0.25)
+  );
   --field-bgcolor: light-dark(white, #303030);
   --field-color: light-dark(black, white);
+
+  --backdrop-color: light-dark(rgb(0 0 0 / 0.25), rgb(0 0 0 / 0.65));
 
   --focus-outline: 5px solid rgb(from var(--accent-color) r g b / 0.5);
   --focus-border-color: var(--accent-color);
 
   --header-color: var(--color);
-  --header-bgcolor: var(--bgcolor);
-  --header-border-color: rgb(from var(--color) r g b / 0.4);
+  --header-bgcolor: light-dark(white, hsl(0 0% 12%));
+  --header-border-color: var(--border-color);
+
+  --card-color: var(--color);
+  --card-bgcolor: light-dark(white, hsl(0 0% 12%));
+  --card-border-color: var(--border-color);
 
   --link-color: var(--accent-color);
   --link-hover-color: color-mix(in oklch, var(--link-color) 80%, var(--color));

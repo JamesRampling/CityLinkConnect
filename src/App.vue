@@ -2,7 +2,12 @@
 import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
 import IconAccessibility from '@/components/icons/IconAccessibility.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
+import IconUser from '@/components/icons/IconUser.vue';
+
+import { useUser } from '@/user';
 import { ref } from 'vue';
+
+const userState = useUser();
 
 const accessibilityButton = ref<HTMLButtonElement>();
 const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
@@ -13,24 +18,25 @@ const hamburgerMenuExpanded = ref(false);
 <template>
   <header class="">
     <img class="logo-image" src="/favicon.svg" alt="" />
-    <nav>
-      <div
-        class="nav-list"
-        :data-expanded="hamburgerMenuExpanded || undefined"
-        @click="hamburgerMenuExpanded = false"
-      >
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
-        <router-link to="/bookings">Service Bookings</router-link>
-        <router-link to="/feedback">Feedback</router-link>
-      </div>
-      <button
-        class="nav-toggle-button button-outlined"
-        @click="hamburgerMenuExpanded = !hamburgerMenuExpanded"
-      >
-        <IconMenu />
-      </button>
+
+    <button
+      class="nav-toggle-button button-outlined"
+      @click.stop="hamburgerMenuExpanded = !hamburgerMenuExpanded"
+    >
+      <IconMenu />
+    </button>
+
+    <nav
+      class="nav-list"
+      :data-expanded="hamburgerMenuExpanded || undefined"
+      @click="hamburgerMenuExpanded = false"
+    >
+      <router-link to="/">Home</router-link>
+      <router-link to="/about">About</router-link>
+      <router-link to="/bookings">Service Bookings</router-link>
+      <router-link to="/feedback">Feedback</router-link>
     </nav>
+
     <div class="end-header-buttons">
       <button
         ref="accessibilityButton"
@@ -39,7 +45,16 @@ const hamburgerMenuExpanded = ref(false);
       >
         <IconAccessibility />Accessiblity
       </button>
-      <router-link to="/login" class="button-filled">Login</router-link>
+
+      <span v-if="userState === undefined">
+        <router-link to="/login" class="button-filled">Login</router-link>
+      </span>
+      <span v-else>
+        <router-link :to="`/user/${userState.id}`" class="button-outlined">
+          <IconUser />
+          {{ userState.display_name }}
+        </router-link>
+      </span>
     </div>
   </header>
   <main>
@@ -56,12 +71,14 @@ const hamburgerMenuExpanded = ref(false);
 <style scoped>
 header {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
   padding: 0.5rem 1rem;
   border-bottom: 1px solid var(--header-border-color);
 
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1000;
   background: var(--header-bgcolor);
 }
@@ -83,11 +100,6 @@ nav {
   }
 }
 
-.nav-list {
-  display: flex;
-  gap: 1.5rem;
-}
-
 .nav-toggle-button {
   display: none;
 }
@@ -95,7 +107,7 @@ nav {
 .nav-menu-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgb(0 0 0 / 0.25);
+  background-color: var(--backdrop-color);
   display: none;
   z-index: 100;
 }
@@ -107,20 +119,16 @@ nav {
 
   .nav-list {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
     background: var(--header-bgcolor);
-    border-bottom: 1px solid var(--header-border-color);
-    padding: 1rem;
     z-index: 1000;
-
     flex-direction: column;
+    padding-bottom: 0.5rem;
   }
 
   .nav-list[data-expanded] {
     display: flex;
+    flex-basis: 100%;
+    order: 1;
   }
 
   .nav-menu-backdrop[data-expanded] {
@@ -133,9 +141,5 @@ nav {
   justify-content: end;
   display: flex;
   gap: 1rem;
-}
-
-main {
-  padding-block-start: 0.5rem;
 }
 </style>
