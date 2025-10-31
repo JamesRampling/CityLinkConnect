@@ -4,11 +4,9 @@
   <div class="page-wrapper">
     <h1>About CityLink Connect</h1>
 
-    <div class="ContentClass">
-      <div>
-        <img src="/favicon.svg" alt="CityLink Connect Logo" width="200" />
-      </div>
-      <div class="ContentClass-Horizontal">
+    <section class="card about-section">
+      <img src="/favicon.svg" alt="CityLink Connect Logo" />
+      <div class="vertical">
         <p>
           CityLink Connect is a platform that connects users with various city
           services. Our mission is to make it easier for residents to access and
@@ -28,146 +26,101 @@
           engaged with your city.
         </p>
       </div>
-    </div>
-    <div class="ContentClass">
-      <div>
-        <h2>Our Team</h2>
-        <div class="ContentClass-Horizontal">
-          <div>
-            <p>
-              Our team is composed of dedicated professionals passionate about
-              improving urban living through technology. We work closely with
-              city officials and community members to ensure our platform meets
-              the needs of our users.
-            </p>
-            <p>
-              From software developers to customer support specialists, each
-              member of our team plays a crucial role in delivering a
-              high-quality service experience. We are committed to continuous
-              improvement and innovation to better serve our community.
-            </p>
-          </div>
+    </section>
 
-          <img src="@/assets/Images/team.jpg" alt="Our Team" width="300" />
+    <section class="card team-section">
+      <h2>Our Team</h2>
+      <div class="horizontal">
+        <div class="vertical">
+          <p>
+            Our team is composed of dedicated professionals passionate about
+            improving urban living through technology. We work closely with city
+            officials and community members to ensure our platform meets the
+            needs of our users.
+          </p>
+          <p>
+            From software developers to customer support specialists, each
+            member of our team plays a crucial role in delivering a high-quality
+            service experience. We are committed to continuous improvement and
+            innovation to better serve our community.
+          </p>
         </div>
+        <img src="@/assets/team.jpg" alt="Our Team" />
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <style scoped>
 h1 {
-  color: #2c3e50;
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  font-weight: 700;
+  margin-block-end: 1rem;
 }
 
-h2 {
-  color: #34495e;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
+p {
+  margin-block: 0.5rem;
 }
 
-.ContentClass {
+.page-wrapper {
+  display: grid;
+  padding-block-end: 2rem;
+}
+
+section {
   display: flex;
-  gap: 3rem;
-  align-items: flex-start;
-  margin-bottom: 3rem;
-  padding: 2rem;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.ContentClass-Horizontal {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-  flex: 1;
-}
-
-.ContentClass-Horizontal p {
-  color: #555;
-  line-height: 1.7;
-  margin-bottom: 1rem;
-  font-size: 1.05rem;
-}
-
-.ContentClass img {
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
-}
-
-.ContentClass-Horizontal img {
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  align-self: center;
-}
-
-/* First ContentClass specific styling */
-.ContentClass:first-of-type .ContentClass-Horizontal {
-  flex-direction: column;
-}
-
-.ContentClass:first-of-type img {
-  flex-shrink: 0;
-}
-
-/* Second ContentClass specific styling */
-.ContentClass:last-of-type .ContentClass-Horizontal {
+.about-section {
   flex-direction: row;
+  gap: 3rem;
+  margin-block-end: 3rem;
+
+  img {
+    align-self: center;
+  }
 }
 
-.ContentClass:last-of-type .ContentClass-Horizontal > div {
-  flex: 1;
-}
+.team-section {
+  flex-direction: column;
 
-.ContentClass:last-of-type .ContentClass-Horizontal img {
-  flex-shrink: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .ContentClass {
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-  }
-
-  .ContentClass-Horizontal {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .ContentClass:last-of-type .ContentClass-Horizontal {
-    flex-direction: column;
-  }
-
-  h1 {
-    font-size: 2rem;
+  > .horizontal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   h2 {
-    font-size: 1.5rem;
+    margin: 0;
+    font-size: 2rem;
+  }
+
+  img {
+    border-radius: 2rem;
+    align-self: center;
   }
 }
 
-@media (max-width: 480px) {
-  .ContentClass {
-    padding: 1rem;
-    margin-bottom: 2rem;
+@media (width < 80ch) {
+  .about-section {
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  h1 {
-    font-size: 1.75rem;
+  .team-section {
+    .horizontal {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
   }
+}
 
-  .ContentClass-Horizontal p {
-    font-size: 1rem;
-  }
+.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
 }
 </style>

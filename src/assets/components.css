@@ -71,9 +71,18 @@
   display: grid;
   gap: var(--form-gap);
   width: min(60ch, 90vw);
+  margin-block-start: 2rem;
 }
 
 .button-row {
   display: flex;
   gap: 0.5rem;
+}
+
+.card {
+  color: var(--card-color);
+  background-color: var(--card-bgcolor);
+  border: 1px solid var(--card-border-color);
+  border-radius: 2rem;
+  padding: 1.5rem;
 }

@@ -37,12 +37,7 @@ defineExpose({ show });
         ]"
       />
     </div>
-    <div>
-      <div class="button-row">
-        <button type="submit" class="button-filled">Submit</button>
-        <button type="reset" class="button-outlined">Reset</button>
-      </div>
-    </div>
+    <button class="button-outlined">Reset</button>
   </dialog>
 </template>
 
@@ -54,6 +49,7 @@ dialog {
   width: min(100%, 40ch);
   z-index: 1000000000000;
 }
+
 #options {
   margin-bottom: 1rem;
 }

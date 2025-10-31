@@ -10,7 +10,8 @@ const serviceName = 'Pet Registration';
 
 <template>
   <div class="page-wrapper">
-    <h1>Book a service &mdash; {{ serviceName }}</h1>
+    <h1>Book a service</h1>
+    <h2>{{ serviceName }}</h2>
     <form class="form" action="" @submit.prevent>
       <InputText type="date" name="date-input" label="Date" />
 
@@ -22,3 +23,9 @@ const serviceName = 'Pet Registration';
     </form>
   </div>
 </template>
+
+<style scoped>
+h2 {
+  text-align: center;
+}
+</style>
