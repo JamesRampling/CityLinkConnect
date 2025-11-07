@@ -112,11 +112,7 @@ export async function makeRequest(
       return Result.ok(obj);
     }
 
-    if (
-      (method === 'POST' || method === 'PUT') &&
-      inputSchema === outputSchema &&
-      response.status === 204
-    ) {
+    if ((method === 'POST' || method === 'PUT') && response.status === 204) {
       return Result.ok(inputSchema.parse(data));
     }
 
