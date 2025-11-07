@@ -46,8 +46,31 @@ img {
   }
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+  margin: 0;
+}
+
 h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-block: 0;
+  font-size: 3rem;
+  margin-block: 1rem 2rem;
+}
+
+:is(h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  ol,
+  ul):not(:last-child) {
+  margin-block-end: 1rem;
+
 }

@@ -4,34 +4,38 @@
   <div class="page-wrapper">
     <h1>About CityLink Connect</h1>
 
-    <section class="card about-section">
-      <img src="/favicon.svg" alt="CityLink Connect Logo" />
-      <div class="vertical">
-        <p>
-          CityLink Connect is a platform that connects users with various city
-          services. Our mission is to make it easier for residents to access and
-          book services such as waste management, public transportation, and
-          community events.
-        </p>
-        <p>
-          We believe in fostering a connected community by providing a seamless
-          experience for service bookings and information dissemination. Our
-          platform is designed to be user-friendly and accessible to all
-          residents.
-        </p>
-        <p>
-          Whether you're looking to schedule a pickup for bulky waste, find out
-          about upcoming local events, or get information on public transit
-          schedules, CityLink Connect is here to help you stay informed and
-          engaged with your city.
-        </p>
-      </div>
-    </section>
+    <div class="about-cards">
+      <section class="card about-card section-about">
+        <img
+          class="image-logo"
+          src="/favicon.svg"
+          alt="CityLink Connect Logo"
+        />
+        <div class="content">
+          <p>
+            CityLink Connect is a platform that connects users with various city
+            services. Our mission is to make it easier for residents to access
+            and book services such as waste management, public transportation,
+            and community events.
+          </p>
+          <p>
+            We believe in fostering a connected community by providing a
+            seamless experience for service bookings and information
+            dissemination. Our platform is designed to be user-friendly and
+            accessible to all residents.
+          </p>
+          <p>
+            Whether you're looking to schedule a pickup for bulky waste, find
+            out about upcoming local events, or get information on public
+            transit schedules, CityLink Connect is here to help you stay
+            informed and engaged with your city.
+          </p>
+        </div>
+      </section>
 
-    <section class="card team-section">
-      <h2>Our Team</h2>
-      <div class="horizontal">
-        <div class="vertical">
+      <section class="card about-card">
+        <div class="content">
+          <h2>Our Team</h2>
           <p>
             Our team is composed of dedicated professionals passionate about
             improving urban living through technology. We work closely with city
@@ -45,82 +49,49 @@
             innovation to better serve our community.
           </p>
         </div>
-        <img src="@/assets/team.jpg" alt="Our Team" />
-      </div>
-    </section>
+        <img class="image-cover" src="@/assets/team.jpg" alt="Our Team" />
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
-h1 {
-  margin-block-end: 1rem;
-}
-
-p {
-  margin-block: 0.5rem;
-}
-
-.page-wrapper {
+.about-cards {
   display: grid;
-  padding-block-end: 2rem;
+  gap: 1rem;
 }
 
-section {
-  display: flex;
-}
+.about-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 
-.about-section {
-  flex-direction: row;
-  gap: 3rem;
-  margin-block-end: 3rem;
-
-  img {
-    align-self: center;
-  }
-}
-
-.team-section {
-  flex-direction: column;
-
-  > .horizontal {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  @media (width < 60ch) {
+    grid-template-columns: 1fr !important;
   }
 
   h2 {
-    margin: 0;
     font-size: 2rem;
   }
 
   img {
-    border-radius: 2rem;
-    align-self: center;
+    border-radius: 1rem;
+    place-self: center;
+  }
+
+  img.image-cover {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
   }
 }
 
-@media (width < 80ch) {
-  .about-section {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .team-section {
-    .horizontal {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-  }
+.section-about {
+  grid-template-columns: 0.5fr 1fr;
 }
 
-.vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.horizontal {
-  display: flex;
-  flex-direction: row;
-  gap: 3rem;
+.image-logo {
+  width: 100%;
+  max-height: 12rem;
 }
 </style>

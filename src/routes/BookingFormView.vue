@@ -27,11 +27,13 @@ const service = computed(() => services.value[props.id]);
         <h3>{{ fee }}</h3>
         <ul>
           <li v-for="[title, price] of Object.entries(prices)" :key="title">
-            {{ title }} - {{ price }}
+            <strong>{{ title }}</strong> &ndash; {{ price }}
           </li>
         </ul>
       </div>
     </div>
+
+    <h2>Details</h2>
 
     <form class="form" action="" @submit.prevent>
       <InputText type="date" name="date-input" label="Date" />
@@ -44,9 +46,3 @@ const service = computed(() => services.value[props.id]);
     </form>
   </div>
 </template>
-
-<style scoped>
-h2 {
-  text-align: center;
-}
-</style>

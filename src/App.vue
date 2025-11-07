@@ -41,9 +41,12 @@ const hamburgerMenuExpanded = ref(false);
       <button
         ref="accessibilityButton"
         class="button-outlined"
+        aria-label="Accessibility"
         @click="accessibilityPopup?.show()"
       >
-        <IconAccessibility />Accessiblity
+        <IconAccessibility /><span class="hide-narrow" aria-hidden
+          >Accessibility</span
+        >
       </button>
 
       <span v-if="userState === undefined">
@@ -85,10 +88,6 @@ header {
 
 .logo-image {
   width: 2.5rem;
-
-  @media (prefers-color-scheme: dark) {
-    filter: invert(1) hue-rotate(180deg) brightness(1.2);
-  }
 }
 
 nav {
@@ -112,7 +111,7 @@ nav {
   z-index: 100;
 }
 
-@media (width < 100ch) {
+@media (width < 65ch) {
   .nav-toggle-button {
     display: flex;
   }
@@ -133,6 +132,12 @@ nav {
 
   .nav-menu-backdrop[data-expanded] {
     display: block;
+  }
+}
+
+@media (width < 80ch) {
+  .hide-narrow {
+    display: none;
   }
 }
 

@@ -9,7 +9,7 @@ const { services } = useExampleData();
   <div class="page-wrapper">
     <h1>Service Bookings</h1>
 
-    <div class="card-grid">
+    <div class="service-list">
       <article
         v-for="[idx, item] in services.entries()"
         :key="idx"
@@ -31,11 +31,9 @@ article {
   }
 }
 
-.card-grid {
-  margin-block-start: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.service-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(25ch, 1fr));
 }
 </style>

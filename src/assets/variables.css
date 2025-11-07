@@ -5,10 +5,8 @@
   --color: light-dark(black, white);
   --accent-color: light-dark(rgb(0 126 7), rgb(100, 211, 106));
   --on-accent-color: light-dark(white, black);
-  --border-color: light-dark(
-    rgb(from var(--color) r g b / 0.25),
-    rgb(from var(--color) r g b / 0.25)
-  );
+  --border-color: light-dark(rgb(from var(--color) r g b / 0.25),
+      rgb(from var(--color) r g b / 0.25));
   --field-bgcolor: light-dark(white, #303030);
   --field-color: light-dark(black, white);
 
@@ -22,8 +20,8 @@
   --header-border-color: var(--border-color);
 
   --card-color: var(--color);
-  --card-bgcolor: light-dark(rgb(240, 240, 240), hsl(0 0% 12%));
-  --card-border-color: var(--border-color);
+  --card-bgcolor: light-dark(rgb(240, 240, 240), hsl(0 0% 15%));
+  --card-border-color: transparent;
 
   --link-color: var(--accent-color);
   --link-hover-color: color-mix(in oklch, var(--link-color) 80%, var(--color));
@@ -45,19 +43,15 @@
   --button-filled-color: var(--button-filled-base-color);
   --button-filled-border-color: transparent;
 
-  --button-filled-hover-bgcolor: color-mix(
-    in srgb,
-    var(--button-filled-base-bgcolor) 80%,
-    var(--button-filled-base-color)
-  );
+  --button-filled-hover-bgcolor: color-mix(in srgb,
+      var(--button-filled-base-bgcolor) 80%,
+      var(--button-filled-base-color));
   --button-filled-hover-color: var(--button-filled-color);
   --button-filled-hover-border-color: var(--button-filled-border-color);
 
-  --button-filled-active-bgcolor: color-mix(
-    in srgb,
-    var(--button-filled-base-bgcolor) 70%,
-    var(--button-filled-base-color)
-  );
+  --button-filled-active-bgcolor: color-mix(in srgb,
+      var(--button-filled-base-bgcolor) 70%,
+      var(--button-filled-base-color));
   --button-filled-active-color: var(--button-filled-color);
   --button-filled-active-border-color: var(--button-filled-border-color);
 
@@ -67,15 +61,11 @@
   --button-outlined-color: var(--button-outlined-base-color);
   --button-outlined-border-color: var(--button-outlined-base-color);
 
-  --button-outlined-hover-bgcolor: rgb(
-    from var(--button-outlined-base-color) r g b / 0.15
-  );
+  --button-outlined-hover-bgcolor: rgb(from var(--button-outlined-base-color) r g b / 0.15);
   --button-outlined-hover-color: var(--button-outlined-color);
   --button-outlined-hover-border-color: var(--button-outlined-border-color);
 
-  --button-outlined-active-bgcolor: rgb(
-    from var(--button-outlined-base-color) r g b / 0.25
-  );
+  --button-outlined-active-bgcolor: rgb(from var(--button-outlined-base-color) r g b / 0.25);
   --button-outlined-active-color: var(--button-outlined-color);
   --button-outlined-active-border-color: var(--button-outlined-border-color);
 
