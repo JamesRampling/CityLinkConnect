@@ -75,15 +75,15 @@ type RequestOptions<
   | PutRequestOptions<Input, Output>
   | DeleteRequestOptions;
 
-export async function makeRequest<Out extends z.ZodType, In extends z.ZodType>(
-  options: PutRequestOptions<In, Out>,
-): Promise<PutResult<z.infer<Out>>>;
-export async function makeRequest<Out extends z.ZodType, In extends z.ZodType>(
-  options: PostRequestOptions<In, Out>,
-): Promise<PostResult<z.infer<Out>>>;
 export async function makeRequest<Out extends z.ZodType>(
   options: GetRequestOptions<Out>,
 ): Promise<GetResult<z.infer<Out>>>;
+export async function makeRequest<Out extends z.ZodType, In extends z.ZodType>(
+  options: PostRequestOptions<In, Out>,
+): Promise<PostResult<z.infer<Out>>>;
+export async function makeRequest<Out extends z.ZodType, In extends z.ZodType>(
+  options: PutRequestOptions<In, Out>,
+): Promise<PutResult<z.infer<Out>>>;
 export async function makeRequest(
   options: DeleteRequestOptions,
 ): Promise<DeleteResult>;

@@ -19,7 +19,7 @@ const accessibility = useAccessibility();
   <dialog ref="dialogElement" closedby="any">
     <h2>Accessibility Options</h2>
     <p>Here you can set your accessibility options.</p>
-    <div id="options">
+    <div class="options">
       <InputSelect
         v-model="accessibility.fontSize"
         name="Text size"
@@ -31,7 +31,7 @@ const accessibility = useAccessibility();
         ]"
       />
     </div>
-    <div id="options">
+    <div class="options">
       <InputSelect
         v-model="accessibility.themeMode"
         name="Style"
@@ -58,7 +58,7 @@ dialog {
   z-index: 1000000000000;
 }
 
-#options {
+.options {
   margin-bottom: 1rem;
 }
 </style>
