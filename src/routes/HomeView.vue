@@ -1,14 +1,10 @@
 <script setup lang="ts">
-const articles = Array.from({ length: 5 }, (_, i) => ({
-  id: i,
-  title: 'Scheduled Road Maintenance',
-  date: new Date(`2025-10-${(i + 1).toString().padStart(2, '0')}`),
-  content: `
-      The council will begin scheduled road maintenance on Main Street and
-      adjoining roads from the 10th of October to the 14th of October.
-      Residents are advised to plan alternative routes.
-    `,
-}));
+import { useExampleData } from '@/exampleData';
+import { formatDate } from '@/utils';
+import { computed } from 'vue';
+
+const { announcements } = useExampleData();
+const articles = computed(() => announcements.value);
 </script>
 
 <template>
@@ -18,13 +14,13 @@ const articles = Array.from({ length: 5 }, (_, i) => ({
     <h1>CityLink Connect</h1>
 
     <article
-      v-for="item in articles"
+      v-for="[idx, item] in articles.entries()"
       :key="item.title"
       class="clickable-card"
-      @click="$router.push(`/announcement/${item.id}`)"
+      @click="$router.push(`/announcement/${idx}`)"
     >
       <h2>{{ item.title }}</h2>
-      <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
+      <h3>{{ formatDate(item.date) }}</h3>
       <p>{{ item.content }}</p>
     </article>
   </div>
