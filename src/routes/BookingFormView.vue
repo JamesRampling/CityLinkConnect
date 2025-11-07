@@ -4,12 +4,12 @@ import InputTextarea from '@/components/InputTextarea.vue';
 import { useExampleData } from '@/exampleData';
 import { computed } from 'vue';
 
-const props = defineProps<{ serviceId: number }>();
+const props = defineProps<{ id: number }>();
 
 const { services } = useExampleData();
 
 // TODO: hook up to server
-const service = computed(() => services.value[props.serviceId]);
+const service = computed(() => services.value[props.id]);
 </script>
 
 <template>
