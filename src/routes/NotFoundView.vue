@@ -5,7 +5,8 @@
     <router-link to="/">Go back to Home</router-link>
   </div>
 </template>
-<style lang="css" scoped>
+
+<style scoped>
 .not-found {
   position: fixed;
   top: 50%;

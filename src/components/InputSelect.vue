@@ -7,29 +7,30 @@ withDefaults(
     id?: string,
     name: string,
     label: string,
-    options?: InputSelectOption[],
+    options: InputSelectOption[],
   }>(),
   {
     id: () => `select-${generateRandomId()}`,
-    options: () => [],
   }
 );
 
 interface InputSelectOption {
-  id?: string;
   text?: string;
-  value?: T;
+  value: T;
 }
 
-const model = defineModel<T>();
+const model = defineModel<T>({ required: true });
 </script>
 
 <template>
   <div class="input-select">
     <label :for="id">{{ label }}</label>
     <select :id="id" v-model="model" :name="name">
-      <option :value="undefined">None</option>
-      <option v-for="opt in options" :key="opt.id" :value="opt.value">
+      <option
+        v-for="opt in options"
+        :key="opt.value?.toString()"
+        :value="opt.value"
+      >
         {{ opt.text ?? opt.value }}
       </option>
     </select>

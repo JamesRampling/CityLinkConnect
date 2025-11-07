@@ -20,7 +20,7 @@ const articles = Array.from({ length: 5 }, (_, i) => ({
     <article
       v-for="item in articles"
       :key="item.title"
-      class="card"
+      class="clickable-card"
       @click="$router.push(`/announcement/${item.id}`)"
     >
       <h2>{{ item.title }}</h2>
@@ -51,18 +51,6 @@ img {
 }
 
 article {
-  cursor: pointer;
-  transition: box-shadow 200ms;
-
-  &:hover {
-    box-shadow: 0 10px 16px light-dark(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.9));
-  }
-
-  &:active {
-    transition-duration: 100ms;
-    box-shadow: 0 5px 8px rgb(0 0 0 / 0.5);
-  }
-
   h2 {
     margin: 0;
   }

@@ -33,7 +33,7 @@ const hamburgerMenuExpanded = ref(false);
     >
       <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
-      <router-link to="/bookings">Service Bookings</router-link>
+      <router-link to="/services">Service Bookings</router-link>
       <router-link to="/feedback">Feedback</router-link>
     </nav>
 
