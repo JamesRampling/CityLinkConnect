@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(
   '/api',
   Router()
+    .use('/account', accountsRoute)
     .use('/announcements', announcementsRoute)
     .use('/bookings', bookingsRoute)
     .use('/feedback', feedbackRoute)
