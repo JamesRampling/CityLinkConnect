@@ -1,13 +1,8 @@
 <script setup lang="ts">
+import { useExampleData } from '@/exampleData';
+
 // TODO: hook up to server
-const services = [
-  { id: 1, name: 'Pet Registration', description: 'Register an animal.' },
-  {
-    id: 2,
-    name: 'Bin Collection',
-    description: 'Find out more about waste collection services.',
-  },
-];
+const { services } = useExampleData();
 </script>
 
 <template>
@@ -16,10 +11,10 @@ const services = [
 
     <div class="card-grid">
       <article
-        v-for="item in services"
-        :key="item.id"
+        v-for="[idx, item] in services.entries()"
+        :key="idx"
         class="clickable-card"
-        @click="$router.push(`/booking/${item.id}`)"
+        @click="$router.push(`/booking/${idx}`)"
       >
         <h2>{{ item.name }}</h2>
         <p>{{ item.description }}</p>

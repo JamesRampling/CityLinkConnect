@@ -61,7 +61,6 @@
 
 .page-wrapper {
   max-width: 100ch;
-  width: fit-content;
   margin-inline: auto;
   padding-inline: 1rem;
   margin-block-start: 1rem;
