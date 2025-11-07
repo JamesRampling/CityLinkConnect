@@ -20,8 +20,8 @@ export const User = z.object({
 
 export const Booking = z.object({
   booking_id: tableId.default(0),
-  user_id: tableId.nullable(),
-  service_id: tableId.nullable(),
+  user_id: tableId,
+  service_id: tableId,
   booking_datetime: z.iso.datetime({ local: true }),
   notes: z.string().nullable(),
 });

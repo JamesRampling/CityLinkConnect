@@ -142,3 +142,16 @@ Content-Type: application/json
   "subject": "new feedback",
   "message": "feedback message"
 }
+
+###
+
+POST {{host}}/api/account/register
+Content-Type: application/json
+
+{
+  "given_names": "John",
+  "last_name": "Citizen",
+  "email": "john+citizen@example.invalid",
+  "phone": "0411111111",
+  "password": "hunter2!"
+}

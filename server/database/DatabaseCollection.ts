@@ -7,20 +7,6 @@ import type {
 } from 'node:sqlite';
 import z from 'zod';
 
-export interface DatabaseCollection<Table> {
-  all(): Table[];
-  single(id: number): Table | undefined;
-  insert(entry: Table): ChangeResult<Table>;
-  update(entry: Table): ChangeResult<Table>;
-  delete(id: number): DeleteResult;
-}
-
-export interface JoinedDatabaseCollection<Table, JoinedTable>
-  extends DatabaseCollection<Table> {
-  allJoined(): JoinedTable[];
-  singleJoined(id: number): JoinedTable | undefined;
-}
-
 export type DeleteResult = Result<undefined, DeleteError>;
 type DeleteError = NonExistentIdError | NodeSQLiteError | UnknownError;
 
@@ -91,9 +77,7 @@ export interface SQLiteJoinedDatabaseCollectionConfig<
   ) => MappedObject<z.input<JoinedTableSchema>, SQLOutputValue>[];
 }
 
-export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
-  implements DatabaseCollection<z.infer<TableSchema>>
-{
+export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject> {
   constructor(
     database: DatabaseSync,
     config: SQLiteDatabaseCollectionConfig<TableSchema>,
@@ -133,7 +117,7 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
     return this.zodSchema.parse(rows);
   }
 
-  insert(entry: z.infer<TableSchema>): ChangeResult<z.infer<TableSchema>> {
+  insert(entry: z.input<TableSchema>): ChangeResult<z.infer<TableSchema>> {
     try {
       const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
@@ -164,7 +148,7 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
     }
   }
 
-  update(entry: z.infer<TableSchema>): ChangeResult<z.infer<TableSchema>> {
+  update(entry: z.input<TableSchema>): ChangeResult<z.infer<TableSchema>> {
     try {
       const input = this.zodSchema.safeParse(entry);
       if (!input.success) {
@@ -214,13 +198,9 @@ export class SQLiteDatabaseCollection<TableSchema extends z.ZodObject>
 }
 
 export class SQLiteJoinedDatabaseCollection<
-    TableSchema extends z.ZodObject,
-    JoinedTableSchema extends z.ZodObject,
-  >
-  extends SQLiteDatabaseCollection<TableSchema>
-  implements
-    JoinedDatabaseCollection<z.infer<TableSchema>, z.infer<JoinedTableSchema>>
-{
+  TableSchema extends z.ZodObject,
+  JoinedTableSchema extends z.ZodObject,
+> extends SQLiteDatabaseCollection<TableSchema> {
   constructor(
     database: DatabaseSync,
     config: SQLiteJoinedDatabaseCollectionConfig<
@@ -273,6 +253,12 @@ export function convertObjectToSQLInputParams(
     ) {
       // Directly supported types
       entries.push([key, value]);
+    } else if (value === false) {
+      // Convert false to 0
+      entries.push([key, 0]);
+    } else if (value === true) {
+      // Convert true to 1
+      entries.push([key, 1]);
     } else if (value === undefined) {
       // Convert undefined to null
       entries.push([key, null]);
