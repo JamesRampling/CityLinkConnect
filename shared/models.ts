@@ -9,10 +9,10 @@ export const Service = z.object({
 
 export const User = z.object({
   user_id: tableId.default(0),
-  given_names: z.string(),
-  last_name: z.string(),
+  given_names: z.string().nonempty(),
+  last_name: z.string().nonempty(),
   email: z.email(),
-  phone: z.string(),
+  phone: z.string().regex(/0[0-9]{9}/),
 });
 
 export const Booking = z.object({

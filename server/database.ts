@@ -1,4 +1,5 @@
 import { AnnouncementsCollectionConfig } from '#server/database/AnnouncementsCollection';
+import { AuthenicationCollectionConfig } from '#server/database/AuthenticationCollection';
 import { BookingsCollectionConfig } from '#server/database/BookingsCollection';
 import {
   SQLiteDatabaseCollection,
@@ -33,6 +34,23 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export const db = {
+  execTransaction<R>(fn: () => R): R {
+    let result: R;
+
+    if (database.isTransaction) throw Error('transactions must not be nested');
+
+    try {
+      database.exec('BEGIN TRANSACTION');
+      result = fn();
+
+      database.exec('COMMIT TRANSACTION');
+      return result;
+    } catch (e) {
+      database.exec('ROLLBACK TRANSACTION');
+      throw e;
+    }
+  },
+
   Bookings: new SQLiteJoinedDatabaseCollection(
     database,
     BookingsCollectionConfig,
@@ -48,4 +66,9 @@ export const db = {
   Services: new SQLiteDatabaseCollection(database, ServicesCollectionConfig),
 
   Users: new SQLiteJoinedDatabaseCollection(database, UsersCollectionConfig),
+
+  Authentication: new SQLiteDatabaseCollection(
+    database,
+    AuthenicationCollectionConfig,
+  ),
 };

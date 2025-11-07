@@ -1,4 +1,5 @@
 import '#server/database';
+import accountsRoute from '#server/routes/accounts';
 import announcementsRoute from '#server/routes/announcements';
 import bookingsRoute from '#server/routes/bookings';
 import feedbackRoute from '#server/routes/feedback';
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(
   '/api',
   Router()
+    .use('/account', accountsRoute)
     .use('/announcements', announcementsRoute)
     .use('/bookings', bookingsRoute)
     .use('/feedback', feedbackRoute)
@@ -32,6 +34,7 @@ app.use(
   // Error handlers require all 4 arguments to be recognised correctly.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ((err, _req, res, _next) => {
+    console.error(err);
     Responses.serverError(res, 'An unknown error occurred.', err);
   }) satisfies ErrorRequestHandler,
 );

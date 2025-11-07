@@ -37,4 +37,10 @@ CREATE TABLE Announcements (
   sort_datetime TEXT NOT NULL,
   config TEXT NOT NULL
 );
+
+CREATE TABLE Authentication (
+  user_id INTEGER PRIMARY KEY NOT NULL REFERENCES Users ON DELETE CASCADE,
+  argon2_hash TEXT NOT NULL,
+  is_admin BOOLEAN NOT NULL DEFAULT FALSE
+);
 `;
