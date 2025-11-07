@@ -7,6 +7,68 @@ const props = defineProps({
   name: { type: String, required: false, default: 'AdminName' },
 });
 
+interface UserBooking {
+  name: string;
+  service: string;
+  message: string;
+}
+function generateUserBooking() {
+  const bookingList: UserBooking = [
+    {
+      name: 'user1',
+      service: 'PetService',
+      message: 'Need help with pet caring',
+    },
+    {
+      name: 'user2',
+      service: 'GroomingService',
+      message: 'Requesting grooming for my dog',
+    },
+    {
+      name: 'user3',
+      service: 'WalkingService',
+      message: 'Need daily evening walks for my pet',
+    },
+    {
+      name: 'user4',
+      service: 'VeterinaryService',
+      message: 'Pet needs vaccination checkup',
+    },
+    {
+      name: 'user5',
+      service: 'TrainingService',
+      message: 'Want basic obedience training',
+    },
+    {
+      name: 'user6',
+      service: 'BoardingService',
+      message: 'Need weekend boarding for my cat',
+    },
+    {
+      name: 'user7',
+      service: 'PetTaxi',
+      message: 'Require transport to vet clinic',
+    },
+    {
+      name: 'user8',
+      service: 'PetPhotography',
+      message: 'Looking for pet portrait session',
+    },
+    {
+      name: 'user9',
+      service: 'PetSitting',
+      message: 'Need sitter for two days',
+    },
+    {
+      name: 'user10',
+      service: 'AquariumCleaning',
+      message: 'Need help cleaning my fish tank',
+    },
+  ];
+}
+
+const userList = ['User1', 'User2', 'User3'];
+
 const page = ref(1);
 </script>
 
@@ -19,7 +81,9 @@ const page = ref(1);
       <button class="squareButton" @click="page = 3">Content</button>
     </div>
     <div id="MainContent">
-      <div></div>
+      <div v-if="page === 1"></div>
+      <div v-else-if="page === 2"></div>
+      <div v-else-if="page === 3"></div>
     </div>
   </div>
 </template>
