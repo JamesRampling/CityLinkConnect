@@ -2,4 +2,6 @@
 defineProps<{ id: number }>();
 </script>
 
-<template>Article {{ id }}</template>
+<template>
+  <div class="page-wrapper">Article {{ id }}</div>
+</template>
