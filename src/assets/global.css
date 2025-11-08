@@ -66,10 +66,10 @@ hgroup {
 }
 
 h1 {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   margin-block: 1rem 2rem;
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: clamp(1.5rem, 3.5vw, 1.75rem);
 }

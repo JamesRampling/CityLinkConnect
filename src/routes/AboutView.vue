@@ -71,7 +71,7 @@
   }
 
   h2 {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
   }
 
   img {
