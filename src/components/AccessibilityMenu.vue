@@ -71,11 +71,18 @@ dialog {
   height: 100%;
   width: min(100%, 40ch);
   z-index: 1000000000000;
+
+  background-color: var(--dialog-bgcolor);
+  color: var(--dialog-color);
+  border: none;
+  outline: 1px solid var(--dialog-border-color);
+  box-shadow: var(--dialog-shadow);
 }
 
 .header-row {
   display: grid;
   grid-template-columns: 1fr auto;
+  gap: 1rem;
   align-items: center;
   margin-bottom: 1rem;
 

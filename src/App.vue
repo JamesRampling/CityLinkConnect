@@ -13,7 +13,7 @@ const { matches: isNarrowScreen } = useMediaQuery('(width < 80ch)');
 </script>
 
 <template>
-  <header class="">
+  <header>
     <img class="logo-image" src="/favicon.svg" alt="" />
 
     <button
@@ -72,6 +72,7 @@ header {
   top: 0;
   z-index: 1000;
   background: var(--header-bgcolor);
+  color: var(--header-color);
 }
 
 .logo-image {
@@ -120,12 +121,6 @@ nav {
 
   .nav-menu-backdrop[data-expanded] {
     display: block;
-  }
-}
-
-@media (width < 80ch) {
-  .hide-narrow {
-    display: none;
   }
 }
 
