@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
-import IconAccessibility from '@/components/icons/IconAccessibility.vue';
+import AccessibilityMenu from '@/components/AccessibilityMenu.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconUser from '@/components/icons/IconUser.vue';
-
 import { useUser } from '@/user';
+import { useMediaQuery } from '@/utils/mediaQuery';
 import { ref } from 'vue';
 
 const userState = useUser();
-
-const accessibilityButton = ref<HTMLButtonElement>();
-const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
-
 const hamburgerMenuExpanded = ref(false);
+
+const { matches: isNarrowScreen } = useMediaQuery('(width < 80ch)');
 </script>
 
 <template>
@@ -39,18 +36,7 @@ const hamburgerMenuExpanded = ref(false);
     </nav>
 
     <div class="end-header-buttons">
-      <button
-        ref="accessibilityButton"
-        class="button-outlined"
-        aria-label="Accessibility"
-        @click="accessibilityPopup?.show()"
-      >
-        <IconAccessibility aria-hidden="true" /><span
-          class="hide-narrow"
-          aria-hidden="true"
-          >Accessibility</span
-        >
-      </button>
+      <AccessibilityMenu :label-hidden="isNarrowScreen" />
 
       <span v-if="userState === undefined">
         <router-link to="/login" class="button-filled">Login</router-link>
@@ -71,7 +57,6 @@ const hamburgerMenuExpanded = ref(false);
     :data-expanded="hamburgerMenuExpanded || undefined"
     @click="hamburgerMenuExpanded = false"
   ></div>
-  <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton!" />
 </template>
 
 <style scoped>
