@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import IconBack from '@/components/icons/IconBack.vue';
 import { useExampleData } from '@/exampleData';
 import NotFoundView from '@/routes/NotFoundView.vue';
 import { formatDate } from '@/utils';
@@ -16,9 +17,30 @@ const announcement = computed(() => announcements.value[props.id]);
   </template>
   <template v-else>
     <div class="page-wrapper">
-      <h1>{{ announcement.title }}</h1>
-      <p>{{ formatDate(announcement.date, { dateStyle: 'full' }) }}</p>
+      <router-link class="back-button button-filled" to="/"
+        ><IconBack />Back</router-link
+      >
+      <hgroup>
+        <h1>{{ announcement.title }}</h1>
+        <p>
+          <time :datetime="announcement.date">{{
+            formatDate(announcement.date, { dateStyle: 'full' })
+          }}</time>
+        </p>
+      </hgroup>
       <p>{{ announcement.content }}</p>
     </div>
   </template>
 </template>
+
+<style scoped>
+.back-button {
+  width: fit-content;
+}
+
+time {
+  color: var(--color-muted);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+</style>
