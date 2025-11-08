@@ -2,11 +2,12 @@
   --icon-size: 1.5rem;
 
   --bgcolor: light-dark(white, hsl(0 0% 8%));
-  --color: light-dark(black, white);
+  --color: light-dark(hsl(0 0% 8%), white);
+  --color-muted: rgb(from var(--color) r g b / 0.75);
   --accent-color: light-dark(rgb(0 126 7), rgb(100, 211, 106));
   --on-accent-color: light-dark(white, black);
-  --border-color: light-dark(rgb(from var(--color) r g b / 0.25),
-      rgb(from var(--color) r g b / 0.25));
+  --border-color: light-dark(rgb(from var(--color) r g b / 0.35),
+      rgb(from var(--color) r g b / 0.35));
   --field-bgcolor: light-dark(white, #303030);
   --field-color: light-dark(black, white);
 
@@ -20,8 +21,22 @@
   --header-border-color: var(--border-color);
 
   --card-color: var(--color);
-  --card-bgcolor: light-dark(rgb(240, 240, 240), hsl(0 0% 15%));
+  --card-bgcolor: light-dark(hsl(0 0% 94%), hsl(0 0% 16%));
   --card-border-color: transparent;
+  --card-shadow: none;
+  --card-focus-outline: var(--focus-outline);
+  --card-focus-background-color: var(--card-active-bgcolor);
+  --card-focus-border-color: var(--focus-border-color);
+
+  --card-hover-color: var(--color);
+  --card-hover-bgcolor: light-dark(hsl(0 0% 94%), hsl(0 0% 18%));
+  --card-hover-border-color: transparent;
+  --card-hover-shadow: 0 10px 16px light-dark(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.9));
+
+  --card-active-color: var(--color);
+  --card-active-bgcolor: light-dark(hsl(0 0% 85%), hsl(0 0% 24%));
+  --card-active-border-color: transparent;
+  --card-active-shadow: 0 5px 8px light-dark(rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.9));
 
   --link-color: var(--accent-color);
   --link-hover-color: color-mix(in oklch, var(--link-color) 80%, var(--color));
@@ -59,7 +74,7 @@
   --button-outlined-border-width: 1px;
   --button-outlined-bgcolor: transparent;
   --button-outlined-color: var(--button-outlined-base-color);
-  --button-outlined-border-color: var(--button-outlined-base-color);
+  --button-outlined-border-color: var(--border-color);
 
   --button-outlined-hover-bgcolor: rgb(from var(--button-outlined-base-color) r g b / 0.15);
   --button-outlined-hover-color: var(--button-outlined-color);

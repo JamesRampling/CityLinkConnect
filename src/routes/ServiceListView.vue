@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useExampleData } from '@/exampleData';
+import { computed } from 'vue';
 
-// TODO: hook up to server
 const { services } = useExampleData();
+
+const serviceItems = computed(() =>
+  services.value.map((e, i) => ({ config: e, service_id: i })),
+);
 </script>
 
 <template>
@@ -10,30 +14,23 @@ const { services } = useExampleData();
     <h1>Service Bookings</h1>
 
     <div class="service-list">
-      <article
-        v-for="[idx, item] in services.entries()"
-        :key="idx"
-        class="clickable-card"
-        @click="$router.push(`/booking/${idx}`)"
+      <router-link
+        v-for="{ service_id, config } in serviceItems"
+        :key="service_id"
+        :to="`/booking/${service_id}`"
+        class="card clickable"
       >
-        <h2>{{ item.name }}</h2>
-        <p>{{ item.description }}</p>
-      </article>
+        <h2 class="title">{{ config.name }}</h2>
+        <p>{{ config.description }}</p>
+      </router-link>
     </div>
   </div>
 </template>
 
 <style scoped>
-article {
-  h2,
-  p {
-    margin: 0;
-  }
-}
-
 .service-list {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(25ch, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
 }
 </style>

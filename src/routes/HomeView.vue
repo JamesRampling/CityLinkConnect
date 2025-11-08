@@ -4,7 +4,15 @@ import { formatDate } from '@/utils';
 import { computed } from 'vue';
 
 const { announcements } = useExampleData();
-const articles = computed(() => announcements.value);
+
+const articles = computed(() =>
+  announcements.value
+    .map((e, i) => ({ config: e, announcement_id: i }))
+    .sort(
+      (a, b) =>
+        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
+    ),
+);
 </script>
 
 <template>
@@ -12,26 +20,27 @@ const articles = computed(() => announcements.value);
     Photo by Alex Reynolds on Unsplash
     https://unsplash.com/photos/aerial-view-of-suburban-buildings-and-distant-city-skyline-yt7Jc2S8y0I
   -->
-  <img class="backdrop-image" src="/src/assets/hero-splash.jpg" />
+  <img class="backdrop-image" src="/src/assets/hero-splash.jpg" alt="" />
   <div class="page-wrapper">
     <h1>CityLink Connect</h1>
 
     <div class="announcements-wrapper">
-      <article
-        v-for="[idx, item] in articles.entries()"
-        :key="item.title"
-        class="clickable-card card"
-        @click="$router.push(`/announcement/${idx}`)"
+      <router-link
+        v-for="{ announcement_id: index, config: content } in articles"
+        :key="content.title"
+        class="card clickable"
+        :to="`/announcement/${index}`"
+        tabindex="0"
       >
         <hgroup>
-          <h2 class="title">{{ item.title }}</h2>
+          <h2 class="title">{{ content.title }}</h2>
           <p class="subtitle">
-            <time :datetime="item.date">{{ formatDate(item.date) }}</time>
+            <time :datetime="content.date">{{ formatDate(content.date) }}</time>
           </p>
         </hgroup>
 
-        <p>{{ item.content }}</p>
-      </article>
+        <p>{{ content.content }}</p>
+      </router-link>
     </div>
   </div>
 </template>
