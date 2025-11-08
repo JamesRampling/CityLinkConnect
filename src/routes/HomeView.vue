@@ -38,11 +38,29 @@ const articles = computed(() => announcements.value);
 
 <style scoped>
 .backdrop-image {
+  --overlap: 12rem;
+  --gradient: 14rem;
+
   display: block;
-  min-height: 8rem;
-  aspect-ratio: 8/1;
+  min-height: calc(4rem + var(--overlap));
+  aspect-ratio: 4/1;
   width: 100%;
   object-fit: cover;
+  mask-image: linear-gradient(to top, transparent, black var(--gradient));
+  margin-bottom: calc(var(--overlap) * -1);
+  z-index: -1;
+}
+
+.page-wrapper {
+  position: relative;
+}
+
+h1 {
+  text-shadow:
+    0 0 2rem var(--bgcolor),
+    0 0 1rem var(--bgcolor),
+    0 0 0.5rem var(--bgcolor),
+    0 0 0.25rem var(--bgcolor);
 }
 
 .announcements-wrapper {
