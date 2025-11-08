@@ -54,8 +54,15 @@ h5,
 h6,
 p,
 ol,
-ul {
+ul,
+hgroup {
   margin: 0;
+  margin-block-start: 0;
+  margin-block-end: 1rem;
+
+  &:last-child {
+    margin-block-end: 0;
+  }
 }
 
 h1 {
@@ -63,14 +70,6 @@ h1 {
   margin-block: 1rem 2rem;
 }
 
-:is(h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ol,
-  ul):not(:last-child) {
-  margin-block-end: 1rem;
-
+h2 {
+  font-size: 1.75rem;
 }

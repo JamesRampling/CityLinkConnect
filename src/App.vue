@@ -21,9 +21,10 @@ const hamburgerMenuExpanded = ref(false);
 
     <button
       class="nav-toggle-button button-outlined"
+      aria-label="Toggle navigation menu"
       @click.stop="hamburgerMenuExpanded = !hamburgerMenuExpanded"
     >
-      <IconMenu />
+      <IconMenu aria-hidden="true" />
     </button>
 
     <nav
@@ -44,7 +45,9 @@ const hamburgerMenuExpanded = ref(false);
         aria-label="Accessibility"
         @click="accessibilityPopup?.show()"
       >
-        <IconAccessibility /><span class="hide-narrow" aria-hidden
+        <IconAccessibility aria-hidden="true" /><span
+          class="hide-narrow"
+          aria-hidden="true"
           >Accessibility</span
         >
       </button>

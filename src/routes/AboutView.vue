@@ -49,7 +49,7 @@
             innovation to better serve our community.
           </p>
         </div>
-        <img class="image-cover" src="@/assets/team.jpg" alt="Our Team" />
+        <img class="image-cover" src="@/assets/team.jpg" alt="" />
       </section>
     </div>
   </div>
