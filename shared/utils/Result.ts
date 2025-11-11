@@ -1,4 +1,7 @@
-export type Result<T, E> = ResultOk<T> | ResultError<E>;
+export type Result<T, E> = (ResultOk<T> | ResultErr<E>) & {
+  map<O>(fn: (inner: T) => O): Result<O, E>;
+  and_then<O>(fn: (inner: T) => Result<O, E>): Result<O, E>;
+};
 
 interface ResultOk<T> {
   readonly ok: true;
@@ -9,7 +12,7 @@ interface ResultOk<T> {
   expect(message: string): T;
 }
 
-interface ResultError<E> {
+interface ResultErr<E> {
   readonly ok: false;
   readonly data: undefined;
   readonly error: E;
@@ -28,11 +31,19 @@ class UnwrappedError extends Error {
 }
 
 export const Result = {
-  ok<T, E = unknown>(data: T): Result<T, E> {
+  ok<T, E>(data: T): Result<T, E> {
     return {
       ok: true,
       data,
       error: undefined,
+
+      map(fn) {
+        return Result.ok(fn(this.data));
+      },
+
+      and_then(fn) {
+        return fn(this.data);
+      },
 
       unwrap() {
         return this.data;
@@ -43,11 +54,19 @@ export const Result = {
     } as const;
   },
 
-  error<E, T = unknown>(error: E): Result<T, E> {
+  err<T, E>(error: E): Result<T, E> {
     return {
       ok: false,
       data: undefined,
       error,
+
+      map<O>() {
+        return this as ResultErr<E> as Result<O, E>;
+      },
+
+      and_then<O>() {
+        return this as ResultErr<E> as Result<O, E>;
+      },
 
       unwrap() {
         throw new UnwrappedError(this.error);
@@ -55,6 +74,6 @@ export const Result = {
       expect(message) {
         throw new UnwrappedError(this.error, message);
       },
-    };
+    } as const;
   },
 };
