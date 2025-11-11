@@ -1,15 +1,7 @@
-import { AnnouncementsCollectionConfig } from '#server/database/AnnouncementsCollection';
-import { AuthenicationCollectionConfig } from '#server/database/AuthenticationCollection';
-import { BookingsCollectionConfig } from '#server/database/BookingsCollection';
-import {
-  SQLiteDatabaseCollection,
-  SQLiteJoinedDatabaseCollection,
-} from '#server/database/DatabaseCollection';
-import { FeedbackCollectionConfig } from '#server/database/FeedbackCollection';
+import AuthenticationCollection from '#server/database/collections/AuthenticationCollection';
+import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
-import { ServicesCollectionConfig } from '#server/database/ServicesCollection';
-import { UsersCollectionConfig } from '#server/database/UsersCollection';
 import { DatabaseSync } from 'node:sqlite';
 
 const database =
@@ -51,24 +43,26 @@ export const db = {
     }
   },
 
-  Bookings: new SQLiteJoinedDatabaseCollection(
-    database,
-    BookingsCollectionConfig,
-  ),
-
-  Announcements: new SQLiteDatabaseCollection(
-    database,
-    AnnouncementsCollectionConfig,
-  ),
-
-  Feedback: new SQLiteDatabaseCollection(database, FeedbackCollectionConfig),
-
-  Services: new SQLiteDatabaseCollection(database, ServicesCollectionConfig),
-
-  Users: new SQLiteJoinedDatabaseCollection(database, UsersCollectionConfig),
-
-  Authentication: new SQLiteDatabaseCollection(
-    database,
-    AuthenicationCollectionConfig,
-  ),
+  Users: initializeCollection(database, UsersCollection),
+  Authentication: initializeCollection(database, AuthenticationCollection),
 };
+
+export type DatabaseConfig = Record<string, (db: DatabaseSync) => unknown>;
+
+type DatabaseCollection<T> = {
+  [key in keyof T]: T[key] extends (db: DatabaseSync) => infer F ? F : never;
+};
+
+function initializeCollection<T extends DatabaseConfig>(
+  database: DatabaseSync,
+  collection: T,
+): DatabaseCollection<T> {
+  const entries = [];
+
+  for (const key in collection) {
+    const fn = collection[key];
+    entries.push([key, fn(database)]);
+  }
+
+  return Object.fromEntries(entries);
+}
