@@ -31,7 +31,7 @@ function onInput(event: Event) {
     <textarea
       :id="id"
       ref="textareaElement"
-      v-model="model"
+      v-model.lazy="model"
       :name="name"
       rows="4"
       @input="onInput"

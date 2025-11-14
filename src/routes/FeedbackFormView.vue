@@ -2,43 +2,30 @@
 import { Feedback } from '#shared/models';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
-import { ref } from 'vue';
-import { z } from 'zod';
+import { useValidation } from '@/utils/validation';
+import { reactive } from 'vue';
 
-const email = ref('');
-const subject = ref('');
-const message = ref('');
-const errors = ref<{ [_ in keyof z.infer<typeof Feedback>]?: string[] }>({});
-
-function handleFeedback() {
-  const body = Feedback.safeParse({
-    email: email.value,
-    subject: subject.value,
-    message: message.value,
-  });
-  if (!body.success) {
-    errors.value = z.flattenError(body.error).fieldErrors;
-  }
-}
+const field = reactive({ email: '', subject: '', message: '' });
+const { errors, validate } = useValidation(Feedback, field);
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1>Give us your feedback</h1>
-    <form class="form" action="" @submit.prevent="handleFeedback">
-      <InputText v-model="email" name="email" label="E-Mail" />
+    <form class="form" action="" @submit.prevent="validate">
+      <InputText v-model="field.email" name="email" label="E-Mail" />
       <ul v-if="errors.email" class="error-list">
         <li v-for="error in errors.email" :key="error" class="error-item">
           {{ error }}
         </li>
       </ul>
-      <InputText v-model="subject" name="subject" label="Subject" />
+      <InputText v-model="field.subject" name="subject" label="Subject" />
       <ul v-if="errors.subject" class="error-list">
         <li v-for="error in errors.subject" :key="error" class="error-item">
           {{ error }}
         </li>
       </ul>
-      <InputTextarea v-model="message" name="message" label="Feedback" />
+      <InputTextarea v-model="field.message" name="message" label="Feedback" />
       <ul v-if="errors.message" class="error-list">
         <li v-for="error in errors.message" :key="error" class="error-item">
           {{ error }}

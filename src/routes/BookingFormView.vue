@@ -1,11 +1,19 @@
 <script setup lang="ts">
+import { Booking } from '#shared/models';
 import IconBack from '@/components/icons/IconBack.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import { useExampleData } from '@/exampleData';
-import { computed } from 'vue';
+import { useValidation } from '@/utils/validation';
+import { computed, reactive } from 'vue';
 
 const props = defineProps<{ id: number }>();
+
+const field = reactive({ booking_datetime: '', notes: '' });
+const { errors, validate } = useValidation(
+  Booking.omit({ user_id: true, service_id: true }),
+  field,
+);
 
 const { services } = useExampleData();
 
@@ -46,11 +54,23 @@ const service = computed(() => services.value[props.id]);
 
       <section class="section-form">
         <h2>Booking details</h2>
-        <form class="form" action="" @submit.prevent>
-          <InputText type="date" name="date-input" label="Date" />
-
+        <form class="form" action="" @submit.prevent="validate">
+          <InputText
+            v-model="field.booking_datetime"
+            type="datetime-local"
+            name="date-input"
+            label="Date"
+          />
+          <ul v-if="errors.booking_datetime" class="error-list">
+            <li
+              v-for="error in errors.booking_datetime"
+              :key="error"
+              class="error-item"
+            >
+              {{ error }}
+            </li>
+          </ul>
           <InputTextarea name="service-notes" label="Additional information" />
-
           <div class="button-row">
             <button type="submit" class="button-filled">Submit</button>
           </div>
@@ -76,5 +96,15 @@ const service = computed(() => services.value[props.id]);
 
 .fee-name {
   text-transform: capitalize;
+}
+
+.error-list {
+  margin: 0;
+  padding-inline-start: 1rem;
+}
+
+.error-item {
+  color: red;
+  list-style: none;
 }
 </style>

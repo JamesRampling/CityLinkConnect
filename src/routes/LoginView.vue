@@ -1,54 +1,59 @@
 <script setup lang="ts">
 import { User } from '#shared/models';
 import InputText from '@/components/InputText.vue';
-import { ref } from 'vue';
-import { z } from 'zod';
+import { useValidation } from '@/utils/validation';
+import { reactive } from 'vue';
+import z from 'zod';
 
-const givenNames = ref('asdfasdf');
-const lastName = ref('asdasdf');
-const email = ref('adsfads@dsfasdf.com');
-const password = ref('asdfasdf');
-const phone = ref('0123456789');
-const errors = ref<{ [_ in keyof z.infer<typeof User>]?: string[] }>({});
-
-function handleRegistration() {
-  const body = User.safeParse({
-    given_names: givenNames.value,
-    last_name: lastName.value,
-    email: email.value,
-    phone: phone.value,
-  });
-  if (!body.success) {
-    errors.value = z.flattenError(body.error).fieldErrors;
-  }
-}
+const field = reactive({
+  given_names: '',
+  last_name: '',
+  password: '',
+  email: '',
+  phone: '',
+});
+const { errors, validate } = useValidation(
+  User.extend({ password: z.string().min(8) }),
+  field,
+);
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1>Register</h1>
-    <form class="form" action="" @submit.prevent="handleRegistration">
-      <InputText v-model="givenNames" name="given-names" label="Given Names" />
+    <form class="form" action="" @submit.prevent="validate">
+      <InputText
+        v-model="field.given_names"
+        name="given-names"
+        label="Given Names"
+      />
       <ul v-if="errors.given_names" class="error-list">
         <li v-for="error in errors.given_names" :key="error">{{ error }}</li>
       </ul>
 
-      <InputText v-model="lastName" name="last-name" label="Last Name" />
+      <InputText v-model="field.last_name" name="last-name" label="Last Name" />
       <ul v-if="errors.last_name" class="error-list">
         <li v-for="error in errors.last_name" :key="error" class="error-item">
           {{ error }}
         </li>
       </ul>
-      <InputText v-model="email" name="email" label="E-Mail" />
+      <InputText v-model="field.email" name="email" label="E-Mail" />
       <ul v-if="errors.email" class="error-list">
         <li v-for="error in errors.email" :key="error" class="error-item">
           {{ error }}
         </li>
       </ul>
-      <InputText v-model="password" name="password" label="Password" />
-      <InputText v-model="phone" name="phone" label="Phone Number" />
-      <ul v-if="errors.given_names" class="error-item">
-        <li v-for="error in errors.phone" :key="error">{{ error }}</li>
+      <InputText name="password" label="Password" />
+      <ul v-if="errors.password" class="error-list">
+        <li v-for="error in errors.password" :key="error" class="error-item">
+          {{ error }}
+        </li>
+      </ul>
+      <InputText v-model="field.phone" name="phone" label="Phone Number" />
+      <ul v-if="errors.phone" class="error-list">
+        <li v-for="error in errors.phone" :key="error" class="error-item">
+          {{ error }}
+        </li>
       </ul>
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
