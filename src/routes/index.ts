@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import {
+  createRouter,
+  createWebHistory,
+  type RouteLocationNormalized,
+} from 'vue-router';
 
 import AboutView from '@/routes/AboutView.vue';
 import AnnouncementView from '@/routes/AnnouncementView.vue';
@@ -16,13 +20,37 @@ const router = createRouter({
     { path: '/', component: HomeView },
     { path: '/about', component: AboutView },
     { path: '/services', component: ServiceListView },
-    { path: '/booking/:serviceId', component: BookingFormView, props: true },
-    { path: '/announcement/:id', component: AnnouncementView, props: true },
-    { path: '/user/:id', component: UserProfileView, props: true },
+    {
+      path: '/booking/:id',
+      component: BookingFormView,
+      props: convertProps({ id: Number }),
+    },
+    {
+      path: '/announcement/:id',
+      component: AnnouncementView,
+      props: convertProps({ id: Number }),
+    },
+    {
+      path: '/user/:id',
+      component: UserProfileView,
+      props: convertProps({ id: Number }),
+    },
     { path: '/login', component: LoginView },
     { path: '/feedback', component: FeedbackFormView },
     { path: '/:catchAll(.*)*', component: NotFoundView },
   ],
 });
+
+function convertProps(
+  types: Record<string, ((param: string | string[]) => unknown) | undefined>,
+) {
+  return function (route: RouteLocationNormalized) {
+    const params = route.params;
+
+    return Object.fromEntries(
+      Object.entries(params).map(([k, v]) => [k, types[k]?.(v) ?? v]),
+    );
+  };
+}
 
 export default router;

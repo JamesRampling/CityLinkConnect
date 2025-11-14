@@ -1,68 +1,79 @@
 <script setup lang="ts">
-const articles = Array.from({ length: 5 }, (_, i) => ({
-  id: i,
-  title: 'Scheduled Road Maintenance',
-  date: new Date(`2025-10-${(i + 1).toString().padStart(2, '0')}`),
-  content: `
-      The council will begin scheduled road maintenance on Main Street and
-      adjoining roads from the 10th of October to the 14th of October.
-      Residents are advised to plan alternative routes.
-    `,
-}));
+import { useExampleData } from '@/exampleData';
+import { formatDate } from '@/utils';
+import { computed } from 'vue';
+
+const { announcements } = useExampleData();
+
+const articles = computed(() =>
+  announcements.value
+    .map((e, i) => ({ config: e, announcement_id: i }))
+    .sort(
+      (a, b) =>
+        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
+    ),
+);
 </script>
 
 <template>
-  <!--Photo by Alex Reynolds on Unsplash https://unsplash.com/photos/aerial-view-of-suburban-buildings-and-distant-city-skyline-yt7Jc2S8y0I -->
-  <img src="/src/assets/hero-splash.jpg" />
+  <!--
+    Photo by Alex Reynolds on Unsplash
+    https://unsplash.com/photos/aerial-view-of-suburban-buildings-and-distant-city-skyline-yt7Jc2S8y0I
+  -->
+  <img class="backdrop-image" src="/src/assets/hero-splash.jpg" alt="" />
   <div class="page-wrapper">
     <h1>CityLink Connect</h1>
 
-    <article
-      v-for="item in articles"
-      :key="item.title"
-      class="clickable-card"
-      @click="$router.push(`/announcement/${item.id}`)"
-    >
-      <h2>{{ item.title }}</h2>
-      <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
-      <p>{{ item.content }}</p>
-    </article>
+    <div class="announcements-wrapper">
+      <router-link
+        v-for="{ announcement_id: index, config: content } in articles"
+        :key="content.title"
+        class="card clickable"
+        :to="`/announcement/${index}`"
+        tabindex="0"
+      >
+        <hgroup>
+          <h2 class="title">{{ content.title }}</h2>
+          <p class="subtitle">
+            <time :datetime="content.date">{{ formatDate(content.date) }}</time>
+          </p>
+        </hgroup>
+
+        <p>{{ content.content }}</p>
+      </router-link>
+    </div>
   </div>
 </template>
 
 <style scoped>
-img {
-  max-width: 100%;
-  min-height: 6rem;
-  aspect-ratio: 10/1;
+.backdrop-image {
+  --overlap: 12rem;
+  --gradient: 14rem;
+
+  display: block;
+  min-height: calc(4rem + var(--overlap));
+  aspect-ratio: 4/1;
   width: 100%;
-  height: 100%;
   object-fit: cover;
+  mask-image: linear-gradient(to top, transparent, black var(--gradient));
+  margin-bottom: calc(var(--overlap) * -1);
+  z-index: -1;
 }
 
 .page-wrapper {
-  display: grid;
-  gap: 1rem;
-  padding-block-end: 2rem;
-
-  h1 {
-    margin-block: 0;
-  }
+  position: relative;
 }
 
-article {
-  h2 {
-    margin: 0;
-  }
+h1 {
+  text-shadow:
+    0 0 2rem var(--bgcolor),
+    0 0 1rem var(--bgcolor),
+    0 0 0.5rem var(--bgcolor),
+    0 0 0.25rem var(--bgcolor);
+}
 
-  h3 {
-    margin-block-start: 0.5rem;
-    margin-block-end: 0;
-  }
-
-  p {
-    margin-block-start: 0.5rem;
-    margin-block-end: 0;
-  }
+.announcements-wrapper {
+  display: grid;
+  gap: 1rem;
 }
 </style>
