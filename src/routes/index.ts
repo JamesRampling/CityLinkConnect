@@ -5,6 +5,7 @@ import {
 } from 'vue-router';
 
 import AboutView from '@/routes/AboutView.vue';
+import AdminPage from '@/routes/AdminPage.vue';
 import AnnouncementView from '@/routes/AnnouncementView.vue';
 import BookingFormView from '@/routes/BookingFormView.vue';
 import FeedbackFormView from '@/routes/FeedbackFormView.vue';
@@ -38,6 +39,7 @@ const router = createRouter({
     { path: '/login', component: LoginView },
     { path: '/feedback', component: FeedbackFormView },
     { path: '/:catchAll(.*)*', component: NotFoundView },
+    { path: '/admin', component: AdminPage },
   ],
 });
 
