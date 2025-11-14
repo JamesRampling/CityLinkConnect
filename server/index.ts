@@ -11,8 +11,6 @@ import express, {
   type RequestHandler,
 } from 'express';
 
-process.loadEnvFile();
-
 const app = express();
 
 app.use(express.json());
