@@ -1,125 +1,72 @@
-import { ApiError } from '#shared/errors';
-import { Result } from '#shared/utils/Result';
-import { apiFetch, parseResultBody } from '@/api/apiFetch';
+import {
+  apiFetch,
+  checkResponseWithBody,
+  checkResponseWithoutBody,
+} from '@/api/apiFetch';
 import z from 'zod';
 
-/**
- * Generic error has occurred.
- */
-interface FetchError {
-  type: 'fetch-error';
-  status?: number;
-  error: unknown;
-}
-
-/**
- * The response body object failed to be parsed.
- */
-interface DataParseError<T> {
-  type: 'fetch-data-parse';
-  error: Error | z.ZodError<T>;
-}
-
-/**
- * The error object (ApiError) failed to be parsed.
- */
-interface ErrorObjectParseError {
-  type: 'fetch-error-obj-parse';
-  error: Error | z.ZodError<typeof ApiError>;
-}
-
-type FetchResult<T> = Result<
-  T,
-  | z.infer<typeof ApiError>
-  | FetchError
-  | DataParseError<T>
-  | ErrorObjectParseError
->;
-
-export function post<Input extends z.ZodType, Output extends z.ZodType>(
+export function requestInOut<
+  Input extends z.ZodType,
+  Output extends z.ZodType,
+  Authenticate extends boolean,
+>(
+  method: RequestInit['method'],
   route: string,
   inputSchema: Input,
   outputSchema: Output,
+  authenticate: Authenticate,
 ) {
   return async (
     body: z.input<Input>,
-    auth?: z.infer<z.ZodJWT>,
-    signal?: AbortSignal,
-  ): Promise<FetchResult<z.infer<Output>>> => {
-    let status: number | undefined;
+    ...[arg0, arg1]: Authenticate extends true
+      ? [auth: z.infer<z.ZodJWT>, signal?: AbortSignal]
+      : [signal?: AbortSignal]
+  ) => {
+    const [auth, signal] = authenticate
+      ? [arg0 as string, arg1]
+      : [undefined, arg0 as AbortSignal | undefined];
 
-    try {
-      const response = await apiFetch(
-        route,
-        'POST',
-        body,
-        inputSchema,
-        outputSchema,
-        auth,
-        signal,
-      );
-      status = response.status;
+    const response = apiFetch(
+      route,
+      method,
+      body,
+      inputSchema,
+      outputSchema,
+      auth,
+      signal,
+    );
 
-      if (response.ok) {
-        const { ok, data, error } = await parseResultBody(
-          response,
-          outputSchema,
-        );
-
-        if (ok) {
-          return Result.ok(data);
-        }
-
-        return Result.error({ type: 'fetch-data-parse', status, error });
-      }
-
-      const { ok, data, error } = await parseResultBody(response, ApiError);
-
-      if (ok) {
-        return Result.error(data);
-      }
-
-      return Result.error({ type: 'fetch-error-obj-parse', status, error });
-    } catch (error) {
-      return Result.error({ type: 'fetch-error', error, status });
-    }
+    return await checkResponseWithBody(response, outputSchema);
   };
 }
 
-export function postNoResponseContent<Input extends z.ZodType>(
+export function requestIn<
+  Input extends z.ZodType,
+  Authenticate extends boolean,
+>(
+  method: RequestInit['method'],
   route: string,
   inputSchema: Input,
+  authenticate: Authenticate,
 ) {
   return async (
     body: z.input<Input>,
-    auth?: z.infer<z.ZodJWT>,
-    signal?: AbortSignal,
-  ): Promise<FetchResult<undefined>> => {
-    let status: number | undefined;
-
-    try {
-      const response = await apiFetch(
-        route,
-        'POST',
-        body,
-        inputSchema,
-        undefined,
-        auth,
-        signal,
-      );
-
-      if (response.ok) {
-        return Result.ok(undefined);
-      }
-      const { ok, data, error } = await parseResultBody(response, ApiError);
-
-      if (ok) {
-        return Result.error(data);
-      }
-
-      return Result.error({ type: 'fetch-error-obj-parse', status, error });
-    } catch (error) {
-      return Result.error({ type: 'fetch-error', status, error });
-    }
+    ...[arg0, arg1]: Authenticate extends true
+      ? [auth: z.infer<z.ZodJWT>, signal?: AbortSignal]
+      : [signal?: AbortSignal]
+  ) => {
+    const [auth, signal] = authenticate
+      ? [arg0 as string, arg1]
+      : [undefined, arg0 as AbortSignal | undefined];
+    const response = apiFetch(
+      route,
+      method,
+      body,
+      inputSchema,
+      undefined,
+      auth,
+      signal,
+    );
+    return await checkResponseWithoutBody(response);
   };
 }

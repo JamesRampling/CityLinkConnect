@@ -1,16 +1,20 @@
 import { User } from '#shared/models';
-import { post, postNoResponseContent } from '@/api/factories';
+import { requestIn, requestInOut } from '@/api/factories';
 import z from 'zod';
 
 export default {
-  register: postNoResponseContent(
+  register: requestIn(
+    'POST',
     '/api/account/register',
     User.extend({ password: z.string() }),
+    false,
   ),
 
-  login: post(
+  login: requestInOut(
+    'POST',
     '/api/account/login',
     z.object({ email: z.email(), password: z.string() }),
     z.jwt(),
+    true,
   ),
 };

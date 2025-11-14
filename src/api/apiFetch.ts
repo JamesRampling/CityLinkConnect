@@ -1,10 +1,44 @@
+import { ApiError } from '#shared/errors';
 import { Result } from '#shared/utils/Result';
 import z from 'zod';
+
+/**
+ * Generic error has occurred.
+ */
+interface FetchError {
+  type: 'fetch-error';
+  status?: number;
+  error: unknown;
+}
+
+/**
+ * The response body object failed to be parsed.
+ */
+interface DataParseError<T> {
+  type: 'fetch-data-parse';
+  error: Error | z.ZodError<T>;
+}
+
+/**
+ * The error object (ApiError) failed to be parsed.
+ */
+interface ErrorObjectParseError {
+  type: 'fetch-error-obj-parse';
+  error: Error | z.ZodError<typeof ApiError>;
+}
+
+type FetchResult<T> = Result<
+  T,
+  | z.infer<typeof ApiError>
+  | FetchError
+  | DataParseError<T>
+  | ErrorObjectParseError
+>;
 
 export function apiFetch(
   route: string,
   method: RequestInit['method'],
-  data: z.input<typeof inputSchema>,
+  body: z.input<typeof inputSchema>,
   inputSchema?: z.ZodType,
   outputSchema?: z.ZodType,
   auth?: string,
@@ -19,9 +53,64 @@ export function apiFetch(
       ...(auth ? { Authorization: `Bearer ${auth}` } : {}),
       ...headers,
     },
-    body: data ? JSON.stringify(data) : undefined,
+    body: body ? JSON.stringify(body) : undefined,
     signal,
   });
+}
+
+export async function checkResponseWithBody<Output extends z.ZodType>(
+  res: Promise<Response>,
+  outputSchema: Output,
+): Promise<FetchResult<z.infer<Output>>> {
+  let status: number | undefined;
+
+  try {
+    const response = await res;
+    status = response.status;
+
+    if (response.ok) {
+      const { ok, data, error } = await parseResultBody(response, outputSchema);
+
+      if (ok) {
+        return Result.ok(data);
+      }
+
+      return Result.error({ type: 'fetch-data-parse', status, error });
+    }
+
+    const { ok, data, error } = await parseResultBody(response, ApiError);
+
+    if (ok) {
+      return Result.error(data);
+    }
+
+    return Result.error({ type: 'fetch-error-obj-parse', status, error });
+  } catch (error) {
+    return Result.error({ type: 'fetch-error', error, status });
+  }
+}
+
+export async function checkResponseWithoutBody(
+  res: Promise<Response>,
+): Promise<FetchResult<undefined>> {
+  let status: number | undefined;
+  try {
+    const response = await res;
+    status = response.status;
+
+    if (response.ok) {
+      return Result.ok(undefined);
+    }
+    const { ok, data, error } = await parseResultBody(response, ApiError);
+
+    if (ok) {
+      return Result.error(data);
+    }
+
+    return Result.error({ type: 'fetch-error-obj-parse', status, error });
+  } catch (error) {
+    return Result.error({ type: 'fetch-error', error, status });
+  }
 }
 
 export async function parseResultBody<T extends z.ZodType>(
