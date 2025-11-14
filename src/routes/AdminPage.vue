@@ -12,7 +12,7 @@ interface UserBooking {
   message: string;
 }
 
-interface User{
+interface User {
   id: number;
   name: string;
   email: string;
@@ -111,31 +111,34 @@ const page = ref(1);
     </div>
     <div id="MainContent">
       <div v-if="page === 1">
-        <list>
-          <li v-for="user in generateUsers()" :key="user.id">
-            <strong>{{ user.name }}</strong> — {{ user.email }} 
+        <ul id="ItemsDisplayColumn">
+          <li
+            v-for="user in generateUsers()"
+            :key="user.id"
+            class="clickable-card"
+          >
+            <strong>{{ user.name }}</strong> — {{ user.email }}
             <span v-if="user.isBanned">(Banned)</span>
           </li>
-        </list>
+        </ul>
       </div>
       <div v-else-if="page === 2">
-        <ul>
-          <li v-for="(b, i) in bookings" :key="i">
+        <ul id="ItemsDisplayColumn">
+          <li v-for="(b, i) in bookings" :key="i" class="clickable-card">
             <strong>{{ b.name }}</strong> — {{ b.service }}: {{ b.message }}
           </li>
         </ul>
       </div>
       <div v-else-if="page === 3">
         <article
-      v-for="item in articles"
-      :key="item.title"
-      class="clickable-card"
-      @click="$router.push(`/announcement/${item.id}`)"
-    >
-      <h2>{{ item.title }}</h2>
-      <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
-      <p>{{ item.content }}</p>
-    </article>
+          v-for="item in articles"
+          :key="item.title"
+          class="clickable-card"
+        >
+          <h2>{{ item.title }}</h2>
+          <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
+          <p>{{ item.content }}</p>
+        </article>
       </div>
     </div>
   </div>
@@ -143,8 +146,10 @@ const page = ref(1);
 
 <style lang="css" scoped>
 .squareButton {
-  width: 100%;
   padding-top: 10%;
+  width: 100%;
+
+  height: 25sp;
   padding-bottom: 10%;
   text-align: center;
   font-size: medium;
@@ -152,7 +157,9 @@ const page = ref(1);
   background-color: lightgray;
   line-height: 50%;
   border: 1px solid #ccc;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
   font-weight: bold;
   cursor: pointer;
 }
@@ -167,8 +174,17 @@ const page = ref(1);
   flex-direction: row;
   display: flex;
 }
-#SideBar {
+.SideBar {
   flex-direction: column;
   display: flex;
+  width: 500sp;
+  height: 20sp;
+}
+#MainContent {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  display: flex;
+  align-items: baseline;
 }
 </style>
