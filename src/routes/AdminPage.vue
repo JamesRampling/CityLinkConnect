@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { number } from 'zod';
 
 const props = defineProps({
-  id: { type: number, required: false, default: 1345423331 },
+  id: { type: Number, required: false, default: 1345423331 },
   name: { type: String, required: false, default: 'AdminName' },
 });
 
@@ -12,8 +11,25 @@ interface UserBooking {
   service: string;
   message: string;
 }
-function generateUserBooking() {
-  const bookingList: UserBooking = [
+
+interface User{
+  id: number;
+  name: string;
+  email: string;
+  isBanned: boolean;
+}
+
+function generateUsers(): User[] {
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    name: `User${i + 1}`,
+    email: `user${i + 1}@example.com`,
+    isBanned: false,
+  }));
+}
+
+function generateUserBooking(): UserBooking[] {
+  return [
     {
       name: 'user1',
       service: 'PetService',
@@ -67,7 +83,20 @@ function generateUserBooking() {
   ];
 }
 
+const bookings = ref<UserBooking[]>(generateUserBooking());
+
 const userList = ['User1', 'User2', 'User3'];
+
+const articles = Array.from({ length: 5 }, (_, i) => ({
+  id: i,
+  title: 'Scheduled Road Maintenance',
+  date: new Date(`2025-10-${(i + 1).toString().padStart(2, '0')}`),
+  content: `
+      The council will begin scheduled road maintenance on Main Street and
+      adjoining roads from the 10th of October to the 14th of October.
+      Residents are advised to plan alternative routes.
+    `,
+}));
 
 const page = ref(1);
 </script>
@@ -81,9 +110,33 @@ const page = ref(1);
       <button class="squareButton" @click="page = 3">Content</button>
     </div>
     <div id="MainContent">
-      <div v-if="page === 1"></div>
-      <div v-else-if="page === 2"></div>
-      <div v-else-if="page === 3"></div>
+      <div v-if="page === 1">
+        <list>
+          <li v-for="user in generateUsers()" :key="user.id">
+            <strong>{{ user.name }}</strong> — {{ user.email }} 
+            <span v-if="user.isBanned">(Banned)</span>
+          </li>
+        </list>
+      </div>
+      <div v-else-if="page === 2">
+        <ul>
+          <li v-for="(b, i) in bookings" :key="i">
+            <strong>{{ b.name }}</strong> — {{ b.service }}: {{ b.message }}
+          </li>
+        </ul>
+      </div>
+      <div v-else-if="page === 3">
+        <article
+      v-for="item in articles"
+      :key="item.title"
+      class="clickable-card"
+      @click="$router.push(`/announcement/${item.id}`)"
+    >
+      <h2>{{ item.title }}</h2>
+      <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
+      <p>{{ item.content }}</p>
+    </article>
+      </div>
     </div>
   </div>
 </template>
@@ -91,7 +144,6 @@ const page = ref(1);
 <style lang="css" scoped>
 .squareButton {
   width: 100%;
-  height: auto;
   padding-top: 10%;
   padding-bottom: 10%;
   text-align: center;
@@ -99,12 +151,12 @@ const page = ref(1);
   font-family: Arial, Helvetica, sans-serif;
   background-color: lightgray;
   line-height: 50%;
-  border: 1px;
-  transition: 1.2s;
-  height: auto;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease, color 0.2s ease;
   font-weight: bold;
+  cursor: pointer;
 }
-.squarebutton:hover {
+.squareButton:hover {
   background-color: black;
   color: white;
 }
@@ -115,7 +167,7 @@ const page = ref(1);
   flex-direction: row;
   display: flex;
 }
-#sidebar {
+#SideBar {
   flex-direction: column;
   display: flex;
 }
