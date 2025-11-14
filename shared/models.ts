@@ -15,27 +15,27 @@ export const User = z.object({
   given_names: z.string(),
   last_name: z.string(),
   email: z.email(),
-  phone: z.string(),
+  phone: z.string().regex(/0[0-9]{9}/, 'Must be a valid phone number.'),
 });
 
 export const Booking = z.object({
   booking_id: tableId.default(0),
   user_id: tableId.nullable(),
   service_id: tableId.nullable(),
-  booking_datetime: z.iso.datetime(),
+  booking_datetime: z.iso.datetime({ local: true }),
   notes: z.string().nullable(),
 });
 
 export const Feedback = z.object({
   feedback_id: tableId.default(0),
   email: z.email(),
-  subject: z.string(),
-  message: z.string(),
+  subject: z.string().min(3),
+  message: z.string().min(10),
 });
 
 export const Announcement = z.object({
   announcement_id: tableId.default(0),
-  sort_datetime: z.iso.datetime(),
+  sort_datetime: z.iso.datetime({ local: true }),
   config: z.string(),
 });
 
