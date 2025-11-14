@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import AccessibilityPopup from '@/components/AccessibilityPopup.vue';
-import IconAccessibility from '@/components/icons/IconAccessibility.vue';
+import AccessibilityMenu from '@/components/AccessibilityMenu.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconUser from '@/components/icons/IconUser.vue';
-
 import { useUser } from '@/user';
+import { useMediaQuery } from '@/utils/mediaQuery';
 import { ref } from 'vue';
 
 const userState = useUser();
-
-const accessibilityButton = ref<HTMLButtonElement>();
-const accessibilityPopup = ref<InstanceType<typeof AccessibilityPopup>>();
-
 const hamburgerMenuExpanded = ref(false);
+
+const { matches: isNarrowScreen } = useMediaQuery('(width < 80ch)');
 </script>
 
 <template>
-  <header class="">
+  <header>
     <img class="logo-image" src="/favicon.svg" alt="" />
 
     <button
       class="nav-toggle-button button-outlined"
+      aria-label="Toggle navigation menu"
       @click.stop="hamburgerMenuExpanded = !hamburgerMenuExpanded"
     >
-      <IconMenu />
+      <IconMenu aria-hidden="true" />
     </button>
 
     <nav
@@ -38,13 +36,7 @@ const hamburgerMenuExpanded = ref(false);
     </nav>
 
     <div class="end-header-buttons">
-      <button
-        ref="accessibilityButton"
-        class="button-outlined"
-        @click="accessibilityPopup?.show()"
-      >
-        <IconAccessibility />Accessiblity
-      </button>
+      <AccessibilityMenu :label-hidden="isNarrowScreen" />
 
       <span v-if="userState === undefined">
         <router-link to="/login" class="button-filled">Login</router-link>
@@ -65,7 +57,6 @@ const hamburgerMenuExpanded = ref(false);
     :data-expanded="hamburgerMenuExpanded || undefined"
     @click="hamburgerMenuExpanded = false"
   ></div>
-  <AccessibilityPopup ref="accessibilityPopup" :target="accessibilityButton!" />
 </template>
 
 <style scoped>
@@ -81,14 +72,11 @@ header {
   top: 0;
   z-index: 1000;
   background: var(--header-bgcolor);
+  color: var(--header-color);
 }
 
 .logo-image {
   width: 2.5rem;
-
-  @media (prefers-color-scheme: dark) {
-    filter: invert(1) hue-rotate(180deg) brightness(1.2);
-  }
 }
 
 nav {
@@ -112,7 +100,7 @@ nav {
   z-index: 100;
 }
 
-@media (width < 100ch) {
+@media (width < 65ch) {
   .nav-toggle-button {
     display: flex;
   }

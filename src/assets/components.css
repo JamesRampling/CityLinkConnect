@@ -13,7 +13,8 @@
   cursor: pointer;
   text-decoration: none;
   justify-content: center;
-  min-height: 2.2rem;
+  min-height: 2.5rem;
+  align-items: center;
 
   &:focus-visible {
     outline: var(--button-focus-outline);
@@ -60,18 +61,16 @@
 }
 
 .page-wrapper {
-  max-width: 100ch;
-  width: fit-content;
+  display: grid;
+  max-width: 90ch;
   margin-inline: auto;
-  padding-inline: 1rem;
-  margin-block-start: 1rem;
+  padding: 1rem;
 }
 
 .form {
   display: grid;
   gap: var(--form-gap);
   width: min(60ch, 90vw);
-  margin-block-start: 2rem;
 }
 
 .button-row {
@@ -80,29 +79,58 @@
 }
 
 .card {
+  display: block;
   color: var(--card-color);
   background-color: var(--card-bgcolor);
   border: 1px solid var(--card-border-color);
   border-radius: 2rem;
   padding: 1.5rem;
+
+  > hgroup {
+    margin-block: 0 0.5rem;
+  }
+
+  .title {
+    margin-block: 0 0.5rem;
+  }
+
+  .subtitle {
+    margin-block: 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-muted);
+  }
+
+  &.clickable {
+    transition-property: box-shadow, background-color, color, border-color;
+    transition: 200ms;
+
+    &:hover {
+      color: var(--card-hover-color);
+      background-color: var(--card-hover-bgcolor);
+      border-color: var(--card-hover-border-color);
+      box-shadow: var(--card-hover-shadow);
+      text-decoration: none;
+    }
+
+    &:active {
+      transition-duration: 50ms;
+      color: var(--card-active-color);
+      background-color: var(--card-active-bgcolor);
+      border-color: var(--card-active-border-color);
+      box-shadow: var(--card-active-shadow);
+      text-decoration: none;
+    }
+  }
+
+  &:focus-visible {
+    transition-duration: 50ms;
+    background-color: var(--card-focus-background-color);
+    outline: var(--card-focus-outline);
+    border-color: var(--card-focus-border-color);
+  }
 }
 
-.clickable-card {
-  color: var(--card-color);
-  background-color: var(--card-bgcolor);
-  border: 1px solid var(--card-border-color);
-  border-radius: 2rem;
-  padding: 1.5rem;
-
-  cursor: pointer;
-  transition: box-shadow 200ms;
-
-  &:hover {
-    box-shadow: 0 10px 16px light-dark(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.9));
-  }
-
-  &:active {
-    transition-duration: 100ms;
-    box-shadow: 0 5px 8px rgb(0 0 0 / 0.5);
-  }
+.separator {
+  border-bottom: 1px solid var(--border-color);
 }

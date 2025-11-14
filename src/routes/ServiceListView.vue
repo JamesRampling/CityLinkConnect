@@ -1,46 +1,36 @@
 <script setup lang="ts">
-// TODO: hook up to server
-const services = [
-  { id: 1, name: 'Pet Registration', description: 'Register an animal.' },
-  {
-    id: 2,
-    name: 'Bin Collection',
-    description: 'Find out more about waste collection services.',
-  },
-];
+import { useExampleData } from '@/exampleData';
+import { computed } from 'vue';
+
+const { services } = useExampleData();
+
+const serviceItems = computed(() =>
+  services.value.map((e, i) => ({ config: e, service_id: i })),
+);
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1>Service Bookings</h1>
 
-    <div class="card-grid">
-      <article
-        v-for="item in services"
-        :key="item.id"
-        class="clickable-card"
-        @click="$router.push(`/booking/${item.id}`)"
+    <div class="service-list">
+      <router-link
+        v-for="{ service_id, config } in serviceItems"
+        :key="service_id"
+        :to="`/booking/${service_id}`"
+        class="card clickable"
       >
-        <h2>{{ item.name }}</h2>
-        <p>{{ item.description }}</p>
-      </article>
+        <h2 class="title">{{ config.name }}</h2>
+        <p>{{ config.description }}</p>
+      </router-link>
     </div>
   </div>
 </template>
 
 <style scoped>
-article {
-  h2,
-  p {
-    margin: 0;
-  }
-}
-
-.card-grid {
-  margin-block-start: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.service-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
 }
 </style>
