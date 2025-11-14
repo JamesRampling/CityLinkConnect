@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useExampleData } from '@/exampleData';
+import { formatDate } from '@/utils';
+import { computed, ref } from 'vue';
 
 interface UserBooking {
   name: string;
@@ -80,18 +82,22 @@ function generateUserBooking(): UserBooking[] {
 
 const bookings = ref<UserBooking[]>(generateUserBooking());
 
-const articles = Array.from({ length: 5 }, (_, i) => ({
-  id: i,
-  title: 'Scheduled Road Maintenance',
-  date: new Date(`2025-10-${(i + 1).toString().padStart(2, '0')}`),
-  content: `
-      The council will begin scheduled road maintenance on Main Street and
-      adjoining roads from the 10th of October to the 14th of October.
-      Residents are advised to plan alternative routes.
-    `,
-}));
+const { announcements, services } = useExampleData();
 
-const page = ref(1);
+const articles = computed(() =>
+  announcements.value
+    .map((e, i) => ({ config: e, announcement_id: i }))
+    .sort(
+      (a, b) =>
+        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
+    ),
+);
+
+const serviceItems = computed(() =>
+  services.value.map((e, i) => ({ config: e, service_id: i })),
+);
+
+const page = ref('user');
 </script>
 
 <template>
@@ -99,60 +105,85 @@ const page = ref(1);
   <div class="flex-container">
     <div id="SideBar">
       <button
-        :class="{ squareButton: true, isSelected: page === 1 }"
-        @click="page = 1"
+        :class="{ squareButton: true, isSelected: page === 'user' }"
+        @click="page = 'user'"
       >
         Users
       </button>
       <button
-        :class="{ squareButton: true, isSelected: page === 2 }"
-        @click="page = 2"
+        :class="{ squareButton: true, isSelected: page === 'booking' }"
+        @click="page = 'booking'"
       >
         Bookings
       </button>
       <button
-        :class="{ squareButton: true, isSelected: page === 3 }"
-        @click="page = 3"
+        :class="{ squareButton: true, isSelected: page === 'content' }"
+        @click="page = 'content'"
       >
         Content
       </button>
+      <button
+        :class="{ squareButton: true, isSelected: page === 'service' }"
+        @click="page = 'service'"
+      >
+        Services
+      </button>
+      <button
+        :class="{ squareButton: true, isSelected: page === 'feedback' }"
+        @click="page = 'feedback'"
+      >
+        Feedback
+      </button>
     </div>
     <div id="MainContent">
-      <div v-if="page === 1">
+      <div v-if="page === 'user'">
         <ul id="ItemsDisplayColumn">
           <li
             v-for="user in generateUsers()"
             :key="user.id"
-            class="clickable-card"
+            class="clickable card"
           >
             <strong>{{ user.name }}</strong> — {{ user.email }}
             <span v-if="user.isBanned">(Banned)</span>
           </li>
         </ul>
       </div>
-      <div v-else-if="page === 2">
+      <div v-else-if="page === 'booking'">
         <ul id="ItemsDisplayColumn">
-          <li v-for="(b, i) in bookings" :key="i" class="clickable-card">
+          <li v-for="(b, i) in bookings" :key="i" class="clickable card">
             <strong>{{ b.name }}</strong> — {{ b.service }}: {{ b.message }}
           </li>
         </ul>
       </div>
-      <div v-else-if="page === 3">
+      <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
         <article
           v-for="item in articles"
-          :key="item.title"
-          class="clickable-card"
+          :key="item.config.title"
+          class="clickable card"
         >
-          <h2>{{ item.title }}</h2>
-          <h3>{{ item.date.toLocaleDateString('en-AU') }}</h3>
-          <p>{{ item.content }}</p>
+          <button>Edit</button>
+          <h2>{{ item.config.title }}</h2>
+          <h3>{{ formatDate(item.config.date) }}</h3>
+          <p>{{ item.config.content }}</p>
         </article>
+      </div>
+      <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
+        <li v-for="(e, i) in services" :key="i" class="clickable card">
+          <button>Edit</button>
+          <strong>{{ e.fees }}</strong> — {{ e.name }}
+        </li>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="css" scoped>
+.SideBar {
+  flex-direction: column;
+  display: flex;
+  width: 8rem;
+  height: 2rem;
+}
 .squareButton {
   padding-top: 10%;
   width: 100%;
@@ -178,23 +209,25 @@ const page = ref(1);
   background-color: var(--accent-color);
   color: var(--on-accent-color);
 }
+
 .flex-container {
   flex: auto;
   flex-wrap: wrap;
   flex-direction: row;
   display: flex;
 }
-.SideBar {
-  flex-direction: column;
-  display: flex;
-  width: 500sp;
-  height: 20sp;
-}
+
 #MainContent {
   margin: auto;
   width: 50%;
   padding: 10px;
   display: flex;
   align-items: baseline;
+}
+#ItemsDisplayColumn {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 </style>
