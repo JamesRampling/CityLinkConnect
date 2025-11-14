@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-defineProps({
-  id: { type: Number, required: false, default: 1345423331 },
-  name: { type: String, required: false, default: 'AdminName' },
-});
-
 interface UserBooking {
   name: string;
   service: string;
@@ -100,7 +95,7 @@ const page = ref(1);
 </script>
 
 <template>
-  <h1>Good morning {{ name }}</h1>
+  <h1>Good morning Admin</h1>
   <div class="flex-container">
     <div id="SideBar">
       <button class="squareButton" @click="page = 1">Users</button>

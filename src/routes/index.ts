@@ -23,7 +23,7 @@ const router = createRouter({
     { path: '/login', component: LoginView },
     { path: '/feedback', component: FeedbackFormView },
     { path: '/:catchAll(.*)*', component: NotFoundView },
-    { path: '/admin/:id', component: AdminPage },
+    { path: '/admin', component: AdminPage },
   ],
 });
 
