@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const props = defineProps({
+defineProps({
   id: { type: Number, required: false, default: 1345423331 },
   name: { type: String, required: false, default: 'AdminName' },
 });
@@ -84,8 +84,6 @@ function generateUserBooking(): UserBooking[] {
 }
 
 const bookings = ref<UserBooking[]>(generateUserBooking());
-
-const userList = ['User1', 'User2', 'User3'];
 
 const articles = Array.from({ length: 5 }, (_, i) => ({
   id: i,
