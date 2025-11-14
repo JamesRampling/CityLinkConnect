@@ -98,9 +98,24 @@ const page = ref(1);
   <h1>Good morning Admin</h1>
   <div class="flex-container">
     <div id="SideBar">
-      <button class="squareButton" @click="page = 1">Users</button>
-      <button class="squareButton" @click="page = 2">Bookings</button>
-      <button class="squareButton" @click="page = 3">Content</button>
+      <button
+        :class="{ squareButton: true, isSelected: page === 1 }"
+        @click="page = 1"
+      >
+        Users
+      </button>
+      <button
+        :class="{ squareButton: true, isSelected: page === 2 }"
+        @click="page = 2"
+      >
+        Bookings
+      </button>
+      <button
+        :class="{ squareButton: true, isSelected: page === 3 }"
+        @click="page = 3"
+      >
+        Content
+      </button>
     </div>
     <div id="MainContent">
       <div v-if="page === 1">
@@ -146,21 +161,23 @@ const page = ref(1);
   padding-bottom: 10%;
   text-align: center;
   font-size: medium;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: lightgray;
+  background: transparent;
   line-height: 50%;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
   font-weight: bold;
   cursor: pointer;
 }
-.squareButton:hover {
-  background-color: black;
-  color: white;
-}
 
+.squareButton:hover {
+  background-color: var(--button-outlined-hover-bgcolor);
+}
+.squareButton.isSelected {
+  background-color: var(--accent-color);
+  color: var(--on-accent-color);
+}
 .flex-container {
   flex: auto;
   flex-wrap: wrap;
