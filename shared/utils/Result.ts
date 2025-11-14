@@ -1,6 +1,8 @@
 export type Result<T, E> = (ResultOk<T> | ResultErr<E>) & {
   map<O>(fn: (inner: T) => O): Result<O, E>;
   and_then<O>(fn: (inner: T) => Result<O, E>): Result<O, E>;
+  or_else<O>(fn: (error: E) => Result<T, O>): Result<T, O>;
+  or_throw(fn: (error: E) => Error): T;
 };
 
 interface ResultOk<T> {
@@ -45,6 +47,14 @@ export const Result = {
         return fn(this.data);
       },
 
+      or_else<O>() {
+        return this as ResultOk<T> as Result<T, O>;
+      },
+
+      or_throw() {
+        return this.data;
+      },
+
       unwrap() {
         return this.data;
       },
@@ -66,6 +76,14 @@ export const Result = {
 
       and_then<O>() {
         return this as ResultErr<E> as Result<O, E>;
+      },
+
+      or_else(fn) {
+        return fn(this.error);
+      },
+
+      or_throw(fn) {
+        throw fn(this.error);
       },
 
       unwrap() {
