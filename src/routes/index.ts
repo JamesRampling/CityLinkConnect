@@ -1,32 +1,28 @@
-+import {
+import {
   createRouter,
   createWebHistory,
   type RouteLocationNormalized,
 } from 'vue-router';
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: () => import('@/routes/HomeView.vue') },
-    { path: '/about', component: () => import('@/routes/AboutView.vue') },
-    {
-      path: '/services',
-      component: () => import('@/routes/ServiceListView.vue'),
-    },
+    { path: '/', component: HomeView },
+    { path: '/about', component: AboutView },
+    { path: '/services', component: ServiceListView },
     {
       path: '/booking/:id',
-      component: () => import('@/routes/BookingFormView.vue'),
+      component: BookingFormView,
       props: convertProps({ id: Number }),
     },
     {
       path: '/announcement/:id',
-      component: () => import('@/routes/AnnouncementView.vue'),
+      component: AnnouncementView,
       props: convertProps({ id: Number }),
     },
     {
       path: '/user/:id',
-      component: () => import('@/routes/UserProfileView.vue'),
+      component: UserProfileView,
       props: convertProps({ id: Number }),
     },
     { path: '/login', component: LoginView },
