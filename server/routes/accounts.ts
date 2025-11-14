@@ -109,4 +109,29 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+export function authorize<R, B>(
+  predicate: (
+    request: Request<R, unknown, B>,
+    auth: AuthenticationStatus,
+  ) => boolean,
+) {
+  return (req: Request<R, unknown, B>, res: Response, next: NextFunction) => {
+    if (req.authentication === undefined) {
+      Responses.error(res, {
+        type: 'unauthorized',
+        status: 401,
+        title: 'This resource requires authorization.',
+      });
+    } else if (!predicate(req, req.authentication)) {
+      Responses.error(res, {
+        type: 'forbidden',
+        status: 403,
+        title: 'You do not have permission to access this resource.',
+      });
+    } else next();
+  };
+}
+
+export const authorizeAdmin = authorize((_, auth) => auth.is_admin);
+
 export default route;
