@@ -9,6 +9,12 @@ export const ValidationError = z.object({
   route_issues: validationIssues.nullable(),
 });
 
+export const ConstraintError = z.object({
+  type: z.literal('constraint-error'),
+  title: z.string(),
+  status: z.literal(400),
+});
+
 export const NotFoundError = z.object({
   type: z.literal('not-found'),
   title: z.string(),
@@ -36,6 +42,7 @@ export const ServerError = z.object({
 
 export const ApiError = z.discriminatedUnion('type', [
   ValidationError,
+  ConstraintError,
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,

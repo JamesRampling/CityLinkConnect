@@ -50,3 +50,23 @@ export const Responses = {
     });
   },
 };
+
+export class ResponseError extends Error {
+  readonly inner: z.infer<typeof ApiError>;
+
+  constructor(inner: z.infer<typeof ApiError>) {
+    super();
+    this.inner = inner;
+  }
+}
+
+// To be able to throw as an expression.
+export function raise(error: Error | string): never {
+  if (typeof error === 'string') throw Error(error);
+  throw error;
+}
+
+export function die(reason: string): never {
+  console.error(`fatal error: ${reason}`);
+  process.exit(1);
+}

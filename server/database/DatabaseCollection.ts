@@ -1,3 +1,4 @@
+import { ResponseError } from '#server/utils/Responses';
 import { Result } from '#shared/utils/Result';
 import type {
   DatabaseSync,
@@ -170,6 +171,26 @@ interface UnknownError {
   error?: unknown;
 }
 
+export function queryErrorToResponse(error: QueryError): ResponseError {
+  if (
+    error.type === 'sqlite-error' &&
+    sqliteConstraintErrorCodes.includes(error.errcode)
+  ) {
+    return new ResponseError({
+      type: 'constraint-error',
+      status: 400,
+      title: 'The request violated a database constraint.',
+    });
+  } else {
+    return new ResponseError({
+      type: 'server-error',
+      status: 500,
+      title: 'An unknown database error occured.',
+      details: error,
+    });
+  }
+}
+
 function getSQLiteErrorCode(e: unknown): number | undefined {
   if (
     typeof e === 'object' &&
@@ -182,3 +203,7 @@ function getSQLiteErrorCode(e: unknown): number | undefined {
     return e.errcode;
   }
 }
+
+const sqliteConstraintErrorCodes = [
+  19, 275, 531, 3091, 787, 1043, 1299, 2835, 1555, 2579, 1811, 2067, 2323,
+];

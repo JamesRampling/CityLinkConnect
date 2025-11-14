@@ -166,3 +166,8 @@ Content-Type: application/json
   "email": "john+citizen@example.invalid",
   "password": "hunter2!"
 }
+
+###
+
+POST {{host}}/api/account/info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMDkwMjMzLCJleHAiOjE3NjMxNzY2MzMsInN1YiI6IjMifQ.3UcPVSEZgAB1BsEBQGaLqMt7FO6aToIRimVivNnlL2U
