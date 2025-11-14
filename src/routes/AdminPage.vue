@@ -201,7 +201,16 @@ const page = ref('user');
   font-weight: bold;
   cursor: pointer;
 }
-
+#MainContent {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  display: flex;
+  align-items: baseline;
+  border: 1px;
+  border-color: var(--border-color);
+  border-style: double;
+}
 .squareButton:hover {
   background-color: var(--button-outlined-hover-bgcolor);
 }
@@ -217,13 +226,6 @@ const page = ref('user');
   display: flex;
 }
 
-#MainContent {
-  margin: auto;
-  width: 50%;
-  padding: 10px;
-  display: flex;
-  align-items: baseline;
-}
 #ItemsDisplayColumn {
   padding: 0;
   display: flex;
