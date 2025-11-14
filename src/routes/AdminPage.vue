@@ -156,6 +156,7 @@ const page = ref('user');
         </ul>
       </div>
       <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
+        <button>Add Content</button>
         <article
           v-for="item in articles"
           :key="item.config.title"
@@ -168,6 +169,7 @@ const page = ref('user');
         </article>
       </div>
       <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
+        <button>Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
           <button>Edit</button>
           <strong>{{ e.fees }}</strong> — {{ e.name }}
