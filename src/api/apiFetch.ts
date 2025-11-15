@@ -119,7 +119,7 @@ export async function parseResultBody<T extends z.ZodType>(
 ): Promise<
   Result<z.infer<T>, z.ZodError<T> | SyntaxError | TypeError | Error>
 > {
-  if (response.headers.get('Content-Type') !== 'application/json') {
+  if (!response.headers.get('Content-Type')?.startsWith('application/json')) {
     return Result.error(TypeError('Content-Type is not application/json.'));
   }
 

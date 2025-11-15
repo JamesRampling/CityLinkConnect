@@ -2,17 +2,19 @@ import { User } from '#shared/models';
 import { requestIn, requestInOut } from '@/api/factories';
 import z from 'zod';
 
+const baseUrl = `/api/account`;
+
 export default {
   register: requestIn(
     'POST',
-    '/api/account/register',
+    `${baseUrl}/register`,
     User.extend({ password: z.string() }),
     false,
   ),
 
   login: requestInOut(
     'POST',
-    '/api/account/login',
+    `${baseUrl}/login`,
     z.object({ email: z.email(), password: z.string() }),
     z.jwt(),
     true,
