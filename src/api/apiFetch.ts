@@ -30,8 +30,8 @@ interface ErrorObjectParseError {
 }
 
 export type FetchResult<T extends z.ZodType | undefined> = Result<
-  T extends undefined ? undefined : z.infer<T>,
-  | z.infer<typeof ApiError>
+  T extends undefined ? undefined : z.output<T>,
+  | z.output<typeof ApiError>
   | FetchError
   | DataParseError<T>
   | ErrorObjectParseError
@@ -40,7 +40,7 @@ export type FetchResult<T extends z.ZodType | undefined> = Result<
 export function apiFetch(
   route: string,
   method: RequestInit['method'],
-  body: z.input<typeof inputSchema>,
+  body: z.output<typeof inputSchema>,
   inputSchema?: z.ZodType,
   outputSchema?: z.ZodType,
   auth?: string,
@@ -55,7 +55,7 @@ export function apiFetch(
       ...(auth ? { Authorization: `Bearer ${auth}` } : {}),
       ...headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: inputSchema ? JSON.stringify(inputSchema.encode(body)) : undefined,
     signal,
   });
 }

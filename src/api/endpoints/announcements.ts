@@ -1,4 +1,4 @@
-import { Announcement } from '#shared/models';
+import { AnnouncementWithXML } from '#shared/models';
 import { request, requestIn, requestInOut, requestOut } from '@/api/factories';
 
 const baseUrl = `/api/announcements`;
@@ -7,24 +7,30 @@ export default {
   /**
    * Get a list of all the announcements.
    */
-  all: requestOut(`GET`, baseUrl, Announcement.array(), false),
+  all: requestOut(`GET`, baseUrl, AnnouncementWithXML.array(), false),
 
   /**
    * Get a single announcement by its ID.
    */
-  single: requestOut(`GET`, `${baseUrl}/:id`, Announcement, false),
+  single: requestOut(`GET`, `${baseUrl}/:id`, AnnouncementWithXML, false),
 
   /**
    * Create a new announcement, requires authentication with admin permissions.
    * @returns Ok with the new announcement, or error if request failed.
    */
-  create: requestInOut(`POST`, baseUrl, Announcement, Announcement, true),
+  create: requestInOut(
+    `POST`,
+    baseUrl,
+    AnnouncementWithXML,
+    AnnouncementWithXML,
+    true,
+  ),
 
   /**
    * Update an existing announcement, requires authentication with admin
    * permissions.
    */
-  update: requestIn(`PUT`, `${baseUrl}/:id`, Announcement, true),
+  update: requestIn(`PUT`, `${baseUrl}/:id`, AnnouncementWithXML, true),
 
   /**
    * Delete an announcement, requires authentication with admin permissions.

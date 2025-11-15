@@ -1,36 +1,40 @@
 <script setup lang="ts">
+import api from '@/api';
 import IconBack from '@/components/icons/IconBack.vue';
-import { useExampleData } from '@/exampleData';
+import LoadedData from '@/components/LoadedData.vue';
 import NotFoundView from '@/routes/NotFoundView.vue';
 import { formatDate } from '@/utils';
-import { computed } from 'vue';
 
-const props = defineProps<{ id: number }>();
-
-const { announcements } = useExampleData();
-const announcement = computed(() => announcements.value[props.id]);
+defineProps<{ id: number }>();
 </script>
 
 <template>
-  <template v-if="announcement === undefined">
-    <NotFoundView />
-  </template>
-  <template v-else>
-    <div class="page-wrapper">
-      <router-link class="back-button button-filled" to="/"
-        ><IconBack />Back</router-link
-      >
-      <hgroup>
-        <h1>{{ announcement.title }}</h1>
-        <p>
-          <time :datetime="announcement.date">{{
-            formatDate(announcement.date, { dateStyle: 'full' })
-          }}</time>
-        </p>
-      </hgroup>
-      <p>{{ announcement.content }}</p>
-    </div>
-  </template>
+  <LoadedData :action="() => api.announcements.single(id)">
+    <template #loading>Loading...</template>
+
+    <template #ok="{ data: announcement }">
+      <div class="page-wrapper">
+        <router-link class="back-button button-filled" to="/"
+          ><IconBack />Back</router-link
+        >
+        <hgroup>
+          <h1>{{ announcement.config.title }}</h1>
+          <p>
+            <time :datetime="announcement.config.date">{{
+              formatDate(announcement.config.date, { dateStyle: 'full' })
+            }}</time>
+          </p>
+        </hgroup>
+        <p>{{ announcement.config.content }}</p>
+      </div>
+    </template>
+
+    <template #error="{ error }">
+      <NotFoundView v-if="error.type === 'not-found'" />
+      <!-- TODO: Add better error messages -->
+      <div v-else>An error occurred: {{ error }}</div>
+    </template>
+  </LoadedData>
 </template>
 
 <style scoped>

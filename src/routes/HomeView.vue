@@ -1,18 +1,7 @@
 <script setup lang="ts">
-import { useExampleData } from '@/exampleData';
+import api from '@/api';
+import LoadedData from '@/components/LoadedData.vue';
 import { formatDate } from '@/utils';
-import { computed } from 'vue';
-
-const { announcements } = useExampleData();
-
-const articles = computed(() =>
-  announcements.value
-    .map((e, i) => ({ config: e, announcement_id: i }))
-    .sort(
-      (a, b) =>
-        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
-    ),
-);
 </script>
 
 <template>
@@ -24,24 +13,37 @@ const articles = computed(() =>
   <div class="page-wrapper">
     <h1>CityLink Connect</h1>
 
-    <div class="announcements-wrapper">
-      <router-link
-        v-for="{ announcement_id: index, config: content } in articles"
-        :key="content.title"
-        class="card clickable"
-        :to="`/announcement/${index}`"
-        tabindex="0"
-      >
-        <hgroup>
-          <h2 class="title">{{ content.title }}</h2>
-          <p class="subtitle">
-            <time :datetime="content.date">{{ formatDate(content.date) }}</time>
-          </p>
-        </hgroup>
+    <LoadedData :action="() => api.announcements.all()">
+      <template #loading> Loading... </template>
 
-        <p>{{ content.content }}</p>
-      </router-link>
-    </div>
+      <template #ok="{ data: announcements }">
+        <div class="announcements-wrapper">
+          <router-link
+            v-for="{ announcement_id: index, config: content } in announcements"
+            :key="content.title"
+            class="card clickable"
+            :to="`/announcement/${index}`"
+            tabindex="0"
+          >
+            <hgroup>
+              <h2 class="title">{{ content.title }}</h2>
+              <p class="subtitle">
+                <time :datetime="content.date">{{
+                  formatDate(content.date)
+                }}</time>
+              </p>
+            </hgroup>
+
+            <p>{{ content.content }}</p>
+          </router-link>
+        </div>
+      </template>
+
+      <template #error="{ error }">
+        <!-- TODO: Add better error messages -->
+        An error occurred: {{ error }}
+      </template>
+    </LoadedData>
   </div>
 </template>
 

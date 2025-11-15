@@ -1,3 +1,4 @@
+import { AnnouncementContent, ServiceContent } from '#shared/xmlModels';
 import { z } from 'zod';
 
 const tableId = z.int().nonnegative();
@@ -6,6 +7,8 @@ export const Service = z.object({
   service_id: tableId.default(0),
   config: z.string(),
 });
+
+export const ServiceWithXML = Service.extend({ config: ServiceContent });
 
 export const User = z.object({
   user_id: tableId.default(0),
@@ -34,6 +37,10 @@ export const Announcement = z.object({
   announcement_id: tableId.default(0),
   sort_datetime: z.iso.datetime(),
   config: z.string(),
+});
+
+export const AnnouncementWithXML = Announcement.extend({
+  config: AnnouncementContent,
 });
 
 /**

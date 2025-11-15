@@ -1,29 +1,34 @@
 <script setup lang="ts">
-import { useExampleData } from '@/exampleData';
-import { computed } from 'vue';
-
-const { services } = useExampleData();
-
-const serviceItems = computed(() =>
-  services.value.map((e, i) => ({ config: e, service_id: i })),
-);
+import api from '@/api';
+import LoadedData from '@/components/LoadedData.vue';
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1>Service Bookings</h1>
 
-    <div class="service-list">
-      <router-link
-        v-for="{ service_id, config } in serviceItems"
-        :key="service_id"
-        :to="`/booking/${service_id}`"
-        class="card clickable"
-      >
-        <h2 class="title">{{ config.name }}</h2>
-        <p>{{ config.description }}</p>
-      </router-link>
-    </div>
+    <LoadedData :action="api.services.all">
+      <template #loading>Loading...</template>
+
+      <template #ok="{ data: services }">
+        <div class="service-list">
+          <router-link
+            v-for="{ service_id, config } in services"
+            :key="service_id"
+            :to="`/booking/${service_id}`"
+            class="card clickable"
+          >
+            <h2 class="title">{{ config.name }}</h2>
+            <p>{{ config.description }}</p>
+          </router-link>
+        </div>
+      </template>
+
+      <template #error="error">
+        <!-- TODO: Add better error messages -->
+        An error occurred: {{ error }}
+      </template>
+    </LoadedData>
   </div>
 </template>
 
