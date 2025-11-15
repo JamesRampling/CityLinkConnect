@@ -14,8 +14,9 @@ interface FetchError {
 /**
  * The response body object failed to be parsed.
  */
-interface DataParseError<T> {
+interface DataParseError<T extends z.ZodType | undefined> {
   type: 'fetch-data-parse';
+  status: number;
   error: Error | z.ZodError<T>;
 }
 
@@ -24,11 +25,12 @@ interface DataParseError<T> {
  */
 interface ErrorObjectParseError {
   type: 'fetch-error-obj-parse';
+  status: number;
   error: Error | z.ZodError<typeof ApiError>;
 }
 
-type FetchResult<T> = Result<
-  T,
+export type FetchResult<T extends z.ZodType | undefined> = Result<
+  T extends undefined ? undefined : z.infer<T>,
   | z.infer<typeof ApiError>
   | FetchError
   | DataParseError<T>
@@ -61,7 +63,7 @@ export function apiFetch(
 export async function checkResponseWithBody<Output extends z.ZodType>(
   res: Promise<Response>,
   outputSchema: Output,
-): Promise<FetchResult<z.infer<Output>>> {
+): Promise<FetchResult<Output>> {
   let status: number | undefined;
 
   try {
@@ -72,6 +74,8 @@ export async function checkResponseWithBody<Output extends z.ZodType>(
       const { ok, data, error } = await parseResultBody(response, outputSchema);
 
       if (ok) {
+        // @ts-expect-error Cannot assign to conditional type that allows
+        // undefined or zod type.
         return Result.ok(data);
       }
 
