@@ -9,7 +9,7 @@ export default {
   /**
    * Get a list of all the available services.
    */
-  all: requestOut('GET', baseUrl, Service, false),
+  all: requestOut('GET', baseUrl, Service.array(), false),
 
   /**
    * Get a single service by its id.

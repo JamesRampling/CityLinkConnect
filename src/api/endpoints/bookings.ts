@@ -8,7 +8,7 @@ export default {
    * Get list of all service bookings, admin gets every booking, regular user
    * gets just their bookings.
    */
-  all: requestOut('GET', baseUrl, Booking, true),
+  all: requestOut('GET', baseUrl, Booking.array(), true),
 
   /**
    * Get a single service booking, requires authentication with either admin

@@ -8,7 +8,7 @@ export default {
    * Get list of all feedback sent, requires authentication with admin
    * permissions.
    */
-  all: requestOut('GET', baseUrl, Feedback, true),
+  all: requestOut('GET', baseUrl, Feedback.array(), true),
 
   /**
    * Delete a feedback entry, requires authentication with admin permission.

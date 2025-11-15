@@ -7,7 +7,7 @@ export default {
   /**
    * Get a list of all the announcements.
    */
-  all: requestOut(`GET`, baseUrl, Announcement, false),
+  all: requestOut(`GET`, baseUrl, Announcement.array(), false),
 
   /**
    * Get a single announcement by its ID.
