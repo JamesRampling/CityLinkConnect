@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
+import IconRefresh from '@/components/icons/IconRefresh.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 
 defineProps<{ id: number }>();
 </script>
@@ -15,7 +18,9 @@ defineProps<{ id: number }>();
     >
     <h1>Book a service</h1>
     <LoadedData :action="() => api.services.single(id)">
-      <template #loading>Loading...</template>
+      <template #loading>
+        <LoadingSpinner />
+      </template>
 
       <template #ok="{ data: service }">
         <div class="content-wrapper">
@@ -63,9 +68,12 @@ defineProps<{ id: number }>();
         </div>
       </template>
 
-      <template #error="{ error }">
-        <!-- TODO: Add better error messages -->
-        An error occurred: {{ error }}
+      <template #error="{ error, retry }">
+        <ApiErrorMessage :error>
+          <button class="button-filled" @click="retry()">
+            <IconRefresh />Retry
+          </button>
+        </ApiErrorMessage>
       </template>
     </LoadedData>
   </div>

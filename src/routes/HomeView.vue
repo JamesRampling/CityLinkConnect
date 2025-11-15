@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
+import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { formatDate } from '@/utils';
 </script>
 
@@ -14,7 +17,9 @@ import { formatDate } from '@/utils';
     <h1>CityLink Connect</h1>
 
     <LoadedData :action="() => api.announcements.all()">
-      <template #loading> Loading... </template>
+      <template #loading>
+        <LoadingSpinner />
+      </template>
 
       <template #ok="{ data: announcements }">
         <div class="announcements-wrapper">
@@ -39,9 +44,12 @@ import { formatDate } from '@/utils';
         </div>
       </template>
 
-      <template #error="{ error }">
-        <!-- TODO: Add better error messages -->
-        An error occurred: {{ error }}
+      <template #error="{ error, retry }">
+        <ApiErrorMessage :error>
+          <button class="button-filled" @click="retry()">
+            <IconRefresh />Retry
+          </button>
+        </ApiErrorMessage>
       </template>
     </LoadedData>
   </div>
@@ -59,7 +67,6 @@ import { formatDate } from '@/utils';
   object-fit: cover;
   mask-image: linear-gradient(to top, transparent, black var(--gradient));
   margin-bottom: calc(var(--overlap) * -1);
-  z-index: -1;
 }
 
 .page-wrapper {

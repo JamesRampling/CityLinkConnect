@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
+import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1>Service Bookings</h1>
 
-    <LoadedData :action="api.services.all">
-      <template #loading>Loading...</template>
+    <LoadedData :action="() => api.services.all()">
+      <template #loading>
+        <LoadingSpinner />
+      </template>
 
       <template #ok="{ data: services }">
         <div class="service-list">
@@ -24,9 +29,12 @@ import LoadedData from '@/components/LoadedData.vue';
         </div>
       </template>
 
-      <template #error="error">
-        <!-- TODO: Add better error messages -->
-        An error occurred: {{ error }}
+      <template #error="{ error, retry }">
+        <ApiErrorMessage :error>
+          <button class="button-filled" @click="retry()">
+            <IconRefresh />Retry
+          </button>
+        </ApiErrorMessage>
       </template>
     </LoadedData>
   </div>

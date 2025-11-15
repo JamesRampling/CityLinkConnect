@@ -14,10 +14,15 @@ watch(
   },
   { immediate: true },
 );
+
+async function execute() {
+  result.value = undefined;
+  result.value = await props.action();
+}
 </script>
 
 <template>
   <slot v-if="result === undefined" name="loading"></slot>
   <slot v-else-if="result.ok" name="ok" :data="result.data"></slot>
-  <slot v-else name="error" :error="result.error"></slot>
+  <slot v-else name="error" :error="result.error" :retry="execute"></slot>
 </template>

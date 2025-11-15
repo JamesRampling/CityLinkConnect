@@ -5,8 +5,8 @@ import z from 'zod';
 /**
  * Generic error has occurred.
  */
-interface FetchError {
-  type: 'fetch-error';
+interface FetchUnknownError {
+  type: 'fetch-unknown-error';
   status?: number;
   error: unknown;
 }
@@ -29,12 +29,15 @@ interface ErrorObjectParseError {
   error: Error | z.ZodError<typeof ApiError>;
 }
 
+export type FetchError<T extends z.ZodType | undefined> =
+  | z.output<typeof ApiError>
+  | FetchUnknownError
+  | DataParseError<T>
+  | ErrorObjectParseError;
+
 export type FetchResult<T extends z.ZodType | undefined> = Result<
   T extends undefined ? undefined : z.output<T>,
-  | z.output<typeof ApiError>
-  | FetchError
-  | DataParseError<T>
-  | ErrorObjectParseError
+  FetchError<T>
 >;
 
 export function apiFetch(
@@ -90,7 +93,7 @@ export async function checkResponseWithBody<Output extends z.ZodType>(
 
     return Result.error({ type: 'fetch-error-obj-parse', status, error });
   } catch (error) {
-    return Result.error({ type: 'fetch-error', error, status });
+    return Result.error({ type: 'fetch-unknown-error', error, status });
   }
 }
 
@@ -113,7 +116,7 @@ export async function checkResponseWithoutBody(
 
     return Result.error({ type: 'fetch-error-obj-parse', status, error });
   } catch (error) {
-    return Result.error({ type: 'fetch-error', error, status });
+    return Result.error({ type: 'fetch-unknown-error', error, status });
   }
 }
 
