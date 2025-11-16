@@ -59,10 +59,11 @@ Accept: application/json
 POST {{host}}/api/bookings
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
-  "user_id": null,
-  "service_id": null,
+  "user_id": 1,
+  "service_id": 1,
   "booking_datetime": "2025-10-20T08:00:00Z",
   "notes": "...created..."
 }
@@ -72,10 +73,11 @@ Content-Type: application/json
 PUT {{host}}/api/bookings/1
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
-  "user_id": null,
-  "service_id": null,
+  "user_id": 1,
+  "service_id": 2,
   "booking_datetime": "2025-10-20T08:00:00Z",
   "notes": "...updated..."
 }
@@ -84,6 +86,7 @@ Content-Type: application/json
 
 DELETE {{host}}/api/bookings/1
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 ### Services

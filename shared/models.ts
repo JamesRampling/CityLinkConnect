@@ -42,18 +42,3 @@ export const Announcement = z.object({
 export const AnnouncementWithXML = Announcement.extend({
   config: AnnouncementContent,
 });
-
-/**
- * Extended Booking model that includes the User and Service type.
- */
-export const BookingWithRelations = Booking.extend({
-  user: User.nullable(),
-  service: Service.nullable(),
-});
-
-/**
- * Extended User model that includes their Bookings (with Service type).
- */
-export const UserWithRelations = User.extend({
-  bookings: Booking.extend({ service: Service.nullable() }).array(),
-});

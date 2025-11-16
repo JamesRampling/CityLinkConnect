@@ -21,7 +21,7 @@ export default {
            VALUES ($sort_datetime, $config);`,
   ),
   update: mutateRows(
-    Announcement.extend({ announcement_id: z.int().nonnegative() }),
+    Announcement.extend({ announcement_id: z.int() }),
     /*sql*/ `
     UPDATE Announcements
     SET sort_datetime = $sort_datetime, config = $config
