@@ -20,7 +20,8 @@ const { errors, validate } = useValidation(
 
 <template>
   <div class="page-wrapper">
-    <h1>Register</h1>
+    <h1 class="login-less-margin">Register</h1>
+    <p><router-link to="/login">Login here.</router-link></p>
     <form class="form" action="" @submit.prevent="validate">
       <InputText
         v-model="field.given_names"
@@ -28,7 +29,9 @@ const { errors, validate } = useValidation(
         label="Given Names"
       />
       <ul v-if="errors.given_names" class="error-list">
-        <li v-for="error in errors.given_names" :key="error">{{ error }}</li>
+        <li v-for="error in errors.given_names" :key="error" class="error-item">
+          {{ error }}
+        </li>
       </ul>
 
       <InputText v-model="field.last_name" name="last-name" label="Last Name" />
@@ -43,7 +46,12 @@ const { errors, validate } = useValidation(
           {{ error }}
         </li>
       </ul>
-      <InputText v-model="field.password" name="password" label="Password" />
+      <InputText
+        v-model="field.password"
+        type="password"
+        name="password"
+        label="Password"
+      />
       <ul v-if="errors.password" class="error-list">
         <li v-for="error in errors.password" :key="error" class="error-item">
           {{ error }}
@@ -57,9 +65,9 @@ const { errors, validate } = useValidation(
       </ul>
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
-        <router-link to="/login"
+        <!-- <router-link to="/login"
           ><button class="button-outlined">Login</button></router-link
-        >
+        > -->
       </div>
     </form>
   </div>
@@ -74,5 +82,10 @@ const { errors, validate } = useValidation(
 .error-item {
   color: red;
   list-style: none;
+}
+
+.login-less-margin {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-block: 1rem 1rem;
 }
 </style>

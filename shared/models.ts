@@ -12,8 +12,8 @@ export const ServiceWithXML = Service.extend({ config: ServiceContent });
 
 export const User = z.object({
   user_id: tableId.default(0),
-  given_names: z.string(),
-  last_name: z.string(),
+  given_names: z.string().nonempty(),
+  last_name: z.string().nonempty(),
   email: z.email(),
   phone: z.string().regex(/0[0-9]{9}/, 'Must be a valid phone number.'),
 });

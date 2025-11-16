@@ -12,6 +12,7 @@ const field = reactive({
   email: '',
   phone: '',
 });
+
 const { errors, validate } = useValidation(
   User.extend({ password: z.string().min(8) }),
   field,
@@ -20,7 +21,11 @@ const { errors, validate } = useValidation(
 
 <template>
   <div class="page-wrapper">
-    <h1>Login</h1>
+    <h1 class="login-less-margin">Login</h1>
+    <p>
+      Don't have an account?
+      <router-link to="/register">Register here.</router-link>
+    </p>
     <form class="form" action="" @submit.prevent="validate">
       <InputText v-model="field.email" name="email" label="E-Mail" />
       <ul v-if="errors.email" class="error-list">
@@ -28,7 +33,12 @@ const { errors, validate } = useValidation(
           {{ error }}
         </li>
       </ul>
-      <InputText name="password" label="Password" />
+      <InputText
+        v-model="field.password"
+        type="password"
+        name="password"
+        label="Password"
+      />
       <ul v-if="errors.password" class="error-list">
         <li v-for="error in errors.password" :key="error" class="error-item">
           {{ error }}
@@ -36,10 +46,14 @@ const { errors, validate } = useValidation(
       </ul>
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
-        <router-link to="/register"
-          ><button class="button-outlined">Register</button></router-link
-        >
       </div>
     </form>
   </div>
 </template>
+
+<style>
+.login-less-margin {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-block: 1rem 1rem;
+}
+</style>
