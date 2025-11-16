@@ -21,7 +21,7 @@ const model = defineModel<string>();
 <template>
   <div class="input-text">
     <label :for="id">{{ label }}</label>
-    <input :id="id" v-model="model" :type="type" :name="name" />
+    <input :id="id" v-model.lazy="model" :type="type" :name="name" />
   </div>
 </template>
 
