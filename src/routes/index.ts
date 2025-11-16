@@ -29,6 +29,8 @@ const router = createRouter({
       props: convertProps({ id: Number }),
     },
     { path: '/login', component: () => import('@/routes/LoginView.vue') },
+
+    { path: '/register', component: () => import('@/routes/RegisterView.vue') },
     {
       path: '/feedback',
       component: () => import('@/routes/FeedbackFormView.vue'),
