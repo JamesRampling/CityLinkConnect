@@ -9,7 +9,7 @@ import { ref } from 'vue';
 const userState = useUser();
 const hamburgerMenuExpanded = ref(false);
 
-const { matches: isNarrowScreen } = useMediaQuery('(width < 80ch)');
+const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
 </script>
 
 <template>
@@ -100,7 +100,7 @@ nav {
   z-index: 100;
 }
 
-@media (width < 65ch) {
+@media (width < 80ch) {
   .nav-toggle-button {
     display: flex;
   }

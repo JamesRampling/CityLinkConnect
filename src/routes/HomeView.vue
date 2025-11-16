@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { useExampleData } from '@/exampleData';
+import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
+import IconRefresh from '@/components/icons/IconRefresh.vue';
+import LoadedData from '@/components/LoadedData.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { formatDate } from '@/utils';
-import { computed } from 'vue';
-
-const { announcements } = useExampleData();
-
-const articles = computed(() =>
-  announcements.value
-    .map((e, i) => ({ config: e, announcement_id: i }))
-    .sort(
-      (a, b) =>
-        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
-    ),
-);
 </script>
 
 <template>
@@ -24,24 +16,42 @@ const articles = computed(() =>
   <div class="page-wrapper">
     <h1>CityLink Connect</h1>
 
-    <div class="announcements-wrapper">
-      <router-link
-        v-for="{ announcement_id: index, config: content } in articles"
-        :key="content.title"
-        class="card clickable"
-        :to="`/announcement/${index}`"
-        tabindex="0"
-      >
-        <hgroup>
-          <h2 class="title">{{ content.title }}</h2>
-          <p class="subtitle">
-            <time :datetime="content.date">{{ formatDate(content.date) }}</time>
-          </p>
-        </hgroup>
+    <LoadedData :action="() => api.announcements.all()">
+      <template #loading>
+        <LoadingSpinner />
+      </template>
 
-        <p>{{ content.content }}</p>
-      </router-link>
-    </div>
+      <template #ok="{ data: announcements }">
+        <div class="announcements-wrapper">
+          <router-link
+            v-for="{ announcement_id: index, config: content } in announcements"
+            :key="content.title"
+            class="card clickable"
+            :to="`/announcement/${index}`"
+            tabindex="0"
+          >
+            <hgroup>
+              <h2 class="title">{{ content.title }}</h2>
+              <p class="subtitle">
+                <time :datetime="content.date">{{
+                  formatDate(content.date)
+                }}</time>
+              </p>
+            </hgroup>
+
+            <p>{{ content.content }}</p>
+          </router-link>
+        </div>
+      </template>
+
+      <template #error="{ error, retry }">
+        <ApiErrorMessage :error>
+          <button class="button-filled" @click="retry()">
+            <IconRefresh />Retry
+          </button>
+        </ApiErrorMessage>
+      </template>
+    </LoadedData>
   </div>
 </template>
 
@@ -57,7 +67,6 @@ const articles = computed(() =>
   object-fit: cover;
   mask-image: linear-gradient(to top, transparent, black var(--gradient));
   margin-bottom: calc(var(--overlap) * -1);
-  z-index: -1;
 }
 
 .page-wrapper {
