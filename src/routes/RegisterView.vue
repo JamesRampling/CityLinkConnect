@@ -49,7 +49,7 @@ const { errors, validate } = useValidation(
       </ul>
       <InputText
         v-model="field.password"
-        type="assword"
+        type="password"
         name="password"
         label="Password"
       />
