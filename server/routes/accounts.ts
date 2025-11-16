@@ -6,12 +6,7 @@ import { raise, ResponseError, Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { User } from '#shared/models';
 import argon2 from 'argon2';
-import {
-  Router,
-  type NextFunction,
-  type Request,
-  type Response,
-} from 'express';
+import { Router } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 
