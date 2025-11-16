@@ -57,9 +57,11 @@ const { errors, validate } = useValidation(
       </ul>
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
+        <router-link to="/login"
+          ><button class="button-outlined">Login</button></router-link
+        >
       </div>
     </form>
-    <router-link to="/login">Login</router-link>
   </div>
 </template>
 
