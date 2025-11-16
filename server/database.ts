@@ -1,3 +1,4 @@
+import AnnouncementsCollection from '#server/database/collections/AnnouncementsCollection';
 import AuthenticationCollection from '#server/database/collections/AuthenticationCollection';
 import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
@@ -45,6 +46,8 @@ export const db = {
 
   Users: initializeCollection(database, UsersCollection),
   Authentication: initializeCollection(database, AuthenticationCollection),
+
+  Announcements: initializeCollection(database, AnnouncementsCollection),
 };
 
 export type DatabaseConfig = Record<string, (db: DatabaseSync) => unknown>;

@@ -81,7 +81,11 @@ const AuthenticationStatus = z.object({
 });
 export type AuthenticationStatus = z.infer<typeof AuthenticationStatus>;
 
-export function authenticate(req: Request, res: Response, next: NextFunction) {
+export function authenticate<R, B>(
+  req: Request<R, unknown, B>,
+  res: Response,
+  next: NextFunction,
+) {
   const [bearer, token] = req.headers.authorization?.split(' ') ?? [];
 
   if (bearer === 'Bearer') {

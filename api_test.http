@@ -17,6 +17,7 @@ Accept: application/json
 POST {{host}}/api/announcements
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
   "sort_datetime": "2025-10-17T12:27:00Z",
@@ -28,6 +29,7 @@ Content-Type: application/json
 PUT {{host}}/api/announcements/1
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
   "sort_datetime": "2025-10-17T12:27:00Z",
@@ -38,6 +40,7 @@ Content-Type: application/json
 
 DELETE {{host}}/api/announcements/1
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 ### Bookings
@@ -170,4 +173,4 @@ Content-Type: application/json
 ###
 
 POST {{host}}/api/account/info
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6ZmFsc2UsImlhdCI6MTc2MzEzODEyMiwiZXhwIjoxNzYzMjI0NTIyLCJzdWIiOiIzIn0.AvEV-mmZSYFeHRd5wRSkJZvpKA9wWGRXotDCmwkayV4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
