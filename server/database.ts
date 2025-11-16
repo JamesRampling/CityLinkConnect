@@ -1,6 +1,8 @@
 import AnnouncementsCollection from '#server/database/collections/AnnouncementsCollection';
 import AuthenticationCollection from '#server/database/collections/AuthenticationCollection';
 import BookingsCollection from '#server/database/collections/BookingsCollection';
+import FeedbackCollection from '#server/database/collections/FeedbackCollection';
+import ServicesCollection from '#server/database/collections/ServicesCollection';
 import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
@@ -50,6 +52,8 @@ export const db = {
 
   Announcements: initializeCollection(database, AnnouncementsCollection),
   Bookings: initializeCollection(database, BookingsCollection),
+  Services: initializeCollection(database, ServicesCollection),
+  Feedback: initializeCollection(database, FeedbackCollection),
 };
 
 export type DatabaseConfig = Record<string, (db: DatabaseSync) => unknown>;

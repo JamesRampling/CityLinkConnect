@@ -39,7 +39,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1Z
 ###
 
 DELETE {{host}}/api/announcements/1
-Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
@@ -85,7 +84,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1Z
 ###
 
 DELETE {{host}}/api/bookings/1
-Accept: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
@@ -105,6 +103,7 @@ Accept: application/json
 POST {{host}}/api/services
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
   "config": "service config"
@@ -115,6 +114,7 @@ Content-Type: application/json
 PUT {{host}}/api/services/1
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 {
   "config": "updated service config"
@@ -123,7 +123,7 @@ Content-Type: application/json
 ###
 
 DELETE {{host}}/api/services/1
-Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 ### Feedback
@@ -131,11 +131,13 @@ Accept: application/json
 
 GET {{host}}/api/feedback
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 
 GET {{host}}/api/feedback/1
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 
@@ -148,6 +150,11 @@ Content-Type: application/json
   "subject": "new feedback",
   "message": "feedback message"
 }
+
+###
+
+DELETE {{host}}/api/feedback/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw
 
 ###
 
