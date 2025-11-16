@@ -1,6 +1,6 @@
+import { authenticate, authorizeAdmin } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
-import { authenticate, authorizeAdmin } from '#server/routes/accounts';
 import { Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { Feedback } from '#shared/models';
