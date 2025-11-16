@@ -43,7 +43,7 @@ const { errors, validate } = useValidation(
           {{ error }}
         </li>
       </ul>
-      <InputText name="password" label="Password" />
+      <InputText v-model="field.password" name="password" label="Password" />
       <ul v-if="errors.password" class="error-list">
         <li v-for="error in errors.password" :key="error" class="error-item">
           {{ error }}
