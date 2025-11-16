@@ -12,6 +12,7 @@ const field = reactive({
   email: '',
   phone: '',
 });
+
 const { errors, validate } = useValidation(
   User.extend({ password: z.string().min(8) }),
   field,
@@ -48,7 +49,7 @@ const { errors, validate } = useValidation(
       </ul>
       <InputText
         v-model="field.password"
-        type="password"
+        type="assword"
         name="password"
         label="Password"
       />
@@ -65,9 +66,6 @@ const { errors, validate } = useValidation(
       </ul>
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
-        <!-- <router-link to="/login"
-          ><button class="button-outlined">Login</button></router-link
-        > -->
       </div>
     </form>
   </div>
