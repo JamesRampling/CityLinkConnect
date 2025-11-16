@@ -1,36 +1,48 @@
 <script setup lang="ts">
+import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
-import { useExampleData } from '@/exampleData';
-import NotFoundView from '@/routes/NotFoundView.vue';
+import IconRefresh from '@/components/icons/IconRefresh.vue';
+import LoadedData from '@/components/LoadedData.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { formatDate } from '@/utils';
-import { computed } from 'vue';
 
-const props = defineProps<{ id: number }>();
-
-const { announcements } = useExampleData();
-const announcement = computed(() => announcements.value[props.id]);
+defineProps<{ id: number }>();
 </script>
 
 <template>
-  <template v-if="announcement === undefined">
-    <NotFoundView />
-  </template>
-  <template v-else>
-    <div class="page-wrapper">
-      <router-link class="back-button button-filled" to="/"
-        ><IconBack />Back</router-link
-      >
-      <hgroup>
-        <h1>{{ announcement.title }}</h1>
-        <p>
-          <time :datetime="announcement.date">{{
-            formatDate(announcement.date, { dateStyle: 'full' })
-          }}</time>
-        </p>
-      </hgroup>
-      <p>{{ announcement.content }}</p>
-    </div>
-  </template>
+  <div class="page-wrapper">
+    <router-link class="back-button button-filled" to="/"
+      ><IconBack />Back</router-link
+    >
+    <LoadedData :action="() => api.announcements.single(id)">
+      <template #loading>
+        <LoadingSpinner />
+      </template>
+
+      <template #ok="{ data: announcement }">
+        <div class="announcement">
+          <hgroup>
+            <h1>{{ announcement.config.title }}</h1>
+            <p>
+              <time :datetime="announcement.config.date">{{
+                formatDate(announcement.config.date, { dateStyle: 'full' })
+              }}</time>
+            </p>
+          </hgroup>
+          <p>{{ announcement.config.content }}</p>
+        </div>
+      </template>
+
+      <template #error="{ error, retry }">
+        <ApiErrorMessage :error>
+          <button class="button-filled" @click="retry()">
+            <IconRefresh />Retry
+          </button>
+        </ApiErrorMessage>
+      </template>
+    </LoadedData>
+  </div>
 </template>
 
 <style scoped>
@@ -42,5 +54,9 @@ time {
   color: var(--color-muted);
   font-weight: 700;
   font-size: 1.25rem;
+}
+
+.page-wrapper {
+  gap: 1rem;
 }
 </style>

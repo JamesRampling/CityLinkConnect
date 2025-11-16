@@ -7,28 +7,36 @@ import {
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: HomeView },
-    { path: '/about', component: AboutView },
-    { path: '/services', component: ServiceListView },
+    { path: '/', component: () => import('@/routes/HomeView.vue') },
+    { path: '/about', component: () => import('@/routes/AboutView.vue') },
+    {
+      path: '/services',
+      component: () => import('@/routes/ServiceListView.vue'),
+    },
     {
       path: '/booking/:id',
-      component: BookingFormView,
+      component: () => import('@/routes/BookingFormView.vue'),
       props: convertProps({ id: Number }),
     },
     {
       path: '/announcement/:id',
-      component: AnnouncementView,
+      component: () => import('@/routes/AnnouncementView.vue'),
       props: convertProps({ id: Number }),
     },
     {
       path: '/user/:id',
-      component: UserProfileView,
+      component: () => import('@/routes/UserProfileView.vue'),
       props: convertProps({ id: Number }),
     },
-    { path: '/login', component: LoginView },
-    { path: '/feedback', component: FeedbackFormView },
-    { path: '/:catchAll(.*)*', component: NotFoundView },
-    { path: '/admin', component: AdminPage },
+    { path: '/login', component: () => import('@/routes/LoginView.vue') },
+    {
+      path: '/feedback',
+      component: () => import('@/routes/FeedbackFormView.vue'),
+    },
+    {
+      path: '/:catchAll(.*)*',
+      component: () => import('@/routes/NotFoundView.vue'),
+    },
   ],
 });
 
