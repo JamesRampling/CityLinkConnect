@@ -85,4 +85,37 @@ route.get('/', authenticate, authorizeAdmin, (_, res) => {
   Responses.ok(res, { users: db.Users.getAll() });
 });
 
+route.put(
+  '/:id',
+  validate({ route: { id: 'int' }, body: User.omit({ user_id: true }) }),
+  authenticate,
+  authorizeAdmin,
+  (req, res) => {
+    const { id } = req.params;
+    const user = { ...req.body, user_id: id };
+    const { rows_changed } =
+      db.Users.update(user).or_throw(queryErrorToResponse);
+
+    if (rows_changed) {
+      Responses.noContent(res);
+    } else {
+      Responses.notFound(res, 'The user was not found.');
+    }
+  },
+);
+
+route.delete(
+  '/:id',
+  validate({ route: { id: 'int' } }),
+  authenticate,
+  authorizeAdmin,
+  (req, res) => {
+    const id = req.params.id;
+
+    db.Users.delete(id).or_throw(queryErrorToResponse);
+
+    Responses.noContent(res);
+  },
+);
+
 export default route;
