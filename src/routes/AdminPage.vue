@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AnnouncementWithXML, ServiceWithXML } from '#shared/models';
+import { AnnouncementWithXML, Feedback, ServiceWithXML } from '#shared/models';
 import api from '@/api';
 import { formatDate } from '@/utils';
 import { onMounted, ref } from 'vue';
@@ -16,6 +16,11 @@ interface User {
   name: string;
   email: string;
   isBanned: boolean;
+}
+interface Feedback {
+  feedback_id: number;
+  sort_datetime: string;
+  config: { user: string; message: string; date: string };
 }
 
 function generateUsers(): User[] {
@@ -84,6 +89,7 @@ function generateUserBooking(): UserBooking[] {
 
 const bookings = ref<UserBooking[]>(generateUserBooking());
 
+const feedback = ref<z.infer<typeof Feedback>[]>([]);
 const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
 const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
 
@@ -98,6 +104,12 @@ onMounted(async () => {
   if (servicesResult.ok) {
     services.value = servicesResult.data;
   }
+  /*
+  const feedbackResult = await api.feedback.all();
+  if (feedbackResult.ok) {
+    feedback.value = feedbackResult.data;
+  }
+  */
 });
 
 const page = ref('user');
