@@ -1,5 +1,5 @@
 import { Booking } from '#shared/models';
-import { requestInOut, requestOut } from '@/api/factories';
+import { request, requestInOut, requestOut } from '@/api/factories';
 
 const baseUrl = '/api/bookings';
 
@@ -29,4 +29,22 @@ export default {
     Booking,
     true,
   ),
+
+  /**
+   * Updates an existing service booking, requires authentication admin
+   * permissions.
+   */
+  update: requestInOut(
+    'PUT',
+    `${baseUrl}/:id`,
+    Booking.omit({ booking_id: true }),
+    Booking,
+    true,
+  ),
+
+  /**
+   * Deletes an existing service booking, requires authentication with admin
+   * permissions.
+   */
+  delete: request('DELETE', `${baseUrl}/:id`, true),
 };

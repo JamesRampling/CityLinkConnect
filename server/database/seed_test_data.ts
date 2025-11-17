@@ -33,7 +33,7 @@ INSERT INTO Services (config) VALUES
 </service>');
 
 INSERT INTO Users (given_names, last_name, email, phone) VALUES
-  ('John', 'Doe', 'j.doe@example.com', '+1234567890'),
+  ('John', 'Doe', 'j.doe@example.com', '0123456789'),
   ('Jane', 'Smith', 'j.smith@example.com', '0412345678');
 
 INSERT INTO Bookings (user_id, service_id, booking_datetime, notes) VALUES

@@ -1,5 +1,5 @@
 import { User } from '#shared/models';
-import { requestIn, requestInOut } from '@/api/factories';
+import { requestIn, requestInOut, requestOut } from '@/api/factories';
 import z from 'zod';
 
 const baseUrl = `/api/account`;
@@ -26,7 +26,18 @@ export default {
     'POST',
     `${baseUrl}/login`,
     z.object({ email: z.email(), password: z.string() }),
-    z.jwt(),
+    User.extend({ token: z.jwt() }),
     true,
   ),
+
+  /**
+   * Get the currently authenticated user account.
+   */
+  info: requestOut('GET', `${baseUrl}/info`, User, true),
+
+  /**
+   * Get all user accounts on the server, requires authentication with admin
+   * permissions.
+   */
+  all: requestOut('GET', baseUrl, User.array(), true),
 };
