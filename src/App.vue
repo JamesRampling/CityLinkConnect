@@ -42,9 +42,9 @@ const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
         <router-link to="/login" class="button-filled">Login</router-link>
       </span>
       <span v-else>
-        <router-link :to="`/user/${userState.id}`" class="button-outlined">
+        <router-link :to="`/user/${userState.user_id}`" class="button-outlined">
           <IconUser />
-          {{ userState.display_name }}
+          {{ userState.given_names }}
         </router-link>
       </span>
     </div>

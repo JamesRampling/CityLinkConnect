@@ -13,7 +13,7 @@ export default {
   register: requestIn(
     'POST',
     `${baseUrl}/register`,
-    User.extend({ password: z.string() }),
+    User.omit({ user_id: true }).extend({ password: z.string() }),
     false,
   ),
 
@@ -27,7 +27,7 @@ export default {
     `${baseUrl}/login`,
     z.object({ email: z.email(), password: z.string() }),
     User.extend({ token: z.jwt() }),
-    true,
+    false,
   ),
 
   /**
