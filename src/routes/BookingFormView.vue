@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Booking } from '#shared/models';
+import { Result } from '#shared/utils/Result';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
@@ -9,18 +10,26 @@ import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
-import { useValidation } from '@/utils/validation';
-import { reactive } from 'vue';
+import { useSubmission } from '@/utils/validation';
+import { reactive, ref } from 'vue';
 
-defineProps<{ id: number }>();
-
-const field = reactive({ booking_datetime: '', notes: '' });
-const { errors, validate } = useValidation(
-  Booking.omit({ user_id: true, service_id: true }),
-  field,
-);
+const { id: service_id } = defineProps<{ id: number }>();
 
 const userState = useUser();
+
+const success = ref(false);
+const fields = reactive({ booking_datetime: '', notes: '' });
+const { submit, fieldErrors, submissionError } = useSubmission(
+  Booking.omit({ user_id: true, service_id: true }),
+  fields,
+  async (form) => {
+    const auth = userState.value?.token;
+    if (auth === undefined) return Result.err('Unreachable statement reached.');
+
+    return await api.bookings.create({ ...form, service_id }, auth);
+  },
+  () => (success.value = true),
+);
 </script>
 
 <template>
@@ -65,20 +74,20 @@ const userState = useUser();
           <section class="section-form">
             <h2>Booking details</h2>
             <form
-              v-if="userState"
+              v-if="userState && !success"
               class="form"
               action=""
-              @submit.prevent="validate"
+              @submit.prevent="submit"
             >
               <InputText
-                v-model="field.booking_datetime"
+                v-model="fields.booking_datetime"
                 type="datetime-local"
                 name="date-input"
                 label="Date"
               />
-              <ul v-if="errors.booking_datetime" class="error-list">
+              <ul v-if="fieldErrors.booking_datetime" class="error-list">
                 <li
-                  v-for="error in errors.booking_datetime"
+                  v-for="error in fieldErrors.booking_datetime"
                   :key="error"
                   class="error-item"
                 >
@@ -93,7 +102,18 @@ const userState = useUser();
                 <button type="submit" class="button-filled">Submit</button>
               </div>
             </form>
-            <p v-else>Please login before making a service booking.</p>
+            <p v-else-if="!success">
+              Please login before making a service booking.
+            </p>
+            <p v-else class="success-message">
+              Your booking has been submitted!
+            </p>
+
+            <ApiErrorMessage
+              v-if="submissionError"
+              class="small"
+              :error="submissionError"
+            />
           </section>
         </div>
       </template>
