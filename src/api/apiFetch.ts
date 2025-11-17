@@ -82,18 +82,18 @@ export async function checkResponseWithBody<Output extends z.ZodType>(
         return Result.ok(data);
       }
 
-      return Result.error({ type: 'fetch-data-parse', status, error });
+      return Result.err({ type: 'fetch-data-parse', status, error });
     }
 
     const { ok, data, error } = await parseResultBody(response, ApiError);
 
     if (ok) {
-      return Result.error(data);
+      return Result.err(data);
     }
 
-    return Result.error({ type: 'fetch-error-obj-parse', status, error });
+    return Result.err({ type: 'fetch-error-obj-parse', status, error });
   } catch (error) {
-    return Result.error({ type: 'fetch-unknown-error', error, status });
+    return Result.err({ type: 'fetch-unknown-error', error, status });
   }
 }
 
@@ -111,12 +111,12 @@ export async function checkResponseWithoutBody(
     const { ok, data, error } = await parseResultBody(response, ApiError);
 
     if (ok) {
-      return Result.error(data);
+      return Result.err(data);
     }
 
-    return Result.error({ type: 'fetch-error-obj-parse', status, error });
+    return Result.err({ type: 'fetch-error-obj-parse', status, error });
   } catch (error) {
-    return Result.error({ type: 'fetch-unknown-error', error, status });
+    return Result.err({ type: 'fetch-unknown-error', error, status });
   }
 }
 
@@ -127,7 +127,7 @@ export async function parseResultBody<T extends z.ZodType>(
   Result<z.infer<T>, z.ZodError<T> | SyntaxError | TypeError | Error>
 > {
   if (!response.headers.get('Content-Type')?.startsWith('application/json')) {
-    return Result.error(TypeError('Content-Type is not application/json.'));
+    return Result.err(TypeError('Content-Type is not application/json.'));
   }
 
   try {
@@ -136,7 +136,7 @@ export async function parseResultBody<T extends z.ZodType>(
     return Result.ok(parsed);
   } catch (e) {
     if (e instanceof Error) {
-      return Result.error(e);
+      return Result.err(e);
     }
     throw e;
   }

@@ -1,25 +1,31 @@
-import type express from 'express';
 import { fileURLToPath, URL } from 'node:url';
 
 import vue from '@vitejs/plugin-vue';
-import { defineConfig, PreviewServer, ViteDevServer } from 'vite';
+import { defineConfig, PluginOption, PreviewServer, ViteDevServer } from 'vite';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
-import server from '#server/index';
-
 // Attach an Express application to the Vite middleware stack.
-function useExpress(app: express.Express) {
+function useLazyExpress(path: string) {
   return {
     name: 'use-express',
-    configureServer: (server: ViteDevServer) =>
-      void server.middlewares.use(app),
-    configurePreviewServer: (server: PreviewServer) =>
-      void server.middlewares.use(app),
-  };
+    apply: 'serve',
+    configureServer: async (server: ViteDevServer) =>
+      void server.middlewares.use((await import(path)).default),
+    configurePreviewServer: async (server: PreviewServer) =>
+      void server.middlewares.use((await import(path)).default),
+  } as const satisfies PluginOption;
+}
+
+function relativeToRoot(path: string) {
+  return fileURLToPath(new URL(path, import.meta.url));
 }
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), useExpress(server)],
-  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  plugins: [
+    vue(),
+    vueDevTools(),
+    useLazyExpress(relativeToRoot('./server/index.ts')),
+  ],
+  resolve: { alias: { '@': relativeToRoot('./src') } },
 });
