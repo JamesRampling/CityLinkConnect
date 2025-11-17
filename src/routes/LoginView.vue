@@ -37,7 +37,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       Don't have an account?
       <router-link to="/register">Register here.</router-link>
     </p>
-    <p v-else class="success-message">Register successful.</p>
+    <p v-else class="success-message">Registration successful!</p>
     <form class="form" action="" @submit.prevent="submit">
       <InputText v-model="fields.email" name="email" label="E-Mail" />
       <ul v-if="fieldErrors.email" class="error-list">
