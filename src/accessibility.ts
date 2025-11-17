@@ -26,7 +26,6 @@ const applyStyle = (state: AccessibilityState) => {
   document.documentElement.style.colorScheme = state.themeMode;
 };
 
-console.log(accessibilityState.value);
 watch(accessibilityState, applyStyle, { immediate: true, deep: true });
 watch(
   accessibilityState,
