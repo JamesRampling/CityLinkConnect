@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Booking } from '#shared/models';
-import { Result } from '#shared/utils/Result';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
@@ -23,9 +22,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
   Booking.omit({ user_id: true, service_id: true }),
   fields,
   async (form) => {
-    const auth = userState.value?.token;
-    if (auth === undefined) return Result.err('Unreachable statement reached.');
-
+    const auth = userState.value?.token ?? '';
     return await api.bookings.create({ ...form, service_id }, auth);
   },
   () => (success.value = true),
@@ -95,6 +92,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
                 </li>
               </ul>
               <InputTextarea
+                v-model="fields.notes"
                 name="service-notes"
                 label="Additional information"
               />
