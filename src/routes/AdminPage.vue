@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { useExampleData } from '@/exampleData';
+import type { AnnouncementWithXML, ServiceWithXML } from '#shared/models';
+import api from '@/api';
 import { formatDate } from '@/utils';
-import { computed, ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { z } from 'zod';
 
 interface UserBooking {
   name: string;
@@ -82,20 +84,21 @@ function generateUserBooking(): UserBooking[] {
 
 const bookings = ref<UserBooking[]>(generateUserBooking());
 
-const { announcements, services } = useExampleData();
+const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
+const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
 
-const articles = computed(() =>
-  announcements.value
-    .map((e, i) => ({ config: e, announcement_id: i }))
-    .sort(
-      (a, b) =>
-        new Date(b.config.date).valueOf() - new Date(a.config.date).valueOf(),
-    ),
-);
+// Load announcements and services
+onMounted(async () => {
+  const announcementResult = await api.announcements.all();
+  if (announcementResult.ok) {
+    announcements.value = announcementResult.data;
+  }
 
-const serviceItems = computed(() =>
-  services.value.map((e, i) => ({ config: e, service_id: i })),
-);
+  const servicesResult = await api.services.all();
+  if (servicesResult.ok) {
+    services.value = servicesResult.data;
+  }
+});
 
 const page = ref('user');
 </script>
@@ -158,21 +161,21 @@ const page = ref('user');
       <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
         <button>Add Content</button>
         <article
-          v-for="item in articles"
-          :key="item.config.title"
+          v-for="(item, i) in announcements"
+          :key="i"
           class="clickable card"
         >
           <button>Edit</button>
-          <h2>{{ item.config.title }}</h2>
-          <h3>{{ formatDate(item.config.date) }}</h3>
-          <p>{{ item.config.content }}</p>
+          <h2>{{ item.config?.title }}</h2>
+          <h3>{{ formatDate(item.config?.date) }}</h3>
+          <p>{{ item.config?.content }}</p>
         </article>
       </div>
       <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
         <button>Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
           <button>Edit</button>
-          <strong>{{ e.fees }}</strong> — {{ e.name }}
+          <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
         </li>
       </div>
     </div>
