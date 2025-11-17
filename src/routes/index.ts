@@ -39,6 +39,7 @@ const router = createRouter({
       path: '/:catchAll(.*)*',
       component: () => import('@/routes/NotFoundView.vue'),
     },
+    { path: '/admin', component: () => import('@/routes/AdminPage.vue') },
   ],
 });
 
