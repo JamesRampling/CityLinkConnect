@@ -5,22 +5,49 @@ import {
   queryFiltered,
   queryUnique,
 } from '#server/database/DatabaseCollection';
-import { Booking } from '#shared/models';
+import { Booking, Service } from '#shared/models';
 import z from 'zod';
 
+const BookingJoinTransform = z.transform<
+  z.infer<typeof Booking> & z.infer<typeof Service>,
+  z.infer<typeof Booking> & { service: z.infer<typeof Service> }
+>((input) => {
+  const { booking_datetime, booking_id, notes, user_id, service_id, config } =
+    input;
+  return {
+    booking_datetime,
+    booking_id,
+    notes,
+    service_id,
+    user_id,
+    service: { service_id, config },
+  };
+});
+
 export default {
-  getAll: queryAll(Booking, /*sql*/ `SELECT * FROM Bookings;`),
+  getAll: queryAll(
+    BookingJoinTransform,
+    /*sql*/ `
+    SELECT * FROM Bookings
+      LEFT JOIN Services ON Bookings.service_id = Services.service_id;`,
+  ),
 
   getAllByUserId: queryFiltered(
     z.int(),
-    Booking,
-    /*sql*/ `SELECT * FROM Bookings WHERE user_id = ?;`,
+    BookingJoinTransform,
+    /*sql*/ `
+      SELECT * FROM Bookings
+        LEFT JOIN Services ON Bookings.service_id = Services.service_id
+        WHERE user_id = ?;`,
   ),
 
   getFromId: queryUnique(
     z.int(),
-    Booking,
-    /*sql*/ `SELECT * FROM Bookings WHERE booking_id = ?;`,
+    BookingJoinTransform,
+    /*sql*/ `
+      SELECT * FROM Bookings
+        LEFT JOIN Services ON Bookings.service_id = Services.service_id
+        WHERE booking_id = ?;`,
   ),
 
   insert: mutateRows(
