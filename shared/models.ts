@@ -20,8 +20,8 @@ export const User = z.object({
 
 export const Booking = z.object({
   booking_id: tableId.default(0),
-  user_id: tableId.nullable(),
-  service_id: tableId.nullable(),
+  user_id: tableId,
+  service_id: tableId,
   booking_datetime: z.iso.datetime({ local: true }),
   notes: z.string().nullable(),
 });
@@ -41,19 +41,4 @@ export const Announcement = z.object({
 
 export const AnnouncementWithXML = Announcement.extend({
   config: AnnouncementContent,
-});
-
-/**
- * Extended Booking model that includes the User and Service type.
- */
-export const BookingWithRelations = Booking.extend({
-  user: User.nullable(),
-  service: Service.nullable(),
-});
-
-/**
- * Extended User model that includes their Bookings (with Service type).
- */
-export const UserWithRelations = User.extend({
-  bookings: Booking.extend({ service: Service.nullable() }).array(),
 });

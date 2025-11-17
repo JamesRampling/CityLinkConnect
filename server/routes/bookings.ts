@@ -1,4 +1,6 @@
+import { authenticate, authorizeAdmin } from '#server/authentication';
 import { db } from '#server/database';
+import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { Booking } from '#shared/models';
@@ -6,86 +8,70 @@ import { Router } from 'express';
 
 const route = Router();
 
-route.get('/', (_req, res) => {
-  const bookings = db.Bookings.allJoined();
-  Responses.ok(res, bookings);
+route.get('/', (_, res) => {
+  Responses.ok(res, db.Bookings.getAll());
 });
 
 route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
-  const booking = db.Bookings.singleJoined(id);
+  const value = db.Bookings.getFromId(id).or_throw(queryErrorToResponse);
 
-  if (booking) {
-    Responses.ok(res, booking);
-  } else {
+  if (value === undefined) {
     Responses.notFound(res);
+  } else {
+    Responses.ok(res, value);
   }
 });
 
 route.post(
   '/',
   validate({ body: Booking.omit({ booking_id: true }) }),
+  authenticate,
+  authorizeAdmin,
   (req, res) => {
-    const errorTitle = 'An error occurred while creating the booking.';
-    const booking = { ...req.body, booking_id: 0 };
+    const value = req.body;
+    const { last_row_id: id } =
+      db.Bookings.insert(value).or_throw(queryErrorToResponse);
 
-    const { ok, data, error } = db.Bookings.insert(booking);
-    if (!ok) {
-      Responses.serverError(res, errorTitle, error);
-      return;
-    }
-
-    const newBooking = db.Bookings.singleJoined(data.rowId);
-    if (newBooking) {
-      Responses.created(res, newBooking);
-    } else {
-      Responses.serverError(res, errorTitle);
-    }
+    Responses.ok(res, { ...value, booking_id: id });
   },
 );
 
 route.put(
   '/:id',
   validate({ route: { id: 'int' }, body: Booking.omit({ booking_id: true }) }),
+  authenticate,
+  authorizeAdmin,
   (req, res) => {
-    const errorTitle = 'An error occurred while updating the booking.';
-    const { id } = req.params;
-    const booking = { ...req.body, booking_id: id };
+    const id = req.params.id;
+    const values = req.body;
 
-    const { ok, error } = db.Bookings.update(booking);
+    const { rows_changed } = db.Bookings.update({
+      ...values,
+      booking_id: id,
+    }).or_throw(queryErrorToResponse);
 
-    if (!ok) {
-      if (error.type === 'non-existent-id') {
-        Responses.notFound(res, 'The booking was not found.');
-      } else {
-        Responses.serverError(res, errorTitle, error);
-      }
-      return;
-    }
-
-    const updatedBooking = db.Bookings.singleJoined(id);
-    if (updatedBooking) {
-      Responses.ok(res, updatedBooking);
+    if (rows_changed === 0) {
+      Responses.notFound(res);
     } else {
-      Responses.serverError(res, errorTitle);
+      Responses.noContent(res);
     }
   },
 );
 
-route.delete('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const { id } = req.params;
-  const { ok, error } = db.Bookings.delete(id);
+route.delete(
+  '/:id',
+  validate({ route: { id: 'int' } }),
+  authenticate,
+  authorizeAdmin,
+  (req, res) => {
+    const id = req.params.id;
 
-  if (ok || error.type === 'non-existent-id') {
+    db.Bookings.delete(id).or_throw(queryErrorToResponse);
+
     Responses.noContent(res);
-  } else {
-    Responses.serverError(
-      res,
-      'An error occurred while deleting the service.',
-      error,
-    );
-  }
-});
+  },
+);
 
 export default route;

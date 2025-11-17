@@ -38,7 +38,7 @@ INSERT INTO Users (given_names, last_name, email, phone) VALUES
 
 INSERT INTO Bookings (user_id, service_id, booking_datetime, notes) VALUES
   (1, 1, '2024-06-15T10:00:00Z', 'First booking'),
-  (2, NULL, '2024-06-16T14:30:00Z', 'Second booking'),
+  (2, 2, '2024-06-16T14:30:00Z', 'Second booking'),
   (2, 3, '2024-06-16T14:30:00Z', 'Third booking');
 
 INSERT INTO Announcements (sort_datetime, config) VALUES

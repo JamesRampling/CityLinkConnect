@@ -1,4 +1,6 @@
+import { authenticate, authorizeAdmin } from '#server/authentication';
 import { db } from '#server/database';
+import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { Announcement } from '#shared/models';
@@ -6,75 +8,73 @@ import { Router } from 'express';
 
 const route = Router();
 
-route.get('/', (_req, res) => {
-  const announcements = db.Announcements.all();
-  Responses.ok(res, announcements);
+route.get('/', (_, res) => {
+  Responses.ok(res, db.Announcements.getAll());
 });
 
 route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
 
-  const announcement = db.Announcements.single(id);
+  const value = db.Announcements.getFromId(id).or_throw(queryErrorToResponse);
 
-  if (announcement) {
-    Responses.ok(res, announcement);
+  if (value === undefined) {
+    Responses.notFound(res);
   } else {
-    Responses.notFound(res, 'The announcement was not found.');
+    Responses.ok(res, value);
   }
 });
 
-route.post('/', validate({ body: Announcement }), (req, res) => {
-  const announcement = { ...req.body, announcement_id: 0 };
+route.post(
+  '/',
+  validate({ body: Announcement.omit({ announcement_id: true }) }),
+  authenticate,
+  authorizeAdmin,
+  (req, res) => {
+    const value = req.body;
+    const { last_row_id: id } =
+      db.Announcements.insert(value).or_throw(queryErrorToResponse);
 
-  const { ok, data, error } = db.Announcements.insert(announcement);
-
-  if (ok) {
-    Responses.created(res, { ...announcement, announcement_id: data.rowId });
-  } else {
-    Responses.serverError(
-      res,
-      'An error occurred while updating the announcement.',
-      error,
-    );
-  }
-});
+    Responses.ok(res, { ...value, announcement_id: id });
+  },
+);
 
 route.put(
   '/:id',
-  validate({ route: { id: 'int' }, body: Announcement }),
+  validate({
+    route: { id: 'int' },
+    body: Announcement.omit({ announcement_id: true }),
+  }),
+  authenticate,
+  authorizeAdmin,
   (req, res) => {
-    const { id } = req.params;
-    const announcement = { ...req.body, announcement_id: id };
+    const id = req.params.id;
+    const values = req.body;
 
-    const { ok, error } = db.Announcements.update(announcement);
+    const { rows_changed } = db.Announcements.update({
+      ...values,
+      announcement_id: id,
+    }).or_throw(queryErrorToResponse);
 
-    if (ok) {
-      Responses.ok(res, announcement);
-    } else if (error.type === 'non-existent-id') {
+    if (rows_changed === 0) {
       Responses.notFound(res);
     } else {
-      Responses.serverError(
-        res,
-        'An error occurred while updating the announcement.',
-        error,
-      );
+      Responses.noContent(res);
     }
   },
 );
 
-route.delete('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const { id } = req.params;
-  const { ok, error } = db.Announcements.delete(id);
+route.delete(
+  '/:id',
+  validate({ route: { id: 'int' } }),
+  authenticate,
+  authorizeAdmin,
+  (req, res) => {
+    const id = req.params.id;
 
-  if (ok || error.type === 'non-existent-id') {
+    db.Announcements.delete(id).or_throw(queryErrorToResponse);
+
     Responses.noContent(res);
-  } else {
-    Responses.serverError(
-      res,
-      'An error occurred while deleting the service.',
-      error,
-    );
-  }
-});
+  },
+);
 
 export default route;

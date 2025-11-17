@@ -1,20 +1,15 @@
-import { AnnouncementsCollectionConfig } from '#server/database/AnnouncementsCollection';
-import { BookingsCollectionConfig } from '#server/database/BookingsCollection';
-import {
-  SQLiteDatabaseCollection,
-  SQLiteJoinedDatabaseCollection,
-} from '#server/database/DatabaseCollection';
-import { FeedbackCollectionConfig } from '#server/database/FeedbackCollection';
+import AnnouncementsCollection from '#server/database/collections/AnnouncementsCollection';
+import AuthenticationCollection from '#server/database/collections/AuthenticationCollection';
+import BookingsCollection from '#server/database/collections/BookingsCollection';
+import FeedbackCollection from '#server/database/collections/FeedbackCollection';
+import ServicesCollection from '#server/database/collections/ServicesCollection';
+import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
-import { ServicesCollectionConfig } from '#server/database/ServicesCollection';
-import { UsersCollectionConfig } from '#server/database/UsersCollection';
+import { DATABASE_PATH } from '#server/environment';
 import { DatabaseSync } from 'node:sqlite';
 
-const database =
-  process.env.NODE_ENV === 'production'
-    ? new DatabaseSync(process.env.DATABASE_PATH ?? 'database.sqlite')
-    : new DatabaseSync(':memory:');
+const database = new DatabaseSync(DATABASE_PATH);
 
 const actualSchemaVersion =
   database.prepare(`PRAGMA user_version;`).get()?.user_version ?? 0;
@@ -28,24 +23,53 @@ if (actualSchemaVersion === 0) {
   process.exit(1);
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && actualSchemaVersion === 0) {
   database.exec(seed_test_data);
 }
 
 export const db = {
-  Bookings: new SQLiteJoinedDatabaseCollection(
-    database,
-    BookingsCollectionConfig,
-  ),
+  execTransaction<R>(fn: () => R): R {
+    let result: R;
 
-  Announcements: new SQLiteDatabaseCollection(
-    database,
-    AnnouncementsCollectionConfig,
-  ),
+    if (database.isTransaction) throw Error('transactions must not be nested');
 
-  Feedback: new SQLiteDatabaseCollection(database, FeedbackCollectionConfig),
+    try {
+      database.exec('BEGIN TRANSACTION');
+      result = fn();
 
-  Services: new SQLiteDatabaseCollection(database, ServicesCollectionConfig),
+      database.exec('COMMIT TRANSACTION');
+      return result;
+    } catch (e) {
+      database.exec('ROLLBACK TRANSACTION');
+      throw e;
+    }
+  },
 
-  Users: new SQLiteJoinedDatabaseCollection(database, UsersCollectionConfig),
+  Users: initializeCollection(database, UsersCollection),
+  Authentication: initializeCollection(database, AuthenticationCollection),
+
+  Announcements: initializeCollection(database, AnnouncementsCollection),
+  Bookings: initializeCollection(database, BookingsCollection),
+  Services: initializeCollection(database, ServicesCollection),
+  Feedback: initializeCollection(database, FeedbackCollection),
 };
+
+export type DatabaseConfig = Record<string, (db: DatabaseSync) => unknown>;
+
+type DatabaseCollection<T> = {
+  [key in keyof T]: T[key] extends (db: DatabaseSync) => infer F ? F : never;
+};
+
+function initializeCollection<T extends DatabaseConfig>(
+  database: DatabaseSync,
+  collection: T,
+): DatabaseCollection<T> {
+  const entries = [];
+
+  for (const key in collection) {
+    const fn = collection[key];
+    entries.push([key, fn(database)]);
+  }
+
+  return Object.fromEntries(entries);
+}

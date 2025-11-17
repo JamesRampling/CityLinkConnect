@@ -1,9 +1,10 @@
 import '#server/database';
+import accountsRoute from '#server/routes/accounts';
 import announcementsRoute from '#server/routes/announcements';
 import bookingsRoute from '#server/routes/bookings';
 import feedbackRoute from '#server/routes/feedback';
 import servicesRoute from '#server/routes/services';
-import { Responses } from '#server/utils/Responses';
+import { ResponseError, Responses } from '#server/utils/Responses';
 import express, {
   Router,
   type ErrorRequestHandler,
@@ -20,7 +21,8 @@ app.use(
     .use('/announcements', announcementsRoute)
     .use('/bookings', bookingsRoute)
     .use('/feedback', feedbackRoute)
-    .use('/services', servicesRoute),
+    .use('/services', servicesRoute)
+    .use('/account', accountsRoute),
 
   // Do not fallback to index.html for API endpoints
   ((req, res) => {
@@ -32,6 +34,13 @@ app.use(
   // Error handlers require all 4 arguments to be recognised correctly.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ((err, _req, res, _next) => {
+    console.error(err);
+
+    if (err instanceof ResponseError) {
+      Responses.error(res, err.inner);
+      return;
+    }
+
     Responses.serverError(res, 'An unknown error occurred.', err);
   }) satisfies ErrorRequestHandler,
 );

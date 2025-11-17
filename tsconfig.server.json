@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
-  "include": ["standalone.ts", "server/**/*"],
+  "include": ["standalone.ts", "server/**/*", "scripts/*"],
   "exclude": ["server/**/__tests__/*"],
   "compilerOptions": {
     "noEmit": true,
