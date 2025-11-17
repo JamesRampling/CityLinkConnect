@@ -1,6 +1,4 @@
-import '#server/types';
-
-import { JWT_SECRET } from '#server/secrets';
+import { JWT_SECRET } from '#server/environment';
 import { Responses } from '#server/utils/Responses';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
