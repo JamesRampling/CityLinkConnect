@@ -7,6 +7,7 @@ import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
 import { DATABASE_PATH } from '#server/environment';
+import { die } from '#server/utils/Responses';
 import { DatabaseSync } from 'node:sqlite';
 
 const database = new DatabaseSync(DATABASE_PATH);
@@ -17,10 +18,9 @@ const actualSchemaVersion =
 if (actualSchemaVersion === 0) {
   database.exec(schema);
 } else if (actualSchemaVersion !== schemaVersion) {
-  process.stderr.write(
-    `Loaded schema version ${actualSchemaVersion} not compatible with ${schemaVersion}.\n`,
+  die(
+    `Loaded schema version ${actualSchemaVersion} not compatible with ${schemaVersion}.`,
   );
-  process.exit(1);
 }
 
 if (process.env.NODE_ENV !== 'production' && actualSchemaVersion === 0) {
