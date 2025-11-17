@@ -28,6 +28,7 @@ const router = createRouter({
       component: () => import('@/routes/UserProfileView.vue'),
       props: convertProps({ id: Number }),
     },
+    { path: '/account', component: () => import('@/routes/MyProfile.vue') },
     { path: '/login', component: () => import('@/routes/LoginView.vue') },
     { path: '/register', component: () => import('@/routes/RegisterView.vue') },
     {

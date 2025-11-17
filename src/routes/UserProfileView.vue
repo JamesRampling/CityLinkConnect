@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// UserProfileView represents an admin view of any particular user.
 defineProps<{ id: number }>();
 </script>
 
