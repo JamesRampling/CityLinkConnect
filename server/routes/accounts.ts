@@ -1,4 +1,4 @@
-import { authenticate, authorizeAdmin } from '#server/authentication';
+import { authenticate } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { JWT_SECRET } from '#server/environment';
@@ -61,28 +61,12 @@ route.post(
       subject: user.user_id.toString(),
     });
 
-    Responses.ok(res, { ...user, token });
+    Responses.ok(res, token);
   },
 );
 
-route.get('/info', authenticate, (req, res) => {
-  if (!req.authentication?.sub) {
-    throw new ResponseError({
-      type: 'unauthorized',
-      title: 'This resource requires authorization.',
-      status: 401,
-    });
-  }
-
-  const user = db.Users.getFromId(req.authentication.sub).or_throw(
-    queryErrorToResponse,
-  );
-
-  Responses.ok(res, user);
-});
-
-route.get('/', authenticate, authorizeAdmin, (_, res) => {
-  Responses.ok(res, { users: db.Users.getAll() });
+route.post('/info', authenticate, (_, res) => {
+  Responses.noContent(res);
 });
 
 export default route;
