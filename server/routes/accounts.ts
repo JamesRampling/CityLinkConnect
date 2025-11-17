@@ -66,7 +66,15 @@ route.post(
 );
 
 route.get('/info', authenticate, (req, res) => {
-  const user = db.Users.getFromId(req.authentication?.sub ?? 0).or_throw(
+  if (!req.authentication?.sub) {
+    throw new ResponseError({
+      type: 'unauthorized',
+      title: 'This resource requires authorization.',
+      status: 401,
+    });
+  }
+
+  const user = db.Users.getFromId(req.authentication.sub).or_throw(
     queryErrorToResponse,
   );
 

@@ -1,6 +1,6 @@
 import '#server/types';
 
-import { authenticate, authorize } from '#server/authentication';
+import { authenticate, authorizeAdmin } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { ResponseError, Responses } from '#server/utils/Responses';
@@ -71,17 +71,9 @@ route.post(
 
 route.put(
   '/:id',
-  validate({
-    route: { id: 'int' },
-    body: Booking.omit({ booking_id: true, user_id: true }),
-  }),
+  validate({ route: { id: 'int' }, body: Booking.omit({ booking_id: true }) }),
   authenticate,
-  authorize(
-    (req) =>
-      !!req.authentication?.is_admin ||
-      req.authentication?.sub ===
-        db.Bookings.getFromId(req.params.id).or_throw(queryErrorToResponse),
-  ),
+  authorizeAdmin,
   (req, res) => {
     if (!req.authentication) {
       throw new ResponseError({
@@ -97,7 +89,6 @@ route.put(
     const { rows_changed } = db.Bookings.update({
       ...values,
       booking_id: id,
-      user_id: req.authentication.sub,
     }).or_throw(queryErrorToResponse);
 
     if (rows_changed === 0) {
@@ -112,12 +103,7 @@ route.delete(
   '/:id',
   validate({ route: { id: 'int' } }),
   authenticate,
-  authorize(
-    (req) =>
-      !!req.authentication?.is_admin ||
-      req.authentication?.sub ===
-        db.Bookings.getFromId(req.params.id).or_throw(queryErrorToResponse),
-  ),
+  authorizeAdmin,
   (req, res) => {
     const id = req.params.id;
 
