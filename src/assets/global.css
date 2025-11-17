@@ -36,6 +36,12 @@ input,
 select,
 textarea {
   font: inherit;
+  text-align: inherit;
+  text-indent: inherit;
+  text-shadow: inherit;
+  text-transform: inherit;
+  word-spacing: inherit;
+  letter-spacing: inherit;
 }
 
 img {
