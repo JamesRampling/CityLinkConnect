@@ -1,5 +1,5 @@
 import { User } from '#shared/models';
-import { requestIn, requestInOut, requestOut } from '@/api/factories';
+import { request, requestIn, requestInOut, requestOut } from '@/api/factories';
 import z from 'zod';
 
 const baseUrl = `/api/account`;
@@ -34,6 +34,18 @@ export default {
    * Get the currently authenticated user account.
    */
   info: requestOut('GET', `${baseUrl}/info`, User, true),
+
+  /**
+   * Updates a single user's account details. Requires authentication and admin
+   * permissions.
+   */
+  update: requestIn('PUT', `${baseUrl}/:id`, User, true),
+
+  /**
+   * Delete a single user's account. Requires authentication and admin
+   * permissions.
+   */
+  delete: request('DELETE', `${baseUrl}/:id`, true),
 
   /**
    * Get all user accounts on the server, requires authentication with admin
