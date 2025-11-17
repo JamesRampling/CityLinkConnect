@@ -7,7 +7,7 @@ import { ref } from 'vue';
 defineProps<{ labelHidden?: boolean }>();
 
 const dialogElement = ref<HTMLDialogElement>();
-const accessibility = useAccessibility();
+const [accessibility, resetAccessibility] = useAccessibility();
 </script>
 
 <template>
@@ -55,7 +55,7 @@ const accessibility = useAccessibility();
           ]"
         />
         <div class="button-row">
-          <button class="button-outlined" @click="accessibility.reset()">
+          <button class="button-outlined" @click="resetAccessibility">
             Reset
           </button>
         </div>
