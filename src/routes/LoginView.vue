@@ -1,32 +1,51 @@
 <script setup lang="ts">
-import { User } from '#shared/models';
+import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import InputText from '@/components/InputText.vue';
+import { UserState, useUser } from '@/user';
 import { useValidation } from '@/utils/validation';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import z from 'zod';
 
-const field = reactive({
-  given_names: '',
-  last_name: '',
-  password: '',
-  email: '',
-  phone: '',
-});
+const router = useRouter();
+const route = useRoute();
+const email = typeof route.query.email === 'string' ? route.query.email : '';
 
-const { errors, validate } = useValidation(
-  User.extend({ password: z.string().min(8) }),
-  field,
-);
+const LoginForm = z.object({ email: z.email(), password: z.string().min(8) });
+
+const field = reactive<z.input<typeof LoginForm>>({ password: '', email });
+
+const { parsed, errors, validate } = useValidation(LoginForm, field);
+
+const requestError = ref<FetchError<typeof UserState>>();
+
+const userState = useUser();
+
+async function submit() {
+  validate();
+  if (!parsed.value) return;
+
+  const result = await api.account.login(parsed.value);
+  if (result.ok) {
+    userState.value = result.data;
+    await router.push(`/`);
+  } else {
+    requestError.value = result.error;
+  }
+}
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1 class="login-less-margin">Login</h1>
-    <p>
+    <p v-if="!route.query.email">
       Don't have an account?
       <router-link to="/register">Register here.</router-link>
     </p>
-    <form class="form" action="" @submit.prevent="validate">
+    <p v-else>Register successful.</p>
+    <form class="form" action="" @submit.prevent="submit">
       <InputText v-model="field.email" name="email" label="E-Mail" />
       <ul v-if="errors.email" class="error-list">
         <li v-for="error in errors.email" :key="error" class="error-item">
@@ -48,6 +67,8 @@ const { errors, validate } = useValidation(
         <button type="submit" class="button-filled">Submit</button>
       </div>
     </form>
+
+    <ApiErrorMessage v-if="requestError" :error="requestError" />
   </div>
 </template>
 

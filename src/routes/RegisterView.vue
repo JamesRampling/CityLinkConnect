@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { User } from '#shared/models';
+import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import InputText from '@/components/InputText.vue';
 import { useValidation } from '@/utils/validation';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import z from 'zod';
 
-const field = reactive({
+const RegisterForm = User.omit({ user_id: true }).extend({
+  password: z.string().min(8),
+});
+
+const field = reactive<z.input<typeof RegisterForm>>({
   given_names: '',
   last_name: '',
   password: '',
@@ -13,17 +21,30 @@ const field = reactive({
   phone: '',
 });
 
-const { errors, validate } = useValidation(
-  User.extend({ password: z.string().min(8) }),
-  field,
-);
+const { parsed, errors, validate } = useValidation(RegisterForm, field);
+
+const requestError = ref<FetchError<typeof RegisterForm>>();
+
+const router = useRouter();
+
+async function submit() {
+  validate();
+  if (!parsed.value) return;
+
+  const result = await api.account.register(parsed.value);
+  if (result.ok) {
+    await router.push(`/login?email=${field.email}`);
+  } else {
+    requestError.value = result.error;
+  }
+}
 </script>
 
 <template>
   <div class="page-wrapper">
     <h1 class="login-less-margin">Register</h1>
     <p><router-link to="/login">Login here.</router-link></p>
-    <form class="form" action="" @submit.prevent="validate">
+    <form class="form" action="" @submit.prevent="submit">
       <InputText
         v-model="field.given_names"
         name="given-names"
@@ -68,6 +89,8 @@ const { errors, validate } = useValidation(
         <button type="submit" class="button-filled">Submit</button>
       </div>
     </form>
+
+    <ApiErrorMessage v-if="requestError" :error="requestError" />
   </div>
 </template>
 
