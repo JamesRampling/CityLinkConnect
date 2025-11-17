@@ -32,12 +32,12 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
 <template>
   <div class="page-wrapper">
-    <h1 class="login-less-margin">Login</h1>
+    <h1>Login</h1>
     <p v-if="!route.query.email">
       Don't have an account?
       <router-link to="/register">Register here.</router-link>
     </p>
-    <p v-else>Registration successful!</p>
+    <p v-else class="success-message">Registration successful!</p>
     <form class="form" action="" @submit.prevent="submit">
       <InputText v-model="fields.email" name="email" label="E-Mail" />
       <ul v-if="fieldErrors.email" class="error-list">
@@ -65,13 +65,10 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       </div>
     </form>
 
-    <ApiErrorMessage v-if="submissionError" :error="submissionError" />
+    <ApiErrorMessage
+      v-if="submissionError"
+      class="small"
+      :error="submissionError"
+    />
   </div>
 </template>
-
-<style>
-.login-less-margin {
-  font-size: clamp(2rem, 5vw, 3rem);
-  margin-block: 1rem 1rem;
-}
-</style>

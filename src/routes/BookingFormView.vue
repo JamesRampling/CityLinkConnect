@@ -8,6 +8,7 @@ import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { useUser } from '@/user';
 import { useValidation } from '@/utils/validation';
 import { reactive } from 'vue';
 
@@ -18,6 +19,8 @@ const { errors, validate } = useValidation(
   Booking.omit({ user_id: true, service_id: true }),
   field,
 );
+
+const userState = useUser();
 </script>
 
 <template>
@@ -61,7 +64,12 @@ const { errors, validate } = useValidation(
 
           <section class="section-form">
             <h2>Booking details</h2>
-            <form class="form" action="" @submit.prevent="validate">
+            <form
+              v-if="userState"
+              class="form"
+              action=""
+              @submit.prevent="validate"
+            >
               <InputText
                 v-model="field.booking_datetime"
                 type="datetime-local"
@@ -85,6 +93,7 @@ const { errors, validate } = useValidation(
                 <button type="submit" class="button-filled">Submit</button>
               </div>
             </form>
+            <p v-else>Please login before making a service booking.</p>
           </section>
         </div>
       </template>
@@ -116,15 +125,5 @@ const { errors, validate } = useValidation(
 
 .fee-name {
   text-transform: capitalize;
-}
-
-.error-list {
-  margin: 0;
-  padding-inline-start: 1rem;
-}
-
-.error-item {
-  color: red;
-  list-style: none;
 }
 </style>

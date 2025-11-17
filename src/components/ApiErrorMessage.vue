@@ -54,4 +54,14 @@ defineProps<{ error: FetchError<T> }>();
   place-items: center;
   text-align: center;
 }
+
+.error-wrapper.small {
+  padding-block: 1rem;
+  place-items: start;
+  text-align: start;
+
+  h2 {
+    font-size: 1rem;
+  }
+}
 </style>
