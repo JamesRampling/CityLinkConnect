@@ -6,12 +6,10 @@ import ServicesCollection from '#server/database/collections/ServicesCollection'
 import UsersCollection from '#server/database/collections/UsersCollection';
 import schema, { schemaVersion } from '#server/database/schema';
 import seed_test_data from '#server/database/seed_test_data';
+import { DATABASE_PATH } from '#server/environment';
 import { DatabaseSync } from 'node:sqlite';
 
-const database =
-  process.env.NODE_ENV === 'production'
-    ? new DatabaseSync(process.env.DATABASE_PATH ?? 'database.sqlite')
-    : new DatabaseSync(':memory:');
+const database = new DatabaseSync(DATABASE_PATH);
 
 const actualSchemaVersion =
   database.prepare(`PRAGMA user_version;`).get()?.user_version ?? 0;
@@ -25,7 +23,7 @@ if (actualSchemaVersion === 0) {
   process.exit(1);
 }
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && actualSchemaVersion === 0) {
   database.exec(seed_test_data);
 }
 

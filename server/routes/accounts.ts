@@ -1,7 +1,7 @@
 import { authenticate } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
-import { JWT_SECRET } from '#server/secrets';
+import { JWT_SECRET } from '#server/environment';
 import { raise, ResponseError, Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { User } from '#shared/models';

@@ -35,6 +35,10 @@ and the website's static files. The frontend must first be built with Vite:
 npm run build
 ```
 
+Before launching the server, a secret is required for signing JWT tokens, to do this,
+set `JWT_SECRET` in `.env` or `.env.production` to a base64url encoded string which is at least 256 bytes long when decoded.
+A suitable secret can be generated with the `make-secret` script.
+
 Then the standalone server can be deployed as such:
 
 ```sh
