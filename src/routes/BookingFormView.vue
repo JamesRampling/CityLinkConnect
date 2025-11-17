@@ -31,9 +31,9 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
 <template>
   <div class="page-wrapper">
-    <router-link class="back-button button-filled" to="/services"
-      ><IconBack />Back</router-link
-    >
+    <button class="back-button button-filled" @click="$router.back()">
+      <IconBack />Back
+    </button>
     <h1>Book a service</h1>
     <LoadedData :action="() => api.services.single(id)">
       <template #loading>

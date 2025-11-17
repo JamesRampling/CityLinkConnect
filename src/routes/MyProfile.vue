@@ -30,7 +30,7 @@ async function getAndSortBookings() {
 
   return sorted.map((bookings) =>
     groupBy(bookings, (e) =>
-      dateToMs(e.booking_datetime) > Date.now() ? 'upcoming' : 'older',
+      dateToMs(e.booking_datetime) > Date.now() ? 'upcoming' : 'past',
     ),
   );
 }
@@ -68,7 +68,7 @@ async function getAndSortBookings() {
             <LoadingSpinner />
           </template>
 
-          <template #ok="{ data: { upcoming, older } }">
+          <template #ok="{ data: { upcoming, past } }">
             <section>
               <h2>My Upcoming Bookings</h2>
               <div v-if="upcoming?.length" class="bookings-list">
@@ -82,15 +82,15 @@ async function getAndSortBookings() {
             </section>
 
             <section>
-              <h2>My Older Bookings</h2>
-              <div v-if="older?.length" class="bookings-list">
+              <h2>My Past Bookings</h2>
+              <div v-if="past?.length" class="bookings-list">
                 <BookingCard
-                  v-for="booking in older"
+                  v-for="booking in past"
                   :key="booking.booking_id"
                   :booking
                 />
               </div>
-              <div v-else class="no-bookings">No older bookings.</div>
+              <div v-else class="no-bookings">No past bookings.</div>
             </section>
           </template>
 
