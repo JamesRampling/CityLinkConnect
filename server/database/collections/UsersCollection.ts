@@ -21,6 +21,7 @@ export default {
     User,
     /*sql*/ `SELECT * FROM Users WHERE email = ?;`,
   ),
+
   insert: mutateRows(
     User.omit({ user_id: true }),
     /*sql*/ `

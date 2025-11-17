@@ -4,12 +4,6 @@ import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 
-declare module 'express' {
-  export interface Request {
-    authentication?: AuthenticationStatus;
-  }
-}
-
 const AuthenticationStatus = z.object({
   is_admin: z.coerce.boolean(),
   iat: z.coerce.number().int().pipe(z.coerce.date()),
