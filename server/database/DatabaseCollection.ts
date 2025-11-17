@@ -22,6 +22,35 @@ export function queryAll<O extends z.ZodType>(
   };
 }
 
+export function queryFiltered<I extends z.ZodType, O extends z.ZodType>(
+  inputSchema: I,
+  outputSchema: O,
+  query: string,
+): (database: DatabaseSync) => (input: z.input<I>) => z.output<z.ZodArray<O>> {
+  return (database) => {
+    const statement = database.prepare(query);
+    statement.setAllowBareNamedParameters(true);
+
+    return (input) => {
+      const rows = validateSqlParameters(inputSchema, input).and_then(
+        (inner) => {
+          try {
+            return Result.ok(statement.all(inner as unknown as SQLInputValue));
+          } catch (error) {
+            const errcode = getSQLiteErrorCode(error);
+            return Result.err(
+              errcode !== undefined
+                ? { type: 'sqlite-error', errcode }
+                : { type: 'unknown-error', error },
+            );
+          }
+        },
+      );
+      return outputSchema.array().parse(rows.data ?? []);
+    };
+  };
+}
+
 export function queryUnique<I extends z.ZodType, O extends z.ZodType>(
   inputSchema: I,
   outputSchema: O,

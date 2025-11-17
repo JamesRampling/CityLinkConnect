@@ -22,8 +22,7 @@ app.use(
     .use('/announcements', announcementsRoute)
     .use('/bookings', bookingsRoute)
     .use('/feedback', feedbackRoute)
-    .use('/services', servicesRoute)
-    .use('/account', accountsRoute),
+    .use('/services', servicesRoute),
 
   // Do not fallback to index.html for API endpoints
   ((req, res) => {
