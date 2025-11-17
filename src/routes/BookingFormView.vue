@@ -126,14 +126,4 @@ const userState = useUser();
 .fee-name {
   text-transform: capitalize;
 }
-
-.error-list {
-  margin: 0;
-  padding-inline-start: 1rem;
-}
-
-.error-item {
-  color: red;
-  list-style: none;
-}
 </style>

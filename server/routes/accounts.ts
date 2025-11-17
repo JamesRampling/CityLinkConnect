@@ -42,7 +42,7 @@ route.post(
     const err = new ResponseError({
       type: 'unauthorized',
       status: 401,
-      title: 'Failed to log in.',
+      title: 'Incorrect email or password.',
     });
 
     const { email, password } = req.body;
