@@ -35,10 +35,9 @@ route.post(
   validate({ body: Feedback.omit({ feedback_id: true }) }),
   (req, res) => {
     const value = req.body;
-    const { last_row_id: id } =
-      db.Feedback.insert(value).or_throw(queryErrorToResponse);
+    db.Feedback.insert(value).or_throw(queryErrorToResponse);
 
-    Responses.ok(res, { ...value, feedback_id: id });
+    Responses.noContent(res);
   },
 );
 

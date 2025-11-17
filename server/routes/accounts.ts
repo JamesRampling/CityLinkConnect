@@ -61,16 +61,16 @@ route.post(
       subject: user.user_id.toString(),
     });
 
-    Responses.ok(res, token);
+    Responses.ok(res, { ...user, token });
   },
 );
 
-route.post('/info', authenticate, (req, res) => {
+route.get('/info', authenticate, (req, res) => {
   const user = db.Users.getFromId(req.authentication?.sub ?? 0).or_throw(
     queryErrorToResponse,
   );
 
-  Responses.ok(res, { ...user, authentication: req.authentication });
+  Responses.ok(res, user);
 });
 
 route.get('/', authenticate, authorizeAdmin, (_, res) => {
