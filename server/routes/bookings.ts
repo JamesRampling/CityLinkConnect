@@ -1,36 +1,67 @@
-import { authenticate, authorizeAdmin } from '#server/authentication';
+import '#server/types';
+
+import { authenticate, authorize } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
-import { Responses } from '#server/utils/Responses';
+import { ResponseError, Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
 import { Booking } from '#shared/models';
 import { Router } from 'express';
 
 const route = Router();
 
-route.get('/', (_, res) => {
-  Responses.ok(res, db.Bookings.getAll());
-});
-
-route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const id = req.params.id;
-
-  const value = db.Bookings.getFromId(id).or_throw(queryErrorToResponse);
-
-  if (value === undefined) {
-    Responses.notFound(res);
-  } else {
-    Responses.ok(res, value);
+route.get('/', authenticate, (req, res) => {
+  const auth = req.authentication;
+  if (!auth) {
+    throw new ResponseError({
+      type: 'unauthorized',
+      status: 401,
+      title: 'This resource requires authorization.',
+    });
   }
+
+  const bookings = auth.is_admin
+    ? db.Bookings.getAll()
+    : db.Bookings.getAllByUserId(auth.sub);
+
+  Responses.ok(res, bookings);
 });
+
+route.get(
+  '/:id',
+  validate({ route: { id: 'int' } }),
+  authenticate,
+  (req, res) => {
+    const id = req.params.id;
+
+    const value = db.Bookings.getFromId(id).or_throw(queryErrorToResponse);
+
+    if (
+      value &&
+      (req.authentication?.is_admin ||
+        req.authentication?.sub === value.user_id)
+    ) {
+      Responses.ok(res, value);
+    } else {
+      Responses.notFound(res);
+    }
+  },
+);
 
 route.post(
   '/',
-  validate({ body: Booking.omit({ booking_id: true }) }),
+  validate({ body: Booking.omit({ booking_id: true, user_id: true }) }),
   authenticate,
-  authorizeAdmin,
   (req, res) => {
-    const value = req.body;
+    if (!req.authentication?.sub) {
+      throw new ResponseError({
+        type: 'unauthorized',
+        title: 'This resource requires authorization.',
+        status: 401,
+      });
+    }
+
+    const value = { ...req.body, user_id: req.authentication.sub };
     const { last_row_id: id } =
       db.Bookings.insert(value).or_throw(queryErrorToResponse);
 
@@ -40,16 +71,33 @@ route.post(
 
 route.put(
   '/:id',
-  validate({ route: { id: 'int' }, body: Booking.omit({ booking_id: true }) }),
+  validate({
+    route: { id: 'int' },
+    body: Booking.omit({ booking_id: true, user_id: true }),
+  }),
   authenticate,
-  authorizeAdmin,
+  authorize(
+    (req) =>
+      !!req.authentication?.is_admin ||
+      req.authentication?.sub ===
+        db.Bookings.getFromId(req.params.id).or_throw(queryErrorToResponse),
+  ),
   (req, res) => {
+    if (!req.authentication) {
+      throw new ResponseError({
+        type: 'unauthorized',
+        status: 401,
+        title: 'This resource requires authorization.',
+      });
+    }
+
     const id = req.params.id;
     const values = req.body;
 
     const { rows_changed } = db.Bookings.update({
       ...values,
       booking_id: id,
+      user_id: req.authentication.sub,
     }).or_throw(queryErrorToResponse);
 
     if (rows_changed === 0) {
@@ -64,7 +112,12 @@ route.delete(
   '/:id',
   validate({ route: { id: 'int' } }),
   authenticate,
-  authorizeAdmin,
+  authorize(
+    (req) =>
+      !!req.authentication?.is_admin ||
+      req.authentication?.sub ===
+        db.Bookings.getFromId(req.params.id).or_throw(queryErrorToResponse),
+  ),
   (req, res) => {
     const id = req.params.id;
 

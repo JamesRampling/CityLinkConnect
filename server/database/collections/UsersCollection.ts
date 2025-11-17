@@ -9,11 +9,19 @@ import z from 'zod';
 
 export default {
   getAll: queryAll(User, /*sql*/ `SELECT * FROM Users;`),
+
+  getFromId: queryUnique(
+    z.int().nonnegative(),
+    User,
+    /*sql*/ `SELECT * FROM Users WHERE user_id = ?;`,
+  ),
+
   getFromEmail: queryUnique(
     z.email(),
     User,
     /*sql*/ `SELECT * FROM Users WHERE email = ?;`,
   ),
+
   insert: mutateRows(
     User.omit({ user_id: true }),
     /*sql*/ `

@@ -1,4 +1,4 @@
-import { authenticate } from '#server/authentication';
+import { authenticate, authorizeAdmin } from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { JWT_SECRET } from '#server/environment';
@@ -65,8 +65,16 @@ route.post(
   },
 );
 
-route.post('/info', authenticate, (_, res) => {
-  Responses.noContent(res);
+route.post('/info', authenticate, (req, res) => {
+  const user = db.Users.getFromId(req.authentication?.sub ?? 0).or_throw(
+    queryErrorToResponse,
+  );
+
+  Responses.ok(res, { ...user, authentication: req.authentication });
+});
+
+route.get('/', authenticate, authorizeAdmin, (_, res) => {
+  Responses.ok(res, { users: db.Users.getAll() });
 });
 
 export default route;
