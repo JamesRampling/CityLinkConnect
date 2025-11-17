@@ -11,7 +11,7 @@ export default {
   getAll: queryAll(User, /*sql*/ `SELECT * FROM Users;`),
 
   getFromId: queryUnique(
-    z.int().nonnegative(),
+    z.int(),
     User,
     /*sql*/ `SELECT * FROM Users WHERE user_id = ?;`,
   ),

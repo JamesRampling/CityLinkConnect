@@ -12,7 +12,7 @@ export default {
   getAll: queryAll(Booking, /*sql*/ `SELECT * FROM Bookings;`),
 
   getAllByUserId: queryFiltered(
-    z.int().nonnegative(),
+    z.int(),
     Booking,
     /*sql*/ `SELECT * FROM Bookings WHERE user_id = ?;`,
   ),
