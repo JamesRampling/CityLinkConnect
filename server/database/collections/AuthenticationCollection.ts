@@ -19,4 +19,20 @@ export default {
     /*sql*/ `INSERT INTO Authentication (user_id, argon2_hash, is_admin)
                     VALUES ($user_id, $argon2_hash, $is_admin);`,
   ),
+  updateHash: mutateRows(
+    AuthenticationEntry.omit({ is_admin: true }),
+    /*sql*/ `
+    UPDATE Authentication
+    SET argon2_hash = $argon2_hash
+    WHERE user_id = $user_id;
+    `,
+  ),
+  updateAdmin: mutateRows(
+    AuthenticationEntry.omit({ argon2_hash: true }),
+    /*sql*/ `
+    UPDATE Authentication
+    SET is_admin = $is_admin
+    WHERE user_id = $user_id;
+    `,
+  ),
 } satisfies DatabaseConfig;
