@@ -20,9 +20,7 @@ const fields = reactive({ password: '', email });
 const { submit, fieldErrors, submissionError } = useSubmission(
   LoginForm,
   fields,
-  async (form) => {
-    return await api.account.login(form);
-  },
+  api.account.login,
   async (result) => {
     userState.value = result;
     await router.push(`/`);

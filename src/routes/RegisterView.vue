@@ -24,7 +24,7 @@ const fields = reactive({
 const { submit, fieldErrors, submissionError } = useSubmission(
   RegisterForm,
   fields,
-  (form) => api.account.register(form),
+  api.account.register,
   () => router.push(`/login?email=${fields.email}`),
 );
 </script>

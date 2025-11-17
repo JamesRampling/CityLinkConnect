@@ -26,7 +26,7 @@ export function useSubmission<I extends z.ZodType, R>(
   schema: I,
   fields: Reactive<z.input<I>>,
   action: (form: z.infer<I>) => Promise<Result<R, unknown>>,
-  success: (result: R) => Promise<unknown>,
+  success: (result: R) => unknown,
 ) {
   const { errors, validate } = useValidation(schema, fields);
   const submissionError = ref();
@@ -41,6 +41,7 @@ export function useSubmission<I extends z.ZodType, R>(
 
       const result = await action(parsed);
       if (result.ok) {
+        submissionError.value = undefined;
         await success(result.data);
       } else {
         submissionError.value = result.error;
