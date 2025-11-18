@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { BookingWithServices } from '@/api/endpoints/bookings';
+import type { BookingWithService } from '@/api/endpoints/bookings';
 import { formatDate } from '@/utils';
 import type z from 'zod';
 
-defineProps<{ booking: z.infer<typeof BookingWithServices> }>();
+defineProps<{ booking: z.infer<typeof BookingWithService> }>();
 </script>
 
 <template>
