@@ -17,7 +17,7 @@ function useLazyExpress(path: string) {
 }
 
 function relativeToRoot(path: string) {
-  return fileURLToPath(new URL(path, import.meta.url));
+  return new URL(path, import.meta.url);
 }
 
 // https://vite.dev/config/
@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
-    useLazyExpress(relativeToRoot('./server/index.ts')),
+    useLazyExpress(relativeToRoot('./server/index.ts').href),
   ],
-  resolve: { alias: { '@': relativeToRoot('./src') } },
+  resolve: { alias: { '@': fileURLToPath(relativeToRoot('./src')) } },
 });

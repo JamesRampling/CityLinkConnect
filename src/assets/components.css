@@ -28,10 +28,12 @@
   border-color: var(--button-filled-border-color);
   border-width: var(--button-filled-border-width);
 
-  &:hover {
-    background-color: var(--button-filled-hover-bgcolor);
-    color: var(--button-filled-hover-color);
-    border-color: var(--button-filled-hover-border-color);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-filled-hover-bgcolor);
+      color: var(--button-filled-hover-color);
+      border-color: var(--button-filled-hover-border-color);
+    }
   }
 
   &:active {
@@ -47,10 +49,12 @@
   border-color: var(--button-outlined-border-color);
   border-width: var(--button-outlined-border-width);
 
-  &:hover {
-    background-color: var(--button-outlined-hover-bgcolor);
-    color: var(--button-outlined-hover-color);
-    border-color: var(--button-outlined-hover-border-color);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-outlined-hover-bgcolor);
+      color: var(--button-outlined-hover-color);
+      border-color: var(--button-outlined-hover-border-color);
+    }
   }
 
   &:active {
@@ -70,7 +74,6 @@
 .form {
   display: grid;
   gap: var(--form-gap);
-  width: min(60ch, 90vw);
 }
 
 .button-row {
@@ -105,12 +108,14 @@
     transition-property: box-shadow, background-color, color, border-color;
     transition: 200ms;
 
-    &:hover {
-      color: var(--card-hover-color);
-      background-color: var(--card-hover-bgcolor);
-      border-color: var(--card-hover-border-color);
-      box-shadow: var(--card-hover-shadow);
-      text-decoration: none;
+    @media (hover: hover) {
+      &:hover {
+        color: var(--card-hover-color);
+        background-color: var(--card-hover-bgcolor);
+        border-color: var(--card-hover-border-color);
+        box-shadow: var(--card-hover-shadow);
+        text-decoration: none;
+      }
     }
 
     &:active {

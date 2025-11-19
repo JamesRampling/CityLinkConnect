@@ -20,11 +20,11 @@ route.get('/', authenticate, (req, res) => {
     });
   }
 
-  const bookings = auth.is_admin
-    ? db.Bookings.getAll()
-    : db.Bookings.getAllByUserId(auth.sub);
+  Responses.ok(res, db.Bookings.getAllByUserId(auth.sub));
+});
 
-  Responses.ok(res, bookings);
+route.get('/all', authenticate, authorizeAdmin, (req, res) => {
+  Responses.ok(res, db.Bookings.getAll());
 });
 
 route.get(

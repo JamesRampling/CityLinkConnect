@@ -38,15 +38,17 @@ const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
     <div class="end-header-buttons">
       <AccessibilityMenu :label-hidden="isNarrowScreen" />
 
-      <span v-if="userState === undefined">
+      <template v-if="userState === undefined">
         <router-link to="/login" class="button-filled">Login</router-link>
-      </span>
-      <span v-else>
+      </template>
+      <template v-else>
         <router-link :to="`/account`" class="button-outlined">
           <IconUser />
-          {{ userState.given_names }}
+          <template v-if="!isNarrowScreen">{{
+            userState.given_names
+          }}</template>
         </router-link>
-      </span>
+      </template>
     </div>
   </header>
   <main>

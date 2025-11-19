@@ -105,6 +105,12 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       v-if="submissionError"
       class="small"
       :error="submissionError"
-    />
+    >
+      <template #title="{ error }">
+        <span v-if="error.type === 'constraint-error'">
+          User already exists.
+        </span>
+      </template>
+    </ApiErrorMessage>
   </div>
 </template>

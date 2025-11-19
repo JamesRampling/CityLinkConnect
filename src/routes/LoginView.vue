@@ -14,7 +14,7 @@ const email = typeof route.query.email === 'string' ? route.query.email : '';
 
 const userState = useUser();
 
-const LoginForm = z.object({ email: z.email(), password: z.string().min(8) });
+const LoginForm = z.object({ email: z.email(), password: z.string() });
 
 const fields = reactive({ password: '', email });
 const { submit, fieldErrors, submissionError } = useSubmission(

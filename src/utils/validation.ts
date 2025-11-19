@@ -22,14 +22,14 @@ export function useValidation<T extends z.ZodType>(
   };
 }
 
-export function useSubmission<I extends z.ZodType, R>(
+export function useSubmission<I extends z.ZodType, R, E>(
   schema: I,
   fields: Reactive<z.input<I>>,
-  action: (form: z.infer<I>) => Promise<Result<R, unknown>>,
+  action: (form: z.infer<I>) => Promise<Result<R, E>>,
   success: (result: R) => unknown,
 ) {
   const { errors, validate } = useValidation(schema, fields);
-  const submissionError = ref();
+  const submissionError = ref<E>();
 
   return {
     fieldErrors: errors,
