@@ -12,9 +12,9 @@ defineProps<{ id: number }>();
 
 <template>
   <div class="page-wrapper">
-    <router-link class="back-button button-filled" to="/"
-      ><IconBack />Back</router-link
-    >
+    <button class="back-button button-filled" @click="$router.back()">
+      <IconBack />Back
+    </button>
     <LoadedData :action="() => api.announcements.single(id)">
       <template #loading>
         <LoadingSpinner />

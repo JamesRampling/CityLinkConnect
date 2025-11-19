@@ -35,6 +35,17 @@ const [accessibility, resetAccessibility] = useAccessibility();
       <p>Here you can set your accessibility options.</p>
       <div class="accessibility-options">
         <InputSelect
+          v-model="accessibility.themeMode"
+          name="Style"
+          label="Colour Theme"
+          :options="[
+            { text: 'Light', value: 'light' },
+            { text: 'Dark', value: 'dark' },
+            { text: 'System', value: 'light dark' },
+          ]"
+        />
+
+        <InputSelect
           v-model="accessibility.fontSize"
           name="Text size"
           label="Text size"
@@ -44,16 +55,42 @@ const [accessibility, resetAccessibility] = useAccessibility();
             { text: 'Extra large', value: 20 },
           ]"
         />
+
         <InputSelect
-          v-model="accessibility.themeMode"
+          v-model="accessibility.fontFamily"
           name="Style"
-          label="Theme"
+          label="Font"
           :options="[
-            { text: 'Light', value: 'light' },
-            { text: 'Dark', value: 'dark' },
-            { text: 'System', value: 'light dark' },
+            { text: 'Default', value: 'sans' },
+            { text: 'Serif', value: 'serif' },
+            { text: 'Comic', value: 'comic' },
+            { text: 'Monospace', value: 'monospace' },
           ]"
         />
+
+        <InputSelect
+          v-model="accessibility.lineHeight"
+          name="Style"
+          label="Text line height"
+          :options="[
+            { text: 'Regular', value: 1.2 },
+            { text: 'Tall', value: 1.5 },
+            { text: 'Extra Tall', value: 2 },
+          ]"
+        />
+
+        <InputSelect
+          v-model="accessibility.letterSpacing"
+          name="Style"
+          label="Text letter spacing"
+          :options="[
+            { text: 'None', value: 0 },
+            { text: 'Light', value: 1 },
+            { text: 'Moderate', value: 2 },
+            { text: 'Extra', value: 5 },
+          ]"
+        />
+
         <div class="button-row">
           <button class="button-outlined" @click="resetAccessibility">
             Reset

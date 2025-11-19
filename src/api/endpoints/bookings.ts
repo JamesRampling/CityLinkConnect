@@ -1,20 +1,26 @@
-import { Booking } from '#shared/models';
+import { Booking, ServiceWithXML, User } from '#shared/models';
 import { request, requestInOut, requestOut } from '@/api/factories';
 
 const baseUrl = '/api/bookings';
 
+export const BookingWithService = Booking.extend({ service: ServiceWithXML });
+
+export const BookingWithUserAndService = Booking.extend({
+  service: ServiceWithXML,
+  user: User,
+});
+
 export default {
   /**
-   * Get list of all service bookings, admin gets every booking, regular user
-   * gets just their bookings.
+   * Get list of all the current user's service bookings.
    */
-  all: requestOut('GET', baseUrl, Booking.array(), true),
+  all: requestOut('GET', baseUrl, BookingWithService.array(), true),
 
   /**
    * Get a single service booking, requires authentication with either admin
    * permissions, or the owning user.
    */
-  single: requestOut('GET', `${baseUrl}/:id`, Booking, true),
+  single: requestOut('GET', `${baseUrl}/:id`, BookingWithUserAndService, true),
 
   /**
    * Create a new service booking, new booking will belong to the user that
@@ -27,6 +33,16 @@ export default {
     baseUrl,
     Booking.omit({ booking_id: true, user_id: true }),
     Booking,
+    true,
+  ),
+
+  /**
+   * Get list of every service booking made by every user.
+   */
+  allAdmin: requestOut(
+    'GET',
+    `${baseUrl}/all`,
+    BookingWithUserAndService.array(),
     true,
   ),
 

@@ -5,22 +5,76 @@ import {
   queryFiltered,
   queryUnique,
 } from '#server/database/DatabaseCollection';
-import { Booking } from '#shared/models';
+import { Booking, Service, User } from '#shared/models';
 import z from 'zod';
 
+const BookingWithService = z.transform<
+  z.infer<typeof Booking> & z.infer<typeof Service>,
+  z.infer<typeof Booking> & { service: z.infer<typeof Service> }
+>(({ booking_datetime, booking_id, notes, user_id, service_id, config }) => ({
+  booking_datetime,
+  booking_id,
+  notes,
+  user_id,
+  service_id,
+  service: { service_id, config },
+}));
+
+const BookingWithUserAndService = z.transform<
+  z.infer<typeof Booking> & z.infer<typeof Service> & z.infer<typeof User>,
+  z.infer<typeof Booking> & {
+    service: z.infer<typeof Service>;
+    user: z.infer<typeof User>;
+  }
+>(
+  ({
+    booking_id,
+    booking_datetime,
+    notes,
+    service_id,
+    config,
+    user_id,
+    given_names,
+    last_name,
+    email,
+    phone,
+  }) => ({
+    booking_id,
+    booking_datetime,
+    notes,
+    user_id,
+    user: { user_id, given_names, last_name, email, phone },
+    service_id,
+    service: { service_id, config },
+  }),
+);
+
 export default {
-  getAll: queryAll(Booking, /*sql*/ `SELECT * FROM Bookings;`),
+  getAll: queryAll(
+    BookingWithUserAndService,
+    /*sql*/ `
+    SELECT * FROM Bookings
+      JOIN Services ON Bookings.service_id = Services.service_id
+      JOIN Users ON Bookings.user_id = Users.user_id;`,
+  ),
 
   getAllByUserId: queryFiltered(
     z.int(),
-    Booking,
-    /*sql*/ `SELECT * FROM Bookings WHERE user_id = ?;`,
+    BookingWithService,
+    /*sql*/ `
+      SELECT * FROM Bookings
+        JOIN Services ON Bookings.service_id = Services.service_id
+        WHERE Bookings.user_id = ?;`,
   ),
 
   getFromId: queryUnique(
     z.int(),
-    Booking,
-    /*sql*/ `SELECT * FROM Bookings WHERE booking_id = ?;`,
+    BookingWithUserAndService,
+    /*sql*/ `
+      SELECT * FROM Bookings
+        JOIN Services ON Bookings.service_id = Services.service_id
+        JOIN Users ON Bookings.user_id = Users.user_id
+        WHERE booking_id = ?;`,
   ),
 
   insert: mutateRows(

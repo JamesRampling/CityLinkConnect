@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <svg xmlns="http://www.w3.org/2000/svg">
+    <svg xmlns="http://www.w3.org/2000/svg" aria-label="Loading...">
       <circle />
     </svg>
   </div>

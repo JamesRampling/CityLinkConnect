@@ -34,13 +34,12 @@ app.use(
   // Error handlers require all 4 arguments to be recognised correctly.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ((err, _req, res, _next) => {
-    console.error(err);
-
     if (err instanceof ResponseError) {
       Responses.error(res, err.inner);
       return;
     }
 
+    console.error(err);
     Responses.serverError(res, 'An unknown error occurred.', err);
   }) satisfies ErrorRequestHandler,
 );

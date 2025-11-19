@@ -15,7 +15,7 @@ export const User = z.object({
   given_names: z.string().nonempty(),
   last_name: z.string().nonempty(),
   email: z.email(),
-  phone: z.string().regex(/0[0-9]{9}/, 'Must be a valid phone number.'),
+  phone: z.string().regex(/^0[0-9]{9}$/, 'Must be a valid phone number.'),
 });
 
 export const Booking = z.object({

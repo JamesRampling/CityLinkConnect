@@ -2,40 +2,58 @@
 import type { FetchError } from '@/api/apiFetch';
 import type z from 'zod';
 
-defineProps<{ error: FetchError<T> }>();
+const props = defineProps<{ error: FetchError<T> }>();
+
+function defaultTitle() {
+  switch (props.error.type) {
+    case 'not-found':
+    case 'server-error':
+    case 'unauthorized':
+    case 'forbidden':
+    case 'validation-error':
+    case 'constraint-error':
+      return props.error.title;
+
+    case 'fetch-data-parse':
+    case 'fetch-error-obj-parse':
+    case 'fetch-unknown-error':
+      return 'An error occurred';
+
+    default:
+      props.error satisfies never;
+  }
+}
+
+function defaultContent() {
+  switch (props.error.type) {
+    case 'not-found':
+    case 'unauthorized':
+    case 'forbidden':
+    case 'validation-error':
+    case 'constraint-error':
+      return;
+
+    case 'server-error':
+      return props.error.details;
+
+    case 'fetch-data-parse':
+    case 'fetch-error-obj-parse':
+    case 'fetch-unknown-error':
+      return props.error.error;
+  }
+}
 </script>
 
 <template>
   <div class="error-wrapper">
     <div class="error">
-      <template v-if="error.type === 'not-found'">
-        <h2 class="error-title">404 &mdash; {{ error.title }}</h2>
-      </template>
-      <template v-else-if="error.type === 'server-error'">
-        <h2 class="error-title">{{ error.title }}</h2>
-        <p class="error-content">{{ error.details }}</p>
-      </template>
-      <template v-else-if="error.type === 'unauthorized'">
-        <h2 class="error-title">{{ error.title }}</h2>
-      </template>
-      <template v-else-if="error.type === 'forbidden'">
-        <h2 class="error-title">{{ error.title }}</h2>
-      </template>
-      <template v-else-if="error.type === 'validation-error'">
-        <h2 class="error-title">{{ error.title }}</h2>
-      </template>
-      <template v-else-if="error.type === 'fetch-data-parse'">
-        <h2 class="error-title">An error occurred</h2>
-        <p class="error-content">{{ error.error }}</p>
-      </template>
-      <template v-else-if="error.type === 'fetch-error-obj-parse'">
-        <h2 class="error-title">An error occurred</h2>
-        <p class="error-content">{{ error.error }}</p>
-      </template>
-      <template v-else-if="error.type === 'fetch-unknown-error'">
-        <h2 class="error-title">An error occurred</h2>
-        <p class="error-content">{{ error.error }}</p>
-      </template>
+      <h2 class="error-title">
+        <slot name="title" :error>{{ defaultTitle() }}</slot>
+      </h2>
+
+      <p class="error-content">
+        <slot name="content" :error>{{ defaultContent() }}</slot>
+      </p>
     </div>
     <slot></slot>
   </div>
@@ -63,5 +81,9 @@ defineProps<{ error: FetchError<T> }>();
   h2 {
     font-size: 1rem;
   }
+}
+
+.error-content:empty {
+  display: none;
 }
 </style>
