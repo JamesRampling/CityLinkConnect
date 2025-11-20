@@ -10,16 +10,20 @@ import z from 'zod';
 
 const router = useRouter();
 
-const RegisterForm = User.omit({ user_id: true }).extend({
-  password: z.string().min(8),
-});
+const RegisterForm = User.omit({ user_id: true })
+  .extend({ password: z.string().min(8), passwordConfirm: z.string() })
+  .refine((obj) => obj.password === obj.passwordConfirm, {
+    error: 'Passwords do not match.',
+    path: ['passwordConfirm'],
+  });
 
 const fields = reactive({
   given_names: '',
   last_name: '',
-  password: '',
   email: '',
   phone: '',
+  password: '',
+  passwordConfirm: '',
 });
 const { submit, fieldErrors, submissionError } = useSubmission(
   RegisterForm,
@@ -90,6 +94,22 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       <ul v-if="fieldErrors.password" class="error-list">
         <li
           v-for="error in fieldErrors.password"
+          :key="error"
+          class="error-item"
+        >
+          {{ error }}
+        </li>
+      </ul>
+
+      <InputText
+        v-model="fields.passwordConfirm"
+        type="password"
+        name="password"
+        label="Confirm Password"
+      />
+      <ul v-if="fieldErrors.passwordConfirm" class="error-list">
+        <li
+          v-for="error in fieldErrors.passwordConfirm"
           :key="error"
           class="error-item"
         >
