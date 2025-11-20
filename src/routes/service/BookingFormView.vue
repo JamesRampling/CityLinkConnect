@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Booking } from '#shared/models';
 import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
@@ -35,10 +36,15 @@ const { submit, fieldErrors, submissionError } = useSubmission(
   () => (success.value = true),
 );
 
+const deleteError = ref<FetchError<undefined>>();
+
 async function deleteService() {
-  const { ok } = await api.services.delete(props.id, token.value);
+  const { ok, error } = await api.services.delete(props.id, token.value);
   if (ok) {
     await router.push('/');
+    deleteError.value = undefined;
+  } else {
+    deleteError.value = error;
   }
 }
 </script>
@@ -61,6 +67,12 @@ async function deleteService() {
         <button class="button-outlined" @click="deleteService()">
           <IconDelete />Delete
         </button>
+
+        <ApiErrorMessage
+          v-if="deleteError"
+          :error="deleteError"
+          class="x-small"
+        />
       </template>
     </div>
 

@@ -83,6 +83,21 @@ function defaultContent() {
   }
 }
 
+.error-wrapper.x-small {
+  padding-block: 0;
+  place-items: center;
+  text-align: start;
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .error {
+    padding: 0;
+  }
+}
+
 .error-content:empty {
   display: none;
 }

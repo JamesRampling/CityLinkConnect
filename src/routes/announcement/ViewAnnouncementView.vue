@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
@@ -9,6 +10,7 @@ import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const props = defineProps<{ id: number }>();
@@ -17,10 +19,14 @@ const router = useRouter();
 
 const { token, auth } = useUser();
 
+const deleteError = ref<FetchError<undefined>>();
 async function deleteAnnouncement() {
-  const { ok } = await api.announcements.delete(props.id, token.value);
+  const { ok, error } = await api.announcements.delete(props.id, token.value);
   if (ok) {
     await router.push('/');
+    deleteError.value = undefined;
+  } else {
+    deleteError.value = error;
   }
 }
 </script>
@@ -40,6 +46,12 @@ async function deleteAnnouncement() {
         <button class="button-outlined" @click="deleteAnnouncement()">
           <IconDelete />Delete
         </button>
+
+        <ApiErrorMessage
+          v-if="deleteError"
+          :error="deleteError"
+          class="x-small"
+        />
       </template>
     </div>
 
