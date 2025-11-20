@@ -16,9 +16,9 @@
   padding-block: 4rem;
 
   &.small {
-    --spinner-size: 1.5rem;
+    --spinner-size: 1.25rem;
     --stroke-width: 2px;
-    padding-block: 0;
+    padding: 0.125rem;
   }
 }
 

@@ -47,7 +47,7 @@ export const Feedback = z.object({
 
 export const Announcement = z.object({
   announcement_id: tableId.default(0),
-  sort_datetime: z.iso.datetime({ local: true }),
+  sort_datetime: z.iso.date(),
   config: z.string(),
 });
 

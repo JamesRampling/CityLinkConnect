@@ -42,20 +42,20 @@ INSERT INTO Bookings (user_id, service_id, booking_datetime, notes) VALUES
   (2, 3, '2024-06-16T14:30:00Z', 'Third booking');
 
 INSERT INTO Announcements (sort_datetime, config) VALUES
-  ('2025-09-25T00:00:00Z', '<?xml version="1.0" encoding="UTF-8"?>
+  ('2025-09-25', '<?xml version="1.0" encoding="UTF-8"?>
 <announcement>
     <title>New Recycling Bins Rolled Out Citywide</title>
     <date>2025-09-25</date>
     <content>The council has introduced new colour-coded recycling bins across residential neighborhoods. Collection schedules remain unchanged.</content>
 </announcement>'),
-  ('2025-09-30T00:00:00Z', '<?xml version="1.0" encoding="UTF-8"?>
+  ('2025-09-30', '<?xml version="1.0" encoding="UTF-8"?>
 <announcement>
     <title>Public Meeting on Park Redevelopment Plans</title>
     <date>2025-09-30</date>
     <content>Residents are invited to attend a public meeting on the 7th of October to discuss proposed redevelopment plans for Riverbend Park.
     The meeting will be held at the Civic Centre Hall at 6 PM.</content>
 </announcement>'),
-('2025-10-01T00:00:00Z', '<?xml version="1.0" encoding="UTF-8"?>
+('2025-10-01', '<?xml version="1.0" encoding="UTF-8"?>
 <announcement>
     <title>Scheduled Road Maintenance in Westside District</title>
     <date>2025-10-01</date>
