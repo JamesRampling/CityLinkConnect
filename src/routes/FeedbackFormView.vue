@@ -10,7 +10,7 @@ import { reactive, ref } from 'vue';
 const success = ref(false);
 const fields = reactive({ email: '', subject: '', message: '' });
 const { submit, fieldErrors, submissionError } = useSubmission(
-  Feedback,
+  Feedback.omit({ feedback_id: true }),
   fields,
   api.feedback.create,
   () => (success.value = true),

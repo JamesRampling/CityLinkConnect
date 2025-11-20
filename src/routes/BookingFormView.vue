@@ -14,16 +14,15 @@ import { reactive, ref } from 'vue';
 
 const { id: service_id } = defineProps<{ id: number }>();
 
-const { userState } = useUser();
+const { token } = useUser();
 
 const success = ref(false);
 const fields = reactive({ booking_datetime: '', notes: '' });
 const { submit, fieldErrors, submissionError } = useSubmission(
-  Booking.omit({ user_id: true, service_id: true }),
+  Booking.omit({ booking_id: true, user_id: true, service_id: true }),
   fields,
   async (form) => {
-    const auth = userState.value?.token ?? '';
-    return await api.bookings.create({ ...form, service_id }, auth);
+    return await api.bookings.create({ ...form, service_id }, token.value);
   },
   () => (success.value = true),
 );
@@ -71,7 +70,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
           <section class="section-form">
             <h2>Booking details</h2>
             <form
-              v-if="userState && !success"
+              v-if="token && !success"
               class="form"
               action=""
               @submit.prevent="submit"
