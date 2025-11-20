@@ -3,6 +3,7 @@ import { User } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import InputText from '@/components/InputText.vue';
+import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useSubmission } from '@/utils/validation';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
@@ -46,44 +47,20 @@ const { submit, fieldErrors, submissionError } = useSubmission(
         name="given-names"
         label="Given Names"
       />
-      <ul v-if="fieldErrors.given_names" class="error-list">
-        <li
-          v-for="error in fieldErrors.given_names"
-          :key="error"
-          class="error-item"
-        >
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.given_names" />
 
       <InputText
         v-model="fields.last_name"
         name="last-name"
         label="Last Name"
       />
-      <ul v-if="fieldErrors.last_name" class="error-list">
-        <li
-          v-for="error in fieldErrors.last_name"
-          :key="error"
-          class="error-item"
-        >
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.last_name" />
 
       <InputText v-model="fields.email" name="email" label="E-Mail" />
-      <ul v-if="fieldErrors.email" class="error-list">
-        <li v-for="error in fieldErrors.email" :key="error" class="error-item">
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.email" />
 
       <InputText v-model="fields.phone" name="phone" label="Phone Number" />
-      <ul v-if="fieldErrors.phone" class="error-list">
-        <li v-for="error in fieldErrors.phone" :key="error" class="error-item">
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.phone" />
 
       <InputText
         v-model="fields.password"
@@ -91,15 +68,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
         name="password"
         label="Password"
       />
-      <ul v-if="fieldErrors.password" class="error-list">
-        <li
-          v-for="error in fieldErrors.password"
-          :key="error"
-          class="error-item"
-        >
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.password" />
 
       <InputText
         v-model="fields.passwordConfirm"
@@ -107,15 +76,8 @@ const { submit, fieldErrors, submissionError } = useSubmission(
         name="password"
         label="Confirm Password"
       />
-      <ul v-if="fieldErrors.passwordConfirm" class="error-list">
-        <li
-          v-for="error in fieldErrors.passwordConfirm"
-          :key="error"
-          class="error-item"
-        >
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.passwordConfirm" />
+
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
       </div>

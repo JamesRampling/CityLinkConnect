@@ -9,13 +9,19 @@ const router = createRouter({
   routes: [
     { path: '/', component: () => import('@/routes/HomeView.vue') },
     { path: '/about', component: () => import('@/routes/AboutView.vue') },
+
     {
       path: '/services',
-      component: () => import('@/routes/ServiceListView.vue'),
+      component: () => import('@/routes/service/ServiceListView.vue'),
     },
     {
-      path: '/booking/:id',
-      component: () => import('@/routes/BookingFormView.vue'),
+      path: '/services/book/:id',
+      component: () => import('@/routes/service/BookingFormView.vue'),
+      props: convertProps({ id: Number }),
+    },
+    {
+      path: '/services/edit/:id',
+      component: () => import('@/routes/service/EditServiceView.vue'),
       props: convertProps({ id: Number }),
     },
 

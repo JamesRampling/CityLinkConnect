@@ -2,6 +2,7 @@
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import InputText from '@/components/InputText.vue';
+import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
 import { reactive } from 'vue';
@@ -38,26 +39,16 @@ const { submit, fieldErrors, submissionError } = useSubmission(
     <p v-else class="success-message">Registration successful!</p>
     <form class="form" action="" @submit.prevent="submit">
       <InputText v-model="fields.email" name="email" label="E-Mail" />
-      <ul v-if="fieldErrors.email" class="error-list">
-        <li v-for="error in fieldErrors.email" :key="error" class="error-item">
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.email" />
+
       <InputText
         v-model="fields.password"
         type="password"
         name="password"
         label="Password"
       />
-      <ul v-if="fieldErrors.password" class="error-list">
-        <li
-          v-for="error in fieldErrors.password"
-          :key="error"
-          class="error-item"
-        >
-          {{ error }}
-        </li>
-      </ul>
+      <ValidationErrorList :errors="fieldErrors.password" />
+
       <div class="button-row">
         <button type="submit" class="button-filled">Submit</button>
       </div>

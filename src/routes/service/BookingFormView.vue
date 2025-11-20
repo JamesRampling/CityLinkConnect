@@ -3,6 +3,8 @@ import { Booking } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
+import IconDelete from '@/components/icons/IconDelete.vue';
+import IconEdit from '@/components/icons/IconEdit.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
@@ -11,10 +13,13 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
 import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const { id: service_id } = defineProps<{ id: number }>();
+const props = defineProps<{ id: number }>();
 
-const { token } = useUser();
+const router = useRouter();
+
+const { token, auth } = useUser();
 
 const success = ref(false);
 const fields = reactive({ booking_datetime: '', notes: '' });
@@ -22,17 +27,43 @@ const { submit, fieldErrors, submissionError } = useSubmission(
   Booking.omit({ booking_id: true, user_id: true, service_id: true }),
   fields,
   async (form) => {
-    return await api.bookings.create({ ...form, service_id }, token.value);
+    return await api.bookings.create(
+      { ...form, service_id: props.id },
+      token.value,
+    );
   },
   () => (success.value = true),
 );
+
+async function deleteService() {
+  const { ok } = await api.services.delete(props.id, token.value);
+  if (ok) {
+    await router.push('/');
+  }
+}
 </script>
 
 <template>
   <div class="page-wrapper">
-    <button class="back-button button-filled" @click="$router.back()">
-      <IconBack />Back
-    </button>
+    <div class="button-row">
+      <router-link to="/services" class="back-button button-filled">
+        <IconBack />Back
+      </router-link>
+
+      <template v-if="auth?.is_admin">
+        <router-link class="button-outlined" :to="`/services/edit/${id}`">
+          <IconEdit />Edit
+        </router-link>
+
+        <!-- Deleting a service does not work as there are no delete actions in
+        database, so constraints may be violated if there are bookings under
+        this service. -->
+        <button class="button-outlined" @click="deleteService()">
+          <IconDelete />Delete
+        </button>
+      </template>
+    </div>
+
     <h1>Book a service</h1>
     <LoadedData :action="() => api.services.single(id)">
       <template #loading>
@@ -47,17 +78,14 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
             <div v-if="service?.config.fees" class="fees">
               <div
-                v-for="[fee, prices] of Object.entries(service.config.fees)"
-                :key="fee"
+                v-for="{ title, prices } of service.config.fees"
+                :key="title"
                 class="fee"
               >
-                <h3>{{ fee }}</h3>
+                <h3>{{ title }}</h3>
                 <ul>
-                  <li
-                    v-for="[title, price] of Object.entries(prices)"
-                    :key="title"
-                  >
-                    <strong class="fee-name">{{ title }}</strong> &ndash;
+                  <li v-for="{ variant, price } of prices" :key="variant">
+                    <strong class="fee-name">{{ variant }}</strong> &ndash;
                     {{ price }}
                   </li>
                 </ul>

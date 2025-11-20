@@ -8,6 +8,7 @@ import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
 import { reactive } from 'vue';
@@ -58,15 +59,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       <template #ok>
         <form class="form" @submit.prevent>
           <InputText v-model="fields.title" name="title" label="Title" />
-          <ul v-if="fieldErrors.title" class="error-list">
-            <li
-              v-for="error in fieldErrors.title"
-              :key="error"
-              class="error-item"
-            >
-              {{ error }}
-            </li>
-          </ul>
+          <ValidationErrorList :errors="fieldErrors.title" />
 
           <InputText
             v-model="fields.date"
@@ -74,26 +67,10 @@ const { submit, fieldErrors, submissionError } = useSubmission(
             label="Date"
             type="date"
           />
-          <ul v-if="fieldErrors.date" class="error-list">
-            <li
-              v-for="error in fieldErrors.date"
-              :key="error"
-              class="error-item"
-            >
-              {{ error }}
-            </li>
-          </ul>
+          <ValidationErrorList :errors="fieldErrors.date" />
 
           <InputTextarea v-model="fields.content" name="text" label="Content" />
-          <ul v-if="fieldErrors.content" class="error-list">
-            <li
-              v-for="error in fieldErrors.content"
-              :key="error"
-              class="error-item"
-            >
-              {{ error }}
-            </li>
-          </ul>
+          <ValidationErrorList :errors="fieldErrors.content" />
 
           <div class="button-row">
             <button type="submit" class="button-filled" @click="submit()">

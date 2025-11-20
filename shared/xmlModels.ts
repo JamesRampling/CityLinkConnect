@@ -70,11 +70,13 @@ export const serviceXmlObject = z.object({
           .object({
             price: z
               .object({ '#text': z.string(), '@_variant': z.string() })
-              .array(),
+              .array()
+              .optional(),
 
             '@_title': z.string(),
           })
-          .array(),
+          .array()
+          .optional(),
       })
       .optional(),
   }),
@@ -86,7 +88,24 @@ export const serviceXmlObject = z.object({
 export const ServiceJs = z.object({
   name: z.string(),
   description: z.string(),
-  fees: z.record(z.string(), z.record(z.string(), z.string())).optional(),
+  fees: z
+    .object({
+      title: z.string().nonempty({ error: 'Fee title must not be empty.' }),
+      prices: z
+        .object({
+          variant: z
+            .string()
+            .nonempty({ error: 'Fee variant name must not be empty.' }),
+          price: z
+            .string()
+            .regex(/^\$\d+(\.\d{2})?$/, {
+              error:
+                'Invalid price: must be prefixed with $ and contain 0 or 2 decimal places.',
+            }),
+        })
+        .array(),
+    })
+    .array(),
 });
 
 /**
@@ -107,38 +126,31 @@ const serviceXmlToJs = z.codec(serviceXmlObject, ServiceJs, {
     const { name, description, fees: feesObj } = value.service;
 
     if (!feesObj) {
-      return { name, description };
+      return { name, description, fees: [] };
     }
 
-    const fees = Object.fromEntries(
-      feesObj.fee.map(({ '@_title': title, price: prices }) => [
-        title,
-        prices.reduce<Record<string, string>>(
-          (obj, { '@_variant': variant, '#text': text }) => (
-            (obj[variant] = text),
-            obj
-          ),
-          {},
-        ),
-      ]),
-    );
+    const fees =
+      feesObj.fee?.map((e) => ({
+        title: e['@_title'],
+        prices:
+          e.price?.map((e) => ({
+            price: e['#text'],
+            variant: e['@_variant'],
+          })) ?? [],
+      })) ?? [];
 
     return { name, description, fees };
   },
 
   encode: (value) => {
-    const { name, description, fees: feesRecord } = value;
+    const { name, description, fees } = value;
 
-    if (!feesRecord) {
-      return { service: { name, description } };
-    }
-
-    const fee = Object.entries(feesRecord).map(([title, prices]) => ({
-      price: Object.entries(prices).map(([variant, price]) => ({
-        '@_variant': variant,
-        '#text': price,
+    const fee = fees.map((e) => ({
+      '@_title': e.title,
+      price: e.prices.map((e) => ({
+        '#text': e.price,
+        '@_variant': e.variant,
       })),
-      '@_title': title,
     }));
 
     return { service: { name, description, fees: { fee } } };
