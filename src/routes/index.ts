@@ -18,11 +18,18 @@ const router = createRouter({
       component: () => import('@/routes/BookingFormView.vue'),
       props: convertProps({ id: Number }),
     },
+
     {
-      path: '/announcement/:id',
-      component: () => import('@/routes/AnnouncementView.vue'),
+      path: '/announcement/view/:id',
+      component: () => import('@/routes/announcement/ViewAnnouncementView.vue'),
       props: convertProps({ id: Number }),
     },
+    {
+      path: '/announcement/edit/:id',
+      component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
+      props: convertProps({ id: Number }),
+    },
+
     {
       path: '/user/:id',
       component: () => import('@/routes/UserProfileView.vue'),
