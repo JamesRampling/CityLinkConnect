@@ -18,6 +18,18 @@ export const User = z.object({
   phone: z.string().regex(/^0[0-9]{9}$/, 'Must be a valid phone number.'),
 });
 
+const SecondsToDate = z.codec(z.number(), z.date(), {
+  decode: (number) => new Date(number * 1000),
+  encode: (date) => date.valueOf() / 1000,
+});
+
+export const AuthenticationStatus = z.object({
+  is_admin: z.coerce.boolean(),
+  iat: z.coerce.number().int().pipe(SecondsToDate),
+  exp: z.coerce.number().int().pipe(SecondsToDate),
+  sub: z.coerce.number().int().nonnegative(),
+});
+
 export const Booking = z.object({
   booking_id: tableId.default(0),
   user_id: tableId,

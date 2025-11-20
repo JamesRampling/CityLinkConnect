@@ -1,16 +1,9 @@
 import { JWT_SECRET } from '#server/environment';
 import { Responses } from '#server/utils/Responses';
+import { AuthenticationStatus } from '#shared/models';
 import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
-
-const AuthenticationStatus = z.object({
-  is_admin: z.coerce.boolean(),
-  iat: z.coerce.number().int().pipe(z.coerce.date()),
-  exp: z.coerce.number().int().pipe(z.coerce.date()),
-  sub: z.coerce.number().int().nonnegative(),
-});
-export type AuthenticationStatus = z.infer<typeof AuthenticationStatus>;
 
 export function authenticate<R, B>(
   req: Request<R, unknown, B>,
@@ -47,7 +40,7 @@ export function authenticate<R, B>(
 export function authorize<R, B>(
   predicate: (
     request: Request<R, unknown, B>,
-    auth: AuthenticationStatus,
+    auth: z.infer<typeof AuthenticationStatus>,
   ) => boolean,
 ) {
   return (req: Request<R, unknown, B>, res: Response, next: NextFunction) => {

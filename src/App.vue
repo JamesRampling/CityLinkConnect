@@ -6,7 +6,7 @@ import { useUser } from '@/user';
 import { useMediaQuery } from '@/utils/mediaQuery';
 import { ref } from 'vue';
 
-const userState = useUser();
+const { userState } = useUser();
 const hamburgerMenuExpanded = ref(false);
 
 const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');

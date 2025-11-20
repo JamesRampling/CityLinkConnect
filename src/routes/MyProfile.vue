@@ -12,7 +12,7 @@ import { useRouter } from 'vue-router';
 // MyProfileView represents an the current logged in user's page.
 
 const router = useRouter();
-const userState = useUser();
+const { userState } = useUser();
 
 async function logout() {
   userState.value = undefined;

@@ -14,7 +14,7 @@ import { reactive, ref } from 'vue';
 
 const { id: service_id } = defineProps<{ id: number }>();
 
-const userState = useUser();
+const { userState } = useUser();
 
 const success = ref(false);
 const fields = reactive({ booking_datetime: '', notes: '' });

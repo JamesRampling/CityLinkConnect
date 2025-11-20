@@ -5,9 +5,14 @@ import IconBack from '@/components/icons/IconBack.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { useUser } from '@/user';
 import { formatDate } from '@/utils';
 
 defineProps<{ id: number }>();
+
+const { auth } = useUser();
+
+console.log(auth.value);
 </script>
 
 <template>
