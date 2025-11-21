@@ -82,6 +82,22 @@ route.get('/info', authenticate, (req, res) => {
 });
 
 route.post(
+  '/details',
+  validate({ body: User.omit({ user_id: true }) }),
+  authenticate,
+  (req, res) => {
+    const user_id = req.authentication?.sub ?? raise(unauthorizedError);
+    const user = { ...req.body, user_id };
+
+    const { rows_changed } =
+      db.Users.update(user).or_throw(queryErrorToResponse);
+
+    if (rows_changed) Responses.ok(res, user);
+    else throw unauthorizedError;
+  },
+);
+
+route.post(
   '/change-password',
   validate({
     body: z.object({ oldPassword: z.string(), newPassword: z.string().min(8) }),

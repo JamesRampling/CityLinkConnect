@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { User } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import BookingCard from '@/components/BookingCard.vue';
@@ -52,6 +53,44 @@ const {
   },
 );
 
+const isEditing = ref(false);
+
+const detailsFields = reactive({
+  given_names: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  ...userInfo.value,
+});
+const {
+  fieldErrors: detailsErrors,
+  submissionError: detailsSubmissionError,
+  submit: submitDetails,
+} = useSubmission(
+  User.omit({ user_id: true }),
+  detailsFields,
+  async (form) => {
+    const result = await api.account.updateDetails(form, token.value);
+
+    if (result.error?.type === 'unauthorized') {
+      setUserState(undefined);
+    }
+
+    return result;
+  },
+  (details) => {
+    setUserState({ ...details, token: token.value });
+    isEditing.value = false;
+  },
+);
+
+function resetDetails() {
+  isEditing.value = false;
+  detailsErrors.value = {};
+  detailsSubmissionError.value = undefined;
+  Object.assign(detailsFields, userInfo.value);
+}
+
 async function logout() {
   setUserState(undefined);
   await router.push('/');
@@ -84,12 +123,19 @@ async function getAndSortBookings() {
         <button class="button-filled" @click="passwordDialog?.showModal()">
           Change Password
         </button>
+        <button
+          v-if="!isEditing"
+          class="button-filled"
+          @click="isEditing = true"
+        >
+          Edit Account Details
+        </button>
       </div>
 
       <div class="content">
         <section>
           <h2>Account Details</h2>
-          <dl class="details-list">
+          <dl v-if="!isEditing" class="details-list">
             <dt>Given names</dt>
             <dd>{{ userInfo.given_names }}</dd>
 
@@ -102,6 +148,58 @@ async function getAndSortBookings() {
             <dt>Phone number</dt>
             <dd>{{ userInfo.phone }}</dd>
           </dl>
+          <form v-else class="form" action="" @submit.prevent="submitDetails()">
+            <InputText
+              v-model="detailsFields.given_names"
+              name="given-names"
+              label="Given Names"
+            />
+            <ValidationErrorList :errors="detailsErrors.given_names" />
+
+            <InputText
+              v-model="detailsFields.last_name"
+              name="last-name"
+              label="Last Name"
+            />
+            <ValidationErrorList :errors="detailsErrors.last_name" />
+
+            <InputText
+              v-model="detailsFields.email"
+              name="email"
+              label="E-Mail"
+            />
+            <ValidationErrorList :errors="detailsErrors.email" />
+
+            <InputText
+              v-model="detailsFields.phone"
+              name="phone"
+              label="Phone Number"
+            />
+            <ValidationErrorList :errors="detailsErrors.phone" />
+
+            <div class="button-row">
+              <button type="submit" class="button-filled">Submit</button>
+              <button
+                type="button"
+                class="button-outlined"
+                @click="resetDetails()"
+              >
+                Cancel
+              </button>
+            </div>
+
+            <ApiErrorMessage
+              v-if="detailsSubmissionError"
+              class="small"
+              :error="detailsSubmissionError"
+            >
+              <template #title="{ error }">
+                <span v-if="error.type === 'constraint-error'">
+                  Email or phone number are already in use.
+                </span>
+              </template>
+            </ApiErrorMessage>
+          </form>
         </section>
 
         <LoadedData :action="getAndSortBookings">
