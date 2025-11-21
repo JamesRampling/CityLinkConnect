@@ -3,8 +3,6 @@ import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import BookingCard from '@/components/BookingCard.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
-import InputText from '@/components/InputText.vue';
-import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
@@ -88,7 +86,9 @@ const page = ref('user');
         <LoadedData :action="() => api.announcements.all()">
           <template #ok="{ data: announcements }">
             <div class="button-row">
-              <button @click="page = 'add_content'">Add Content</button>
+              <button class="button-filled" @click="page = 'add_content'">
+                Add Content
+              </button>
             </div>
             <article
               v-for="(item, i) in announcements"
@@ -115,12 +115,19 @@ const page = ref('user');
         </LoadedData>
       </div>
       <div v-else-if="page === 'service'" class="item-list">
-        <button @click="page = 'add_service'">Add Services</button>
-        <li v-for="(e, i) in services" :key="i" class="clickable card">
-          <button>Delete</button>
-          <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
-        </li>
+        <button class="button-filled" @click="page = 'add_service'">
+          Add Services
+        </button>
+        <LoadedData :action="() => api.services.all()">
+          <template #ok="{ data: services }">
+            <li v-for="(e, i) in services" :key="i" class="clickable card">
+              <button>Delete</button>
+              <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
+            </li>
+          </template>
+        </LoadedData>
       </div>
+      <!--
       <div v-else-if="page === 'add_content'" id="ItemsDisplayColumn">
         <h1>Add Announcement</h1>
         <form class="form" action="" @submit.prevent="submit">
@@ -149,6 +156,7 @@ const page = ref('user');
           </div>
         </form>
       </div>
+      -->
     </div>
   </div>
 </template>
