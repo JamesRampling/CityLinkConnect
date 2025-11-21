@@ -79,8 +79,11 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
           <section class="section-form">
             <h2>Booking details</h2>
+            <p v-if="service.is_hidden">
+              Cannot make a booking with a hidden service.
+            </p>
             <form
-              v-if="token && !success"
+              v-else-if="token && !success"
               class="form"
               action=""
               @submit.prevent="submit"

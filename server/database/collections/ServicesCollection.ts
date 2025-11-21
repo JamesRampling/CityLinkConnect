@@ -38,10 +38,4 @@ export default {
     WHERE service_id = $service_id;
     `,
   ),
-
-  isHidden: queryUnique(
-    z.int(),
-    z.coerce.boolean(),
-    /*sql*/ `SELECT is_hidden from Services WHERE service_id = ?;`,
-  ),
 } satisfies DatabaseConfig;
