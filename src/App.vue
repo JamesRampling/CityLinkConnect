@@ -6,11 +6,20 @@ import IconUser from '@/components/icons/IconUser.vue';
 import { useUser } from '@/user';
 import { useMediaQuery } from '@/utils/mediaQuery';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const { userInfo, auth } = useUser();
+const router = useRouter();
+const { userInfo, auth, setUserState } = useUser();
 const hamburgerMenuExpanded = ref(false);
 
 const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
+
+router.afterEach(() => {
+  const expiry = auth.value?.exp;
+  if (expiry !== undefined && expiry < new Date()) {
+    setUserState(undefined);
+  }
+});
 </script>
 
 <template>

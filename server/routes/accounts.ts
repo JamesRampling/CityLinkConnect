@@ -12,6 +12,12 @@ import z from 'zod';
 
 const route = Router();
 
+const unauthorizedError = new ResponseError({
+  type: 'unauthorized',
+  title: 'This resource requires authorization.',
+  status: 401,
+});
+
 route.post(
   '/register',
   validate({
@@ -66,13 +72,7 @@ route.post(
 );
 
 route.get('/info', authenticate, (req, res) => {
-  if (!req.authentication?.sub) {
-    throw new ResponseError({
-      type: 'unauthorized',
-      title: 'This resource requires authorization.',
-      status: 401,
-    });
-  }
+  if (!req.authentication?.sub) throw unauthorizedError;
 
   const user = db.Users.getFromId(req.authentication.sub).or_throw(
     queryErrorToResponse,
@@ -80,6 +80,52 @@ route.get('/info', authenticate, (req, res) => {
 
   Responses.ok(res, user);
 });
+
+route.post(
+  '/details',
+  validate({ body: User.omit({ user_id: true }) }),
+  authenticate,
+  (req, res) => {
+    const user_id = req.authentication?.sub ?? raise(unauthorizedError);
+    const user = { ...req.body, user_id };
+
+    const { rows_changed } =
+      db.Users.update(user).or_throw(queryErrorToResponse);
+
+    if (rows_changed !== 0) Responses.ok(res, user);
+    else throw unauthorizedError;
+  },
+);
+
+route.post(
+  '/change-password',
+  validate({
+    body: z.object({ oldPassword: z.string(), newPassword: z.string().min(8) }),
+  }),
+  authenticate,
+  async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+
+    const user_id = req.authentication?.sub ?? raise(unauthorizedError);
+    const auth =
+      db.Authentication.get(user_id).or_throw(queryErrorToResponse) ??
+      raise(unauthorizedError);
+
+    if (!(await argon2.verify(auth.argon2_hash, oldPassword)))
+      throw new ResponseError({
+        type: 'unauthorized',
+        status: 401,
+        title: 'Incorrect current password.',
+      });
+
+    const new_hash = await argon2.hash(newPassword);
+    db.Authentication.updateHash({ user_id, argon2_hash: new_hash }).or_throw(
+      queryErrorToResponse,
+    );
+
+    Responses.noContent(res);
+  },
+);
 
 route.get('/', authenticate, authorizeAdmin, (_, res) => {
   Responses.ok(res, { users: db.Users.getAll() });
@@ -96,7 +142,7 @@ route.put(
     const { rows_changed } =
       db.Users.update(user).or_throw(queryErrorToResponse);
 
-    if (rows_changed) {
+    if (rows_changed !== 0) {
       Responses.noContent(res);
     } else {
       Responses.notFound(res, 'The user was not found.');
