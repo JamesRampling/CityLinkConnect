@@ -9,20 +9,33 @@ const router = createRouter({
   routes: [
     { path: '/', component: () => import('@/routes/HomeView.vue') },
     { path: '/about', component: () => import('@/routes/AboutView.vue') },
+
     {
       path: '/services',
-      component: () => import('@/routes/ServiceListView.vue'),
+      component: () => import('@/routes/service/ServiceListView.vue'),
     },
     {
-      path: '/booking/:id',
-      component: () => import('@/routes/BookingFormView.vue'),
+      path: '/services/book/:id',
+      component: () => import('@/routes/service/BookingFormView.vue'),
       props: convertProps({ id: Number }),
     },
     {
-      path: '/announcement/:id',
-      component: () => import('@/routes/AnnouncementView.vue'),
+      path: '/services/edit/:id',
+      component: () => import('@/routes/service/EditServiceView.vue'),
       props: convertProps({ id: Number }),
     },
+
+    {
+      path: '/announcement/view/:id',
+      component: () => import('@/routes/announcement/ViewAnnouncementView.vue'),
+      props: convertProps({ id: Number }),
+    },
+    {
+      path: '/announcement/edit/:id',
+      component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
+      props: convertProps({ id: Number }),
+    },
+
     {
       path: '/user/:id',
       component: () => import('@/routes/UserProfileView.vue'),

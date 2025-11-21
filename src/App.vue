@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import AccessibilityMenu from '@/components/AccessibilityMenu.vue';
+import IconAdmin from '@/components/icons/IconAdmin.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconUser from '@/components/icons/IconUser.vue';
 import { useUser } from '@/user';
 import { useMediaQuery } from '@/utils/mediaQuery';
 import { ref } from 'vue';
 
-const userState = useUser();
+const { userInfo, auth } = useUser();
 const hamburgerMenuExpanded = ref(false);
 
 const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
@@ -38,15 +39,14 @@ const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
     <div class="end-header-buttons">
       <AccessibilityMenu :label-hidden="isNarrowScreen" />
 
-      <template v-if="userState === undefined">
+      <template v-if="userInfo === undefined">
         <router-link to="/login" class="button-filled">Login</router-link>
       </template>
       <template v-else>
         <router-link :to="`/account`" class="button-outlined">
-          <IconUser />
-          <template v-if="!isNarrowScreen">{{
-            userState.given_names
-          }}</template>
+          <IconAdmin v-if="auth?.is_admin" aria-label="Admin user" />
+          <IconUser v-else aria-label="User" />
+          <template v-if="!isNarrowScreen">{{ userInfo.given_names }}</template>
         </router-link>
       </template>
     </div>

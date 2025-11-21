@@ -27,7 +27,7 @@ import { formatDate } from '@/utils';
             v-for="{ announcement_id: index, config: content } in announcements"
             :key="content.title"
             class="card clickable"
-            :to="`/announcement/${index}`"
+            :to="`/announcement/view/${index}`"
             tabindex="0"
           >
             <hgroup>

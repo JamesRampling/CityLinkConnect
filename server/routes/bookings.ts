@@ -61,6 +61,19 @@ route.post(
       });
     }
 
+    const { is_hidden } =
+      db.Services.getFromId(req.body.service_id).or_throw(
+        queryErrorToResponse,
+      ) ?? {};
+
+    if (is_hidden) {
+      throw new ResponseError({
+        type: 'forbidden',
+        status: 403,
+        title: 'Cannot make a booking from a hidden service.',
+      });
+    }
+
     const value = { ...req.body, user_id: req.authentication.sub };
     const { last_row_id: id } =
       db.Bookings.insert(value).or_throw(queryErrorToResponse);

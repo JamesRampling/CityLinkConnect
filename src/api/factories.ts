@@ -47,7 +47,7 @@ export function requestInOut<
   return async (
     ...args: [
       ...Parameters<typeof route>,
-      body: z.input<Input>,
+      body: z.output<Input>,
       ...(Authenticate extends true
         ? [auth: z.infer<z.ZodJWT>, signal?: AbortSignal]
         : [signal?: AbortSignal]),
@@ -95,7 +95,7 @@ export function requestIn<
   return async (
     ...args: [
       ...Parameters<typeof route>,
-      body: z.input<Input>,
+      body: z.output<Input>,
       ...(Authenticate extends true
         ? [auth: z.infer<z.ZodJWT>, signal?: AbortSignal]
         : [signal?: AbortSignal]),

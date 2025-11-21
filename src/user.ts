@@ -1,20 +1,46 @@
-import { User } from '#shared/models';
+import { AuthenticationStatus, User } from '#shared/models';
 import { getItem, setItem } from '@/utils/localStorage';
-import { ref, watch } from 'vue';
+import { jwtDecode } from 'jwt-decode';
+import { computed, readonly, ref, watch } from 'vue';
 import z from 'zod';
 
-export const UserState = User.extend({ token: z.jwt() });
+const tokenKey = 'user_token';
+const userInfoKey = 'user_info';
 
-const localStorageKey = 'user_state';
+const token = ref(getItem(tokenKey, z.jwt()).data ?? '');
 
-const userState = ref<z.infer<typeof UserState> | undefined>(
-  getItem(localStorageKey, UserState).data,
-);
-
-watch(userState, (newValue) => {
-  setItem(localStorageKey, newValue);
+watch(token, (newValue) => {
+  setItem(tokenKey, newValue);
 });
 
+const userInfo = ref(getItem(userInfoKey, User).data);
+
+watch(userInfo, (newValue) => {
+  setItem(userInfoKey, newValue);
+});
+
+const auth = computed(() =>
+  token.value
+    ? AuthenticationStatus.safeParse(jwtDecode(token.value)).data
+    : undefined,
+);
+
+function setUserState(value?: z.infer<typeof User> & { token: string }) {
+  if (value) {
+    const { token: authToken, ...user } = value;
+    token.value = authToken;
+    userInfo.value = user;
+  } else {
+    token.value = '';
+    userInfo.value = undefined;
+  }
+}
+
 export function useUser() {
-  return userState;
+  return {
+    setUserState,
+    userInfo: readonly(userInfo),
+    token: readonly(token),
+    auth,
+  };
 }

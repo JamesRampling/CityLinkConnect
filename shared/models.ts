@@ -6,6 +6,7 @@ const tableId = z.int().nonnegative();
 export const Service = z.object({
   service_id: tableId.default(0),
   config: z.string(),
+  is_hidden: z.coerce.boolean(),
 });
 
 export const ServiceWithXML = Service.extend({ config: ServiceContent });
@@ -16,6 +17,18 @@ export const User = z.object({
   last_name: z.string().nonempty(),
   email: z.email(),
   phone: z.string().regex(/^0[0-9]{9}$/, 'Must be a valid phone number.'),
+});
+
+const SecondsToDate = z.codec(z.number(), z.date(), {
+  decode: (number) => new Date(number * 1000),
+  encode: (date) => date.valueOf() / 1000,
+});
+
+export const AuthenticationStatus = z.object({
+  is_admin: z.coerce.boolean(),
+  iat: z.coerce.number().int().pipe(SecondsToDate),
+  exp: z.coerce.number().int().pipe(SecondsToDate),
+  sub: z.coerce.number().int().nonnegative(),
 });
 
 export const Booking = z.object({
@@ -35,7 +48,7 @@ export const Feedback = z.object({
 
 export const Announcement = z.object({
   announcement_id: tableId.default(0),
-  sort_datetime: z.iso.datetime({ local: true }),
+  sort_datetime: z.iso.date(),
   config: z.string(),
 });
 

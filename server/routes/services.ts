@@ -1,4 +1,8 @@
-import { authenticate, authorizeAdmin } from '#server/authentication';
+import {
+  authenticate,
+  authorizeAdmin,
+  maybeAuthenticate,
+} from '#server/authentication';
 import { db } from '#server/database';
 import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { Responses } from '#server/utils/Responses';
@@ -9,20 +13,32 @@ import { Router } from 'express';
 const route = Router();
 
 route.get('/', (_, res) => {
+  Responses.ok(res, db.Services.getVisible());
+});
+
+route.get('/all', authenticate, authorizeAdmin, (_, res) => {
   Responses.ok(res, db.Services.getAll());
 });
 
-route.get('/:id', validate({ route: { id: 'int' } }), (req, res) => {
-  const id = req.params.id;
+route.get(
+  '/:id',
+  validate({ route: { id: 'int' } }),
+  maybeAuthenticate,
+  (req, res) => {
+    const id = req.params.id;
 
-  const value = db.Services.getFromId(id).or_throw(queryErrorToResponse);
+    const value = db.Services.getFromId(id).or_throw(queryErrorToResponse);
 
-  if (value === undefined) {
-    Responses.notFound(res);
-  } else {
-    Responses.ok(res, value);
-  }
-});
+    if (
+      value === undefined ||
+      (value.is_hidden && !req.authentication?.is_admin)
+    ) {
+      Responses.notFound(res);
+    } else {
+      Responses.ok(res, value);
+    }
+  },
+);
 
 route.post(
   '/',
@@ -57,20 +73,6 @@ route.put(
     } else {
       Responses.notFound(res, 'The announcement was not found.');
     }
-  },
-);
-
-route.delete(
-  '/:id',
-  validate({ route: { id: 'int' } }),
-  authenticate,
-  authorizeAdmin,
-  (req, res) => {
-    const { id } = req.params;
-
-    db.Services.delete(id).or_throw(queryErrorToResponse);
-
-    Responses.noContent(res);
   },
 );
 

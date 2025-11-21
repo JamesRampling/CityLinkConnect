@@ -12,15 +12,15 @@ import { useRouter } from 'vue-router';
 // MyProfileView represents an the current logged in user's page.
 
 const router = useRouter();
-const userState = useUser();
+const { setUserState, userInfo, token } = useUser();
 
 async function logout() {
-  userState.value = undefined;
+  setUserState(undefined);
   await router.push('/');
 }
 
 async function getAndSortBookings() {
-  const bookings = await api.bookings.all(userState.value?.token ?? '');
+  const bookings = await api.bookings.all(token.value);
 
   const sorted = bookings.map((b) =>
     b.sort(
@@ -38,8 +38,8 @@ async function getAndSortBookings() {
 
 <template>
   <div class="page-wrapper">
-    <template v-if="userState">
-      <h1>{{ userState.given_names }} {{ userState.last_name }}</h1>
+    <template v-if="userInfo">
+      <h1>{{ userInfo.given_names }} {{ userInfo.last_name }}</h1>
 
       <div class="button-row account-actions">
         <button class="button-filled" @click="logout()">Logout</button>
@@ -50,16 +50,16 @@ async function getAndSortBookings() {
           <h2>Account Details</h2>
           <dl class="details-list">
             <dt>Given names</dt>
-            <dd>{{ userState.given_names }}</dd>
+            <dd>{{ userInfo.given_names }}</dd>
 
             <dt>Last name</dt>
-            <dd>{{ userState.last_name }}</dd>
+            <dd>{{ userInfo.last_name }}</dd>
 
             <dt>Email</dt>
-            <dd>{{ userState.email }}</dd>
+            <dd>{{ userInfo.email }}</dd>
 
             <dt>Phone number</dt>
-            <dd>{{ userState.phone }}</dd>
+            <dd>{{ userInfo.phone }}</dd>
           </dl>
         </section>
 

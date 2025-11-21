@@ -11,14 +11,24 @@ import z from 'zod';
 const BookingWithService = z.transform<
   z.infer<typeof Booking> & z.infer<typeof Service>,
   z.infer<typeof Booking> & { service: z.infer<typeof Service> }
->(({ booking_datetime, booking_id, notes, user_id, service_id, config }) => ({
-  booking_datetime,
-  booking_id,
-  notes,
-  user_id,
-  service_id,
-  service: { service_id, config },
-}));
+>(
+  ({
+    booking_datetime,
+    booking_id,
+    notes,
+    user_id,
+    service_id,
+    config,
+    is_hidden,
+  }) => ({
+    booking_datetime,
+    booking_id,
+    notes,
+    user_id,
+    service_id,
+    service: { service_id, config, is_hidden },
+  }),
+);
 
 const BookingWithUserAndService = z.transform<
   z.infer<typeof Booking> & z.infer<typeof Service> & z.infer<typeof User>,
@@ -33,6 +43,7 @@ const BookingWithUserAndService = z.transform<
     notes,
     service_id,
     config,
+    is_hidden,
     user_id,
     given_names,
     last_name,
@@ -45,7 +56,7 @@ const BookingWithUserAndService = z.transform<
     user_id,
     user: { user_id, given_names, last_name, email, phone },
     service_id,
-    service: { service_id, config },
+    service: { service_id, config, is_hidden },
   }),
 );
 

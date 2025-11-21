@@ -20,7 +20,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
           <router-link
             v-for="{ service_id, config } in services"
             :key="service_id"
-            :to="`/booking/${service_id}`"
+            :to="`/services/book/${service_id}`"
             class="card clickable"
           >
             <h2 class="title">{{ config.name }}</h2>

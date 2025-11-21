@@ -21,7 +21,7 @@ export default {
   create: requestInOut(
     `POST`,
     baseUrl,
-    AnnouncementWithXML,
+    AnnouncementWithXML.omit({ announcement_id: true }),
     AnnouncementWithXML,
     true,
   ),
@@ -30,7 +30,12 @@ export default {
    * Update an existing announcement, requires authentication with admin
    * permissions.
    */
-  update: requestIn(`PUT`, `${baseUrl}/:id`, AnnouncementWithXML, true),
+  update: requestIn(
+    `PUT`,
+    `${baseUrl}/:id`,
+    AnnouncementWithXML.omit({ announcement_id: true }),
+    true,
+  ),
 
   /**
    * Delete an announcement, requires authentication with admin permissions.

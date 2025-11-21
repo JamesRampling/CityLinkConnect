@@ -1,4 +1,4 @@
-export const schemaVersion = 1;
+export const schemaVersion = 2;
 
 export default /*sql*/ `
 -- Increment version when the schema changes
@@ -6,6 +6,7 @@ PRAGMA user_version = ${schemaVersion};
 
 CREATE TABLE Services (
   service_id INTEGER PRIMARY KEY NOT NULL,
+  is_hidden BOOLEAN NOT NULL DEFAULT FALSE,
   config TEXT NOT NULL
 );
 
