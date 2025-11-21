@@ -36,6 +36,16 @@ export default {
   info: requestOut('GET', `${baseUrl}/info`, User, true),
 
   /**
+   * Update the currently authenticated user's password if the old password matches.
+   */
+  updatePassword: requestIn(
+    'POST',
+    `${baseUrl}/change-password`,
+    z.object({ oldPassword: z.string(), newPassword: z.string() }),
+    true,
+  ),
+
+  /**
    * Updates a single user's account details. Requires authentication and admin
    * permissions.
    */

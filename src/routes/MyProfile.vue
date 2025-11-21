@@ -3,16 +3,54 @@ import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import BookingCard from '@/components/BookingCard.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
+import InputText from '@/components/InputText.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { dateToMs, groupBy } from '@/utils';
+import { useSubmission } from '@/utils/validation';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import z from 'zod';
 
 // MyProfileView represents an the current logged in user's page.
 
 const router = useRouter();
 const { setUserState, userInfo, token } = useUser();
+
+const ChangePasswordForm = z
+  .object({
+    oldPassword: z.string(),
+    newPassword: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .refine((obj) => obj.newPassword === obj.confirmPassword, {
+    error: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  });
+
+const passwordFields = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+});
+const passwordDialog = ref<HTMLDialogElement>();
+const {
+  fieldErrors: passwordErrors,
+  submissionError: changePasswordError,
+  submit: submitPassword,
+} = useSubmission(
+  ChangePasswordForm,
+  passwordFields,
+  (form) => api.account.updatePassword(form, token.value),
+  () => {
+    passwordFields.oldPassword = '';
+    passwordFields.newPassword = '';
+    passwordFields.confirmPassword = '';
+    passwordDialog.value?.close();
+  },
+);
 
 async function logout() {
   setUserState(undefined);
@@ -43,6 +81,9 @@ async function getAndSortBookings() {
 
       <div class="button-row account-actions">
         <button class="button-filled" @click="logout()">Logout</button>
+        <button class="button-filled" @click="passwordDialog?.showModal()">
+          Change Password
+        </button>
       </div>
 
       <div class="content">
@@ -110,6 +151,52 @@ async function getAndSortBookings() {
         <p>You are not logged in.</p>
       </hgroup>
     </template>
+
+    <dialog ref="passwordDialog">
+      <h2>Change Password</h2>
+      <form class="form" action="" @submit.prevent="submitPassword">
+        <InputText
+          v-model="passwordFields.oldPassword"
+          type="password"
+          name="oldPassword"
+          label="Current Password"
+        />
+        <ValidationErrorList :errors="passwordErrors.oldPassword" />
+
+        <InputText
+          v-model="passwordFields.newPassword"
+          type="password"
+          name="newPassword"
+          label="New Password"
+        />
+        <ValidationErrorList :errors="passwordErrors.newPassword" />
+
+        <InputText
+          v-model="passwordFields.confirmPassword"
+          type="password"
+          name="password"
+          label="Confirm Password"
+        />
+        <ValidationErrorList :errors="passwordErrors.confirmPassword" />
+
+        <div class="button-row">
+          <button type="submit" class="button-filled">Submit</button>
+          <button
+            type="button"
+            class="button-outlined"
+            @click="passwordDialog?.close()"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <ApiErrorMessage
+          v-if="changePasswordError"
+          class="small"
+          :error="changePasswordError"
+        />
+      </form>
+    </dialog>
   </div>
 </template>
 
@@ -139,5 +226,14 @@ async function getAndSortBookings() {
 
 .no-bookings {
   color: var(--color-muted);
+}
+
+dialog[open] {
+  border-radius: 1rem;
+  background-color: var(--dialog-bgcolor);
+  color: var(--dialog-color);
+  border: none;
+  outline: 1px solid var(--dialog-border-color);
+  box-shadow: var(--dialog-shadow);
 }
 </style>
