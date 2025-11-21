@@ -1,36 +1,37 @@
 <script setup lang="ts">
-// UserProfileView represents an admin view of any particular user.
-defineProps<{ id: number }>();
-
 import {
   AnnouncementWithXML,
   Booking,
   Feedback,
   ServiceWithXML,
+  User,
 } from '#shared/models';
 import api from '@/api';
+import InputText from '@/components/InputText.vue';
+import InputTextarea from '@/components/InputTextarea.vue';
 import { formatDate } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { z } from 'zod';
 
+/** 
+const addContentField = (
+  title = "",
+  content = ""
+)
+**/
 interface UserBooking {
   name: string;
   service: string;
   message: string;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  isBanned: boolean;
-}
 interface Feedback {
   feedback_id: number;
   sort_datetime: string;
   config: { user: string; message: string; date: string };
 }
 
+/** 
 function generateUsers(): User[] {
   return Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
@@ -39,7 +40,8 @@ function generateUsers(): User[] {
     isBanned: false,
   }));
 }
-
+**/
+/** 
 function generateUserBooking(): UserBooking[] {
   return [
     {
@@ -94,11 +96,19 @@ function generateUserBooking(): UserBooking[] {
     },
   ];
 }
+**/
 
 const bookings = ref<z.infer<typeof Booking>[]>([]);
 const feedback = ref<z.infer<typeof Feedback>[]>([]);
 const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
 const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
+const userList = ref<z.infer<typeof User>[]>([]);
+const fields = ref({ title: '', content: '', name: '', fees: '' });
+
+const submit = async () => {
+  // Submit logic will go here
+  console.log('Form submitted:', fields.value);
+};
 
 // Load announcements and services
 onMounted(async () => {
@@ -111,6 +121,15 @@ onMounted(async () => {
   if (servicesResult.ok) {
     services.value = servicesResult.data;
   }
+
+  const userResult = await api.account.all(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
+  );
+  if (userResult.ok) {
+    userList.value = userResult.data;
+  }
+
+  console.log('User List:', userList.value);
 
   const feedbackResult = await api.feedback.all(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
@@ -126,6 +145,11 @@ onMounted(async () => {
     bookings.value = bookingsResult.data;
   }
 });
+/** 
+function announcementUpdate(title:string,content:string){
+  api.announcement.omit(title:string,content:string)
+}
+**/
 
 const page = ref('user');
 </script>
@@ -169,12 +193,11 @@ const page = ref('user');
       <div v-if="page === 'user'">
         <ul id="ItemsDisplayColumn">
           <li
-            v-for="user in generateUsers()"
-            :key="user.id"
+            v-for="user in userList"
+            :key="user.user_id"
             class="clickable card"
           >
-            <strong>{{ user.name }}</strong> — {{ user.email }}
-            <span v-if="user.isBanned">(Banned)</span>
+            <strong>{{ user.given_names }}</strong> — {{ user.email }}
           </li>
         </ul>
       </div>
@@ -187,36 +210,58 @@ const page = ref('user');
         </ul>
       </div>
       <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
-        <button>Add Content</button>
+        <button @click="page = 'add_content'">Add Content</button>
         <article
           v-for="(item, i) in announcements"
           :key="i"
           class="clickable card"
         >
-          <button>Edit</button>
+          <button>Delete</button>
           <h2>{{ item.config?.title }}</h2>
           <h3>{{ formatDate(item.config?.date) }}</h3>
           <p>{{ item.config?.content }}</p>
         </article>
       </div>
       <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
-        <button>Add Services</button>
+        <button @click="page = 'add_service'">Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
-          <button>Edit</button>
+          <button>Delete</button>
           <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
         </li>
+      </div>
+      <div v-else-if="page === 'add_content'" id="ItemsDisplayColumn">
+        <h1>Add Announcement</h1>
+        <form class="form" action="" @submit.prevent="submit">
+          <InputText v-model="fields.title" name="title" label="Title" />
+
+          <InputTextarea
+            v-model="fields.content"
+            name="content"
+            label="Content"
+          />
+
+          <div class="button-row">
+            <button type="submit" class="button-filled">Submit</button>
+          </div>
+        </form>
+      </div>
+      <div v-else-if="page === 'add_service'" id="ItemsDisplayColumn">
+        <h1>Add Service</h1>
+        <form class="form" action="" @submit.prevent="submit">
+          <InputText v-model="fields.name" name="name" label="Name" />
+
+          <InputText v-model="fields.fees" name="fees" label="Fees" />
+
+          <div class="button-row">
+            <button type="submit" class="button-filled">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="css" scoped>
-.SideBar {
-  flex-direction: column;
-  display: flex;
-  width: 8rem;
-  height: 2rem;
-}
 .squareButton {
   padding-top: 10%;
   width: 100%;

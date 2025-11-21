@@ -36,6 +36,8 @@ const router = createRouter({
       props: convertProps({ id: Number }),
     },
 
+    { path: '/admin', component: () => import('@/routes/AdminPage.vue') },
+
     {
       path: '/user/:id',
       component: () => import('@/routes/UserProfileView.vue'),
