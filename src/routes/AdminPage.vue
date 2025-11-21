@@ -101,7 +101,12 @@ const page = ref('user');
                   :to="`/announcement/edit/${item.announcement_id}`"
                   ><IconEdit />Edit Announcement</router-link
                 >
-                <button class="button-outlined">Delete</button>
+                <button
+                  @click="api.announcements.delete(item.announcement_id, token)"
+                  class="button-outlined"
+                >
+                  Delete
+                </button>
               </div>
               <h2>{{ item.config?.title }}</h2>
               <h3>{{ formatDate(item.config?.date) }}</h3>
