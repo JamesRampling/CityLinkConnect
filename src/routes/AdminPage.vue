@@ -195,7 +195,6 @@ const page = ref('user');
         <ul id="ItemsDisplayColumn">
           <li v-for="user in userList" :key="user.id" class="clickable card">
             <strong>{{ user.name }}</strong> — {{ user.email }}
-            <span v-if="user.isBanned">(Banned)</span>
           </li>
         </ul>
       </div>
@@ -214,7 +213,7 @@ const page = ref('user');
           :key="i"
           class="clickable card"
         >
-          <button>Edit</button>
+          <button>Delete</button>
           <h2>{{ item.config?.title }}</h2>
           <h3>{{ formatDate(item.config?.date) }}</h3>
           <p>{{ item.config?.content }}</p>
@@ -223,7 +222,7 @@ const page = ref('user');
       <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
         <button @click="page = 'add_service'">Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
-          <button>Edit</button>
+          <button>Delete</button>
           <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
         </li>
       </div>
