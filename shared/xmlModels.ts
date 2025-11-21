@@ -65,19 +65,22 @@ export const serviceXmlObject = z.object({
     name: z.string(),
     description: z.string(),
     fees: z
-      .object({
-        fee: z
-          .object({
-            price: z
-              .object({ '#text': z.string(), '@_variant': z.string() })
-              .array()
-              .optional(),
+      .union([
+        z.object({
+          fee: z
+            .object({
+              price: z
+                .object({ '#text': z.string(), '@_variant': z.string() })
+                .array()
+                .optional(),
 
-            '@_title': z.string(),
-          })
-          .array()
-          .optional(),
-      })
+              '@_title': z.string(),
+            })
+            .array()
+            .optional(),
+        }),
+        z.string(),
+      ])
       .optional(),
   }),
 });
@@ -130,14 +133,16 @@ const serviceXmlToJs = z.codec(serviceXmlObject, ServiceJs, {
     }
 
     const fees =
-      feesObj.fee?.map((e) => ({
-        title: e['@_title'],
-        prices:
-          e.price?.map((e) => ({
-            price: e['#text'],
-            variant: e['@_variant'],
-          })) ?? [],
-      })) ?? [];
+      typeof feesObj === 'object' && feesObj.fee
+        ? feesObj.fee.map((e) => ({
+            title: e['@_title'],
+            prices:
+              e.price?.map((e) => ({
+                price: e['#text'],
+                variant: e['@_variant'],
+              })) ?? [],
+          }))
+        : [];
 
     return { name, description, fees };
   },

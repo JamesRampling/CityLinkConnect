@@ -9,7 +9,21 @@ export default {
   /**
    * Get a list of all the available services.
    */
-  all: requestOut('GET', baseUrl, ServiceWithXML.array(), false),
+  all: requestOut(
+    'GET',
+    baseUrl,
+    z.array(z.unknown()).transform((arr) => {
+      const items = [];
+      for (const item of arr) {
+        const result = ServiceWithXML.safeParse(item);
+        if (result.success) {
+          items.push(result.data);
+        }
+      }
+      return items;
+    }),
+    false,
+  ),
 
   /**
    * Get a single service by its id.
