@@ -11,15 +11,20 @@ import account from '@/api/endpoints/account';
 import { formatDate } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { z } from 'zod';
+import InputText from '@/components/InputText.vue';
+import InputTextarea from '@/components/InputTextarea.vue';
 
-
-
+/** 
+const addContentField = (
+  title = "",
+  content = ""
+)
+**/
 interface UserBooking {
   name: string;
   service: string;
   message: string;
 }
-
 
 interface Feedback {
   feedback_id: number;
@@ -94,12 +99,18 @@ function generateUserBooking(): UserBooking[] {
 }
 **/
 
-
 const bookings = ref<z.infer<typeof Booking>[]>([]);
 const feedback = ref<z.infer<typeof Feedback>[]>([]);
 const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
 const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
-const user = ref<z.infer<typeof account>[]>([]);
+const userList = ref<z.infer<typeof User>[]>([]);
+const fields = ref({ title: '', content: '', name: '', fees: '' });
+
+const submit = async () => {
+  // Submit logic will go here
+  console.log('Form submitted:', fields.value);
+};
+
 // Load announcements and services
 onMounted(async () => {
   const announcementResult = await api.announcements.all();
@@ -112,12 +123,14 @@ onMounted(async () => {
     services.value = servicesResult.data;
   }
 
-  
-  const userList = account.all(
+  const userResult = await api.account.all(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
   );
+  if (userResult.ok) {
+    userList.value = userResult.data;
+  }
 
-  console.log('User List:', userList);
+  console.log('User List:', userList.value);
 
   const feedbackResult = await api.feedback.all(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
@@ -133,6 +146,11 @@ onMounted(async () => {
     bookings.value = bookingsResult.data;
   }
 });
+/** 
+function announcementUpdate(title:string,content:string){
+  api.announcement.omit(title:string,content:string)
+}
+**/
 
 const page = ref('user');
 </script>
@@ -175,11 +193,7 @@ const page = ref('user');
     <div id="MainContent">
       <div v-if="page === 'user'">
         <ul id="ItemsDisplayColumn">
-          <li
-            v-for="user in userList"
-            :key="user.id"
-            class="clickable card"
-          >
+          <li v-for="user in userList" :key="user.id" class="clickable card">
             <strong>{{ user.name }}</strong> — {{ user.email }}
             <span v-if="user.isBanned">(Banned)</span>
           </li>
@@ -194,7 +208,7 @@ const page = ref('user');
         </ul>
       </div>
       <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
-        <button>Add Content</button>
+        <button @click="page = 'add_content'">Add Content</button>
         <article
           v-for="(item, i) in announcements"
           :key="i"
@@ -207,23 +221,45 @@ const page = ref('user');
         </article>
       </div>
       <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
-        <button>Add Services</button>
+        <button @click="page = 'add_service'">Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
           <button>Edit</button>
           <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
         </li>
+      </div>
+      <div v-else-if="page === 'add_content'" id="ItemsDisplayColumn">
+        <h1>Add Announcement</h1>
+        <form class="form" action="" @submit.prevent="submit">
+          <InputText v-model="fields.title" name="title" label="Title" />
+
+          <InputTextarea
+            v-model="fields.content"
+            name="content"
+            label="Content"
+          />
+
+          <div class="button-row">
+            <button type="submit" class="button-filled">Submit</button>
+          </div>
+        </form>
+      </div>
+      <div v-else-if="page === 'add_service'" id="ItemsDisplayColumn">
+        <h1>Add Service</h1>
+        <form class="form" action="" @submit.prevent="submit">
+          <InputText v-model="fields.name" name="name" label="Name" />
+
+          <InputText v-model="fields.fees" name="fees" label="Fees" />
+
+          <div class="button-row">
+            <button type="submit" class="button-filled">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="css" scoped>
-.SideBar {
-  flex-direction: column;
-  display: flex;
-  width: 8rem;
-  height: 2rem;
-}
 .squareButton {
   padding-top: 10%;
   width: 100%;
