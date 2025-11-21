@@ -62,6 +62,10 @@ const { matches: isNarrowScreen } = useMediaQuery('(width < 100ch)');
 </template>
 
 <style scoped>
+main {
+  display: flex;
+  flex-direction: column;
+}
 header {
   display: flex;
   flex-wrap: wrap;

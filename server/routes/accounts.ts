@@ -82,7 +82,7 @@ route.get('/info', authenticate, (req, res) => {
 });
 
 route.get('/', authenticate, authorizeAdmin, (_, res) => {
-  Responses.ok(res, { users: db.Users.getAll() });
+  Responses.ok(res, db.Users.getAll());
 });
 
 route.put(

@@ -1,162 +1,22 @@
 <script setup lang="ts">
-import {
-  AnnouncementWithXML,
-  Booking,
-  Feedback,
-  ServiceWithXML,
-  User,
-} from '#shared/models';
 import api from '@/api';
+import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
+import BookingCard from '@/components/BookingCard.vue';
+import IconEdit from '@/components/icons/IconEdit.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
+import LoadedData from '@/components/LoadedData.vue';
+import { useUser } from '@/user';
 import { formatDate } from '@/utils';
-import { onMounted, ref } from 'vue';
-import { z } from 'zod';
+import { ref } from 'vue';
 
-/** 
-const addContentField = (
-  title = "",
-  content = ""
-)
-**/
-interface UserBooking {
-  name: string;
-  service: string;
-  message: string;
-}
-
-interface Feedback {
-  feedback_id: number;
-  sort_datetime: string;
-  config: { user: string; message: string; date: string };
-}
-
-/** 
-function generateUsers(): User[] {
-  return Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    name: `User${i + 1}`,
-    email: `user${i + 1}@example.com`,
-    isBanned: false,
-  }));
-}
-**/
-/** 
-function generateUserBooking(): UserBooking[] {
-  return [
-    {
-      name: 'user1',
-      service: 'PetService',
-      message: 'Need help with pet caring',
-    },
-    {
-      name: 'user2',
-      service: 'GroomingService',
-      message: 'Requesting grooming for my dog',
-    },
-    {
-      name: 'user3',
-      service: 'WalkingService',
-      message: 'Need daily evening walks for my pet',
-    },
-    {
-      name: 'user4',
-      service: 'VeterinaryService',
-      message: 'Pet needs vaccination checkup',
-    },
-    {
-      name: 'user5',
-      service: 'TrainingService',
-      message: 'Want basic obedience training',
-    },
-    {
-      name: 'user6',
-      service: 'BoardingService',
-      message: 'Need weekend boarding for my cat',
-    },
-    {
-      name: 'user7',
-      service: 'PetTaxi',
-      message: 'Require transport to vet clinic',
-    },
-    {
-      name: 'user8',
-      service: 'PetPhotography',
-      message: 'Looking for pet portrait session',
-    },
-    {
-      name: 'user9',
-      service: 'PetSitting',
-      message: 'Need sitter for two days',
-    },
-    {
-      name: 'user10',
-      service: 'AquariumCleaning',
-      message: 'Need help cleaning my fish tank',
-    },
-  ];
-}
-**/
-
-const bookings = ref<z.infer<typeof Booking>[]>([]);
-const feedback = ref<z.infer<typeof Feedback>[]>([]);
-const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
-const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
-const userList = ref<z.infer<typeof User>[]>([]);
-const fields = ref({ title: '', content: '', name: '', fees: '' });
-
-const submit = async () => {
-  // Submit logic will go here
-  console.log('Form submitted:', fields.value);
-};
-
-// Load announcements and services
-onMounted(async () => {
-  const announcementResult = await api.announcements.all();
-  if (announcementResult.ok) {
-    announcements.value = announcementResult.data;
-  }
-
-  const servicesResult = await api.services.all();
-  if (servicesResult.ok) {
-    services.value = servicesResult.data;
-  }
-
-  const userResult = await api.account.all(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
-  );
-  if (userResult.ok) {
-    userList.value = userResult.data;
-  }
-
-  console.log('User List:', userList.value);
-
-  const feedbackResult = await api.feedback.all(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
-  );
-  if (feedbackResult.ok) {
-    feedback.value = feedbackResult.data;
-  }
-
-  const bookingsResult = await api.bookings.all(
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
-  );
-  if (bookingsResult.ok) {
-    bookings.value = bookingsResult.data;
-  }
-});
-/** 
-function announcementUpdate(title:string,content:string){
-  api.announcement.omit(title:string,content:string)
-}
-**/
+const { token } = useUser();
 
 const page = ref('user');
 </script>
 
 <template>
-  <h1>Good morning Admin</h1>
-  <div class="flex-container">
+  <div class="sidebar-container">
     <div id="SideBar">
       <button
         :class="{ squareButton: true, isSelected: page === 'user' }"
@@ -189,40 +49,72 @@ const page = ref('user');
         Feedback
       </button>
     </div>
-    <div id="MainContent">
-      <div v-if="page === 'user'">
-        <ul id="ItemsDisplayColumn">
-          <li
-            v-for="user in userList"
-            :key="user.user_id"
-            class="clickable card"
-          >
-            <strong>{{ user.given_names }}</strong> — {{ user.email }}
-          </li>
-        </ul>
+    <div id="MainContent" class="page-wrapper">
+      <h1>Good morning Admin</h1>
+
+      <div v-if="page === 'user'" class="item-list">
+        <LoadedData :action="() => api.account.all(token)">
+          <template #ok="{ data }">
+            <div
+              v-for="user in data"
+              :key="user.user_id"
+              class="clickable card"
+            >
+              <strong>{{ user.given_names }}</strong> — {{ user.email }}
+            </div>
+          </template>
+
+          <template #error="{ error }">
+            <ApiErrorMessage :error />
+          </template>
+        </LoadedData>
       </div>
-      <div v-else-if="page === 'booking'">
-        <ul id="ItemsDisplayColumn">
-          <li v-for="(b, i) in bookings" :key="i" class="clickable card">
-            <strong>{{ b.user_id }}</strong> — {{ b.booking_datetime }}:
-            {{ b.notes }}
-          </li>
-        </ul>
+      <div v-else-if="page === 'booking'" class="item-list">
+        <LoadedData :action="() => api.bookings.allAdmin(token)">
+          <template #ok="{ data: bookings }">
+            <BookingCard
+              v-for="b in bookings"
+              :key="b.booking_id"
+              :booking="b"
+            />
+          </template>
+
+          <template #error="{ error }">
+            <ApiErrorMessage :error />
+          </template>
+        </LoadedData>
       </div>
-      <div v-else-if="page === 'content'" id="ItemsDisplayColumn">
-        <button @click="page = 'add_content'">Add Content</button>
-        <article
-          v-for="(item, i) in announcements"
-          :key="i"
-          class="clickable card"
-        >
-          <button>Delete</button>
-          <h2>{{ item.config?.title }}</h2>
-          <h3>{{ formatDate(item.config?.date) }}</h3>
-          <p>{{ item.config?.content }}</p>
-        </article>
+      <div v-else-if="page === 'content'" class="item-list">
+        <LoadedData :action="() => api.announcements.all()">
+          <template #ok="{ data: announcements }">
+            <div class="button-row">
+              <button @click="page = 'add_content'">Add Content</button>
+            </div>
+            <article
+              v-for="(item, i) in announcements"
+              :key="i"
+              class="clickable card"
+            >
+              <div class="button-row">
+                <router-link
+                  class="button-outlined"
+                  :to="`/announcement/edit/${item.announcement_id}`"
+                  ><IconEdit />Edit Announcement</router-link
+                >
+                <button class="button-outlined">Delete</button>
+              </div>
+              <h2>{{ item.config?.title }}</h2>
+              <h3>{{ formatDate(item.config?.date) }}</h3>
+              <p>{{ item.config?.content }}</p>
+            </article>
+          </template>
+
+          <template #error="{ error }">
+            <ApiErrorMessage :error />
+          </template>
+        </LoadedData>
       </div>
-      <div v-else-if="page === 'service'" id="ItemsDisplayColumn">
+      <div v-else-if="page === 'service'" class="item-list">
         <button @click="page = 'add_service'">Add Services</button>
         <li v-for="(e, i) in services" :key="i" class="clickable card">
           <button>Delete</button>
@@ -245,7 +137,7 @@ const page = ref('user');
           </div>
         </form>
       </div>
-      <div v-else-if="page === 'add_service'" id="ItemsDisplayColumn">
+      <div v-else-if="page === 'add_service'" class="item-list">
         <h1>Add Service</h1>
         <form class="form" action="" @submit.prevent="submit">
           <InputText v-model="fields.name" name="name" label="Name" />
@@ -262,33 +154,38 @@ const page = ref('user');
 </template>
 
 <style lang="css" scoped>
-.squareButton {
-  padding-top: 10%;
-  width: 100%;
+#SideBar {
+  background-color: var(--bgcolor);
+  display: flex;
+  flex-direction: column;
 
-  height: 25sp;
-  padding-bottom: 10%;
+  align-self: start;
+  position: sticky;
+  top: 3.5rem;
+  overflow: auto;
+
+  @media (width < 80ch) {
+    flex-direction: row;
+  }
+}
+.squareButton {
+  padding: 2rem;
+
   text-align: center;
   font-size: medium;
   background: transparent;
   line-height: 50%;
-  border: 1px solid var(--border-color);
+
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
   font-weight: bold;
   cursor: pointer;
 }
-#MainContent {
-  margin: auto;
-  width: 50%;
-  padding: 10px;
-  display: flex;
-  align-items: baseline;
-  border: 1px;
-  border-color: var(--border-color);
-  border-style: double;
-}
+
 .squareButton:hover {
   background-color: var(--button-outlined-hover-bgcolor);
 }
@@ -297,17 +194,23 @@ const page = ref('user');
   color: var(--on-accent-color);
 }
 
-.flex-container {
-  flex: auto;
-  flex-wrap: wrap;
-  flex-direction: row;
-  display: flex;
+.sidebar-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+
+  @media (width < 80ch) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}
+#MainContent {
+  display: block;
+  width: 100%;
 }
 
-#ItemsDisplayColumn {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+.item-list {
+  display: grid;
   gap: 1rem;
 }
 </style>
