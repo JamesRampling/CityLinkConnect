@@ -29,7 +29,7 @@ const accessibilityState = ref(
 );
 
 const resetAccessibility = () =>
-  (accessibilityState.value = accessibilityDefaults);
+  (accessibilityState.value = { ...accessibilityDefaults });
 
 const fontFamilies = {
   sans: '',
