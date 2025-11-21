@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { Booking } from '#shared/models';
 import api from '@/api';
-import type { FetchError } from '@/api/apiFetch';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
-import IconDelete from '@/components/icons/IconDelete.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import InputText from '@/components/InputText.vue';
@@ -14,11 +12,8 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
 import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const props = defineProps<{ id: number }>();
-
-const router = useRouter();
 
 const { token, auth } = useUser();
 
@@ -35,18 +30,6 @@ const { submit, fieldErrors, submissionError } = useSubmission(
   },
   () => (success.value = true),
 );
-
-const deleteError = ref<FetchError<undefined>>();
-
-async function deleteService() {
-  const { ok, error } = await api.services.delete(props.id, token.value);
-  if (ok) {
-    await router.push('/');
-    deleteError.value = undefined;
-  } else {
-    deleteError.value = error;
-  }
-}
 </script>
 
 <template>
@@ -58,26 +41,13 @@ async function deleteService() {
 
       <template v-if="auth?.is_admin">
         <router-link class="button-outlined" :to="`/services/edit/${id}`">
-          <IconEdit />Edit
+          <IconEdit />Edit Service
         </router-link>
-
-        <!-- Deleting a service does not work as there are no delete actions in
-        database, so constraints may be violated if there are bookings under
-        this service. -->
-        <button class="button-outlined" @click="deleteService()">
-          <IconDelete />Delete
-        </button>
-
-        <ApiErrorMessage
-          v-if="deleteError"
-          :error="deleteError"
-          class="x-small"
-        />
       </template>
     </div>
 
     <h1>Book a service</h1>
-    <LoadedData :action="() => api.services.single(id)">
+    <LoadedData :action="() => api.services.single(id, token)">
       <template #loading>
         <LoadingSpinner />
       </template>

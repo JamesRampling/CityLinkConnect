@@ -5,6 +5,31 @@ import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import z from 'zod';
 
+export function maybeAuthenticate<R, B>(
+  req: Request<R, unknown, B>,
+  res: Response,
+  next: NextFunction,
+) {
+  const [bearer, token] = req.headers.authorization?.split(' ') ?? [];
+
+  if (bearer === 'Bearer') {
+    try {
+      const verified = jwt.verify(token, JWT_SECRET);
+      const status = AuthenticationStatus.parse(verified);
+
+      req.authentication = status;
+    } catch {
+      Responses.error(res, {
+        type: 'unauthorized',
+        status: 401,
+        title: 'Invalid authentication token.',
+      });
+    }
+  }
+
+  next();
+}
+
 export function authenticate<R, B>(
   req: Request<R, unknown, B>,
   res: Response,

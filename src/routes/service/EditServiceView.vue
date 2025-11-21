@@ -6,6 +6,7 @@ import IconAdd from '@/components/icons/IconAdd.vue';
 import IconBack from '@/components/icons/IconBack.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
+import InputCheckbox from '@/components/InputCheckbox.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
@@ -23,16 +24,19 @@ const router = useRouter();
 
 const { token } = useUser();
 
-const fields = reactive<z.infer<typeof ServiceJs>>({
+const EditServiceForm = ServiceJs.extend({ is_hidden: z.boolean() });
+
+const fields = reactive<z.infer<typeof EditServiceForm>>({
   name: '',
   description: '',
   fees: [],
+  is_hidden: false,
 });
 const { submit, fieldErrors, submissionError } = useSubmission(
-  ServiceJs,
+  EditServiceForm,
   fields,
-  (config) => {
-    return api.services.update(props.id, { config }, token.value);
+  ({ is_hidden, ...config }) => {
+    return api.services.update(props.id, { config, is_hidden }, token.value);
   },
   async () => {
     await router.push(`/services/book/${props.id}`);
@@ -52,8 +56,11 @@ const { submit, fieldErrors, submissionError } = useSubmission(
     </div>
 
     <LoadedData
-      :action="() => api.services.single(props.id)"
-      @ok="Object.assign(fields, $event.config)"
+      :action="() => api.services.single(props.id, token)"
+      @ok="
+        (Object.assign(fields, $event.config),
+        (fields.is_hidden = $event.is_hidden))
+      "
     >
       <template #loading>
         <LoadingSpinner />
@@ -61,6 +68,12 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
       <template #ok>
         <form class="form" @submit.prevent>
+          <InputCheckbox
+            v-model="fields.is_hidden"
+            name="is_hidden"
+            label="Hidden"
+          />
+
           <InputText v-model="fields.name" name="title" label="Name" />
           <ValidationErrorList :errors="fieldErrors.name" />
 

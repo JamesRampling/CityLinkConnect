@@ -6,6 +6,7 @@ const tableId = z.int().nonnegative();
 export const Service = z.object({
   service_id: tableId.default(0),
   config: z.string(),
+  is_hidden: z.coerce.boolean(),
 });
 
 export const ServiceWithXML = Service.extend({ config: ServiceContent });

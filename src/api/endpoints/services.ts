@@ -1,5 +1,6 @@
 import { Booking, ServiceWithXML } from '#shared/models';
-import { request, requestIn, requestInOut, requestOut } from '@/api/factories';
+import { requestIn, requestInOut, requestOut } from '@/api/factories';
+import z from 'zod';
 
 const baseUrl = '/api/services';
 
@@ -28,7 +29,7 @@ export default {
   /**
    * Get a single service by its id.
    */
-  single: requestOut('GET', `${baseUrl}/:id`, ServiceWithXML, false),
+  single: requestOut('GET', `${baseUrl}/:id`, ServiceWithXML, true),
 
   /**
    * Create a new service, requires authentication with admin permissions.
@@ -40,9 +41,4 @@ export default {
    * Update an existing service, requires authentication with admin permissions.
    */
   update: requestIn('PUT', `${baseUrl}/:id`, serviceWithoutId, true),
-
-  /**
-   * Delete a service, requires authentication with admin permissions.
-   */
-  delete: request('DELETE', `${baseUrl}/:id`, true),
 };
