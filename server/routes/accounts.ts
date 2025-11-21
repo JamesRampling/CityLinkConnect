@@ -92,7 +92,7 @@ route.post(
     const { rows_changed } =
       db.Users.update(user).or_throw(queryErrorToResponse);
 
-    if (rows_changed) Responses.ok(res, user);
+    if (rows_changed !== 0) Responses.ok(res, user);
     else throw unauthorizedError;
   },
 );
