@@ -4,6 +4,7 @@ import {
   Booking,
   Feedback,
   ServiceWithXML,
+  User,
 } from '#shared/models';
 import api from '@/api';
 import account from '@/api/endpoints/account';
@@ -11,24 +12,22 @@ import { formatDate } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { z } from 'zod';
 
+
+
 interface UserBooking {
   name: string;
   service: string;
   message: string;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  isBanned: boolean;
-}
+
 interface Feedback {
   feedback_id: number;
   sort_datetime: string;
   config: { user: string; message: string; date: string };
 }
 
+/** 
 function generateUsers(): User[] {
   return Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
@@ -37,7 +36,8 @@ function generateUsers(): User[] {
     isBanned: false,
   }));
 }
-
+**/
+/** 
 function generateUserBooking(): UserBooking[] {
   return [
     {
@@ -92,12 +92,14 @@ function generateUserBooking(): UserBooking[] {
     },
   ];
 }
+**/
+
 
 const bookings = ref<z.infer<typeof Booking>[]>([]);
 const feedback = ref<z.infer<typeof Feedback>[]>([]);
 const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
 const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
-
+const user = ref<z.infer<typeof account>[]>([]);
 // Load announcements and services
 onMounted(async () => {
   const announcementResult = await api.announcements.all();
@@ -110,6 +112,7 @@ onMounted(async () => {
     services.value = servicesResult.data;
   }
 
+  
   const userList = account.all(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
   );
@@ -173,7 +176,7 @@ const page = ref('user');
       <div v-if="page === 'user'">
         <ul id="ItemsDisplayColumn">
           <li
-            v-for="user in generateUsers()"
+            v-for="user in userList"
             :key="user.id"
             class="clickable card"
           >
