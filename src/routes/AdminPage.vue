@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { AnnouncementWithXML, Feedback, ServiceWithXML } from '#shared/models';
+import {
+  AnnouncementWithXML,
+  Booking,
+  Feedback,
+  ServiceWithXML,
+} from '#shared/models';
 import api from '@/api';
+import account from '@/api/endpoints/account';
 import { formatDate } from '@/utils';
 import { onMounted, ref } from 'vue';
 import { z } from 'zod';
@@ -87,8 +93,7 @@ function generateUserBooking(): UserBooking[] {
   ];
 }
 
-const bookings = ref<UserBooking[]>(generateUserBooking());
-
+const bookings = ref<z.infer<typeof Booking>[]>([]);
 const feedback = ref<z.infer<typeof Feedback>[]>([]);
 const announcements = ref<z.infer<typeof AnnouncementWithXML>[]>([]);
 const services = ref<z.infer<typeof ServiceWithXML>[]>([]);
@@ -104,12 +109,26 @@ onMounted(async () => {
   if (servicesResult.ok) {
     services.value = servicesResult.data;
   }
-  /*
-  const feedbackResult = await api.feedback.all();
+
+  const userList = account.all(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
+  );
+
+  console.log('User List:', userList);
+
+  const feedbackResult = await api.feedback.all(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
+  );
   if (feedbackResult.ok) {
     feedback.value = feedbackResult.data;
   }
-  */
+
+  const bookingsResult = await api.bookings.all(
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hZG1pbiI6dHJ1ZSwiaWF0IjoxNzYzMjc5NzMxLCJleHAiOjE3OTQ4MzczMzEsInN1YiI6IjMifQ.4ZkL0AUTMbkWNLQRBsphuPltw8lgnVoq48rD775ymjw',
+  );
+  if (bookingsResult.ok) {
+    bookings.value = bookingsResult.data;
+  }
 });
 
 const page = ref('user');
@@ -166,7 +185,8 @@ const page = ref('user');
       <div v-else-if="page === 'booking'">
         <ul id="ItemsDisplayColumn">
           <li v-for="(b, i) in bookings" :key="i" class="clickable card">
-            <strong>{{ b.name }}</strong> — {{ b.service }}: {{ b.message }}
+            <strong>{{ b.user_id }}</strong> — {{ b.booking_datetime }}:
+            {{ b.notes }}
           </li>
         </ul>
       </div>
