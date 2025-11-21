@@ -9,6 +9,7 @@ import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
 import { reactive, ref } from 'vue';
@@ -94,20 +95,15 @@ const { submit, fieldErrors, submissionError } = useSubmission(
                 name="date-input"
                 label="Date"
               />
-              <ul v-if="fieldErrors.booking_datetime" class="error-list">
-                <li
-                  v-for="error in fieldErrors.booking_datetime"
-                  :key="error"
-                  class="error-item"
-                >
-                  {{ error }}
-                </li>
-              </ul>
+              <ValidationErrorList :error="fieldErrors.booking_datetime" />
+
               <InputTextarea
                 v-model="fields.notes"
                 name="service-notes"
                 label="Additional information"
               />
+              <ValidationErrorList :error="fieldErrors.notes" />
+
               <div class="button-row">
                 <button type="submit" class="button-filled">Submit</button>
               </div>
