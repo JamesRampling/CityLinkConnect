@@ -21,6 +21,9 @@ export default {
    */
   single: requestOut('GET', `${baseUrl}/:id`, Service, true),
 
+  /**
+   * Get a single service by its id with its config as a JavaScript object.
+   */
   singleJs: requestOut('GET', `${baseUrl}/:id`, ServiceWithXML, true),
 
   /**

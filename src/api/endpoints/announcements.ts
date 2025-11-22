@@ -21,6 +21,9 @@ export default {
    */
   single: requestOut(`GET`, `${baseUrl}/:id`, Announcement, false),
 
+  /**
+   * Get a single announcement by its ID with its config as a JavaScript object.
+   */
   singleJs: requestOut(`GET`, `${baseUrl}/:id`, AnnouncementWithXML, false),
 
   /**
