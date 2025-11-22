@@ -53,6 +53,7 @@ const pages = [
           </template>
         </LoadedData>
       </div>
+
       <div v-else-if="selectedPage === 'bookings'" class="item-list">
         <LoadedData :action="() => api.bookings.allAdmin(token)">
           <template #ok="{ data: bookings }">
@@ -68,6 +69,7 @@ const pages = [
           </template>
         </LoadedData>
       </div>
+
       <div v-else-if="selectedPage === 'announcements'" class="item-list">
         <LoadedData :action="() => api.announcements.all()">
           <template #ok="{ data: announcements }">
@@ -103,6 +105,7 @@ const pages = [
           </template>
         </LoadedData>
       </div>
+
       <div v-else-if="selectedPage === 'services'" class="item-list">
         <div class="button-row">
           <button class="button-filled">Add Services</button>
@@ -143,6 +146,7 @@ const pages = [
           </template>
         </LoadedData>
       </div>
+
       <div v-else-if="selectedPage === 'feedback'" class="item-list">
         <LoadedData :action="() => api.feedback.all(token)">
           <template #ok="{ data: feedbacks }">
