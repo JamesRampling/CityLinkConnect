@@ -6,51 +6,37 @@ import IconEdit from '@/components/icons/IconEdit.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
-import { ref } from 'vue';
+
+defineProps<{ selectedPage: string }>();
 
 const { token } = useUser();
 
-const page = ref('user');
+const pages = [
+  { id: 'users', name: 'Users' },
+  { id: 'bookings', name: 'Bookings' },
+  { id: 'announcements', name: 'Announcements' },
+  { id: 'services', name: 'Services' },
+  { id: 'feedback', name: 'Feedback' },
+];
 </script>
 
 <template>
+  <div class="page-wrapper">
+    <h1>Admin Options</h1>
+  </div>
   <div class="sidebar-container">
     <div id="SideBar">
-      <button
-        :class="{ squareButton: true, isSelected: page === 'user' }"
-        @click="page = 'user'"
+      <router-link
+        v-for="page in pages"
+        :key="page.id"
+        :to="`/admin/${page.id}`"
+        :class="{ squareButton: true, isSelected: selectedPage === page.id }"
       >
-        Users
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'booking' }"
-        @click="page = 'booking'"
-      >
-        Bookings
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'content' }"
-        @click="page = 'content'"
-      >
-        Content
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'service' }"
-        @click="page = 'service'"
-      >
-        Services
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'feedback' }"
-        @click="page = 'feedback'"
-      >
-        Feedback
-      </button>
+        {{ page.name }}
+      </router-link>
     </div>
     <div id="MainContent" class="page-wrapper">
-      <h1>Good morning Admin</h1>
-
-      <div v-if="page === 'user'" class="item-list">
+      <div v-if="selectedPage === 'users'" class="item-list">
         <LoadedData :action="() => api.account.all(token)">
           <template #ok="{ data }">
             <div
@@ -67,7 +53,7 @@ const page = ref('user');
           </template>
         </LoadedData>
       </div>
-      <div v-else-if="page === 'booking'" class="item-list">
+      <div v-else-if="selectedPage === 'bookings'" class="item-list">
         <LoadedData :action="() => api.bookings.allAdmin(token)">
           <template #ok="{ data: bookings }">
             <BookingCard
@@ -82,13 +68,11 @@ const page = ref('user');
           </template>
         </LoadedData>
       </div>
-      <div v-else-if="page === 'content'" class="item-list">
+      <div v-else-if="selectedPage === 'announcements'" class="item-list">
         <LoadedData :action="() => api.announcements.all()">
           <template #ok="{ data: announcements }">
             <div class="button-row">
-              <button class="button-filled" @click="page = 'add_content'">
-                Add Content
-              </button>
+              <button class="button-filled">Add Content</button>
             </div>
             <article
               v-for="(item, i) in announcements"
@@ -119,10 +103,10 @@ const page = ref('user');
           </template>
         </LoadedData>
       </div>
-      <div v-else-if="page === 'service'" class="item-list">
-        <button class="button-filled" @click="page = 'add_service'">
-          Add Services
-        </button>
+      <div v-else-if="selectedPage === 'services'" class="item-list">
+        <div class="button-row">
+          <button class="button-filled">Add Services</button>
+        </div>
         <LoadedData :action="() => api.services.all()">
           <template #ok="{ data: services }">
             <div
@@ -159,7 +143,7 @@ const page = ref('user');
           </template>
         </LoadedData>
       </div>
-      <div v-else-if="page === 'feedback'" class="item-list">
+      <div v-else-if="selectedPage === 'feedback'" class="item-list">
         <LoadedData :action="() => api.feedback.all(token)">
           <template #ok="{ data: feedbacks }">
             <div

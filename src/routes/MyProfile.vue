@@ -121,6 +121,9 @@ async function getAndSortBookings() {
       <h1>{{ userInfo.given_names }} {{ userInfo.last_name }}</h1>
 
       <div class="button-row account-actions">
+        <router-link to="/admin" class="button-filled"
+          >Admin Options</router-link
+        >
         <button class="button-filled" @click="logout()">Logout</button>
         <button class="button-filled" @click="passwordDialog?.showModal()">
           Change Password

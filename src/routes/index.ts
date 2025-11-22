@@ -36,7 +36,11 @@ const router = createRouter({
       props: convertProps({ id: Number }),
     },
 
-    { path: '/admin', component: () => import('@/routes/AdminPage.vue') },
+    {
+      path: '/admin/:selectedPage?',
+      component: () => import('@/routes/AdminPage.vue'),
+      props: convertProps({ selectedPage: (p) => p || 'users' }),
+    },
 
     { path: '/account', component: () => import('@/routes/MyProfile.vue') },
     { path: '/login', component: () => import('@/routes/LoginView.vue') },
