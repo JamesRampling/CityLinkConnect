@@ -33,9 +33,9 @@ async function deleteAnnouncement() {
 <template>
   <div class="page-wrapper">
     <div class="button-row">
-      <router-link to="/" class="back-button button-filled">
+      <button class="back-button button-filled" @click="$router.back()">
         <IconBack />Back
-      </router-link>
+      </button>
 
       <template v-if="auth?.is_admin">
         <router-link class="button-outlined" :to="`/announcement/edit/${id}`">

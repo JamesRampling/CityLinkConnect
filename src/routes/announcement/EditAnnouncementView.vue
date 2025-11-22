@@ -38,8 +38,8 @@ const {
       token.value,
     );
   },
-  async () => {
-    await router.push(`/announcement/view/${props.id}`);
+  () => {
+    router.back();
   },
 );
 
@@ -53,8 +53,8 @@ const {
   Announcement,
   xmlFields,
   (form) => api.announcements.update(props.id, form, token.value),
-  async () => {
-    await router.push(`/announcement/view/${props.id}`);
+  () => {
+    router.back();
   },
 );
 
@@ -81,12 +81,9 @@ async function submit() {
 <template>
   <div class="page-wrapper">
     <div class="button-row">
-      <router-link
-        :to="`/announcement/view/${id}`"
-        class="back-button button-filled"
-      >
+      <button class="back-button button-filled" @click="$router.back()">
         <IconBack />Back
-      </router-link>
+      </button>
 
       <button
         v-if="!editingXml"

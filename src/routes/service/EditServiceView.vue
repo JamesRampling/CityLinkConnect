@@ -43,8 +43,8 @@ const {
     const config = ServiceContent.encode(jsConfig);
     return api.services.update(props.id, { config, is_hidden }, token.value);
   },
-  async () => {
-    await router.push(`/services/book/${props.id}`);
+  () => {
+    router.back();
   },
 );
 
@@ -58,8 +58,8 @@ const {
   Service,
   xmlFields,
   (form) => api.services.update(props.id, form, token.value),
-  async () => {
-    await router.push(`/services/book/${props.id}`);
+  () => {
+    router.back();
   },
 );
 
@@ -87,12 +87,9 @@ async function submit() {
 <template>
   <div class="page-wrapper">
     <div class="button-row">
-      <router-link
-        :to="`/services/book/${id}`"
-        class="back-button button-filled"
-      >
+      <button class="back-button button-filled" @click="$router.back()">
         <IconBack />Back
-      </router-link>
+      </button>
 
       <button
         v-if="!editingXml"
