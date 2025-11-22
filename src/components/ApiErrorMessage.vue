@@ -38,6 +38,10 @@ function defaultContent() {
 
     case 'fetch-data-parse':
     case 'fetch-error-obj-parse':
+      return import.meta.env.MODE === 'development'
+        ? props.error.error
+        : 'The data was malformed.';
+
     case 'fetch-unknown-error':
       return props.error.error;
   }

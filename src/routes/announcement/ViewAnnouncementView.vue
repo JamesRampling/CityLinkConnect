@@ -57,7 +57,7 @@ async function deleteAnnouncement() {
 
     <LoadedData
       ref="loadedData"
-      :action="() => api.announcements.single(props.id)"
+      :action="() => api.announcements.singleJs(props.id)"
     >
       <template #loading>
         <LoadingSpinner />

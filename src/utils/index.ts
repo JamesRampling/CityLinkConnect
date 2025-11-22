@@ -1,3 +1,5 @@
+import type z from 'zod';
+
 export function generateRandomId(): string {
   return Math.trunc(Math.random() * 0xffffffff).toString(16);
 }
@@ -37,4 +39,19 @@ export function groupBy<T, Key extends string | symbol>(
   }
 
   return map;
+}
+
+export function fallibleArray<I extends z.ZodType>(
+  schema: I,
+): (arr: unknown[]) => z.output<I>[] {
+  return (arr) => {
+    const items = [];
+    for (const item of arr) {
+      const result = schema.safeParse(item);
+      if (result.success) {
+        items.push(result.data);
+      }
+    }
+    return items;
+  };
 }

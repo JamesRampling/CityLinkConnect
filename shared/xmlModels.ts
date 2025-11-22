@@ -9,7 +9,7 @@ const xmlOptions = {
 } satisfies X2jOptions;
 
 const parser = new XMLParser(xmlOptions);
-const builder = new XMLBuilder(xmlOptions);
+const builder = new XMLBuilder({ ...xmlOptions, format: true });
 
 /**
  * Zod Codec that can parse objects from XML strings, and build XML strings from

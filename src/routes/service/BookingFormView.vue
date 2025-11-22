@@ -48,7 +48,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
     </div>
 
     <h1>Book a service</h1>
-    <LoadedData :action="() => api.services.single(id, token)">
+    <LoadedData :action="() => api.services.singleJs(id, token)">
       <template #loading>
         <LoadingSpinner />
       </template>
