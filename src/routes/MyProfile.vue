@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '#shared/models';
+import { PasswordString, User } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import BookingCard from '@/components/BookingCard.vue';
@@ -23,7 +23,7 @@ const { setUserState, userInfo, token } = useUser();
 const ChangePasswordForm = z
   .object({
     oldPassword: z.string(),
-    newPassword: z.string().min(8),
+    newPassword: PasswordString,
     confirmPassword: z.string(),
   })
   .refine((obj) => obj.newPassword === obj.confirmPassword, {

@@ -42,8 +42,12 @@ export const Booking = z.object({
 export const Feedback = z.object({
   feedback_id: tableId.default(0),
   email: z.email(),
-  subject: z.string().min(3),
-  message: z.string().min(10),
+  subject: z
+    .string()
+    .min(3, { error: 'Subject must be at least 3 characters long.' }),
+  message: z
+    .string()
+    .min(10, { error: 'Subject must be at least 10 characters long.' }),
 });
 
 export const Announcement = z.object({
@@ -55,3 +59,13 @@ export const Announcement = z.object({
 export const AnnouncementWithXML = Announcement.extend({
   config: AnnouncementContent,
 });
+
+export const PasswordString = z
+  .string()
+  .min(8, { error: 'Password must be at least 8 characters long.' })
+  .refine((password) => password !== password.toLocaleLowerCase(), {
+    error: 'Password must contain an uppercase character.',
+  })
+  .refine((password) => /\d/.test(password), {
+    error: 'Password must contain at least one numeric digit.',
+  });

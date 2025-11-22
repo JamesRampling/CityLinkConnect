@@ -4,7 +4,7 @@ import { queryErrorToResponse } from '#server/database/DatabaseCollection';
 import { JWT_SECRET } from '#server/environment';
 import { raise, ResponseError, Responses } from '#server/utils/Responses';
 import { validate } from '#server/utils/validate';
-import { User } from '#shared/models';
+import { PasswordString, User } from '#shared/models';
 import argon2 from 'argon2';
 import { Router } from 'express';
 import jwt from 'jsonwebtoken';
@@ -21,7 +21,7 @@ const unauthorizedError = new ResponseError({
 route.post(
   '/register',
   validate({
-    body: User.omit({ user_id: true }).extend({ password: z.string().min(8) }),
+    body: User.omit({ user_id: true }).extend({ password: PasswordString }),
   }),
   async (req, res) => {
     const { password, ...user } = req.body;
@@ -100,7 +100,7 @@ route.post(
 route.post(
   '/change-password',
   validate({
-    body: z.object({ oldPassword: z.string(), newPassword: z.string().min(8) }),
+    body: z.object({ oldPassword: z.string(), newPassword: PasswordString }),
   }),
   authenticate,
   async (req, res) => {

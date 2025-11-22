@@ -1,4 +1,4 @@
-import { User } from '#shared/models';
+import { PasswordString, User } from '#shared/models';
 import { request, requestIn, requestInOut, requestOut } from '@/api/factories';
 import z from 'zod';
 
@@ -13,7 +13,7 @@ export default {
   register: requestIn(
     'POST',
     `${baseUrl}/register`,
-    User.omit({ user_id: true }).extend({ password: z.string() }),
+    User.omit({ user_id: true }).extend({ password: PasswordString }),
     false,
   ),
 
@@ -52,7 +52,7 @@ export default {
   updatePassword: requestIn(
     'POST',
     `${baseUrl}/change-password`,
-    z.object({ oldPassword: z.string(), newPassword: z.string() }),
+    z.object({ oldPassword: z.string(), newPassword: PasswordString }),
     true,
   ),
 

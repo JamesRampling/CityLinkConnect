@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { User } from '#shared/models';
+import { PasswordString, User } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import InputText from '@/components/InputText.vue';
@@ -12,7 +12,7 @@ import z from 'zod';
 const router = useRouter();
 
 const RegisterForm = User.omit({ user_id: true })
-  .extend({ password: z.string().min(8), passwordConfirm: z.string() })
+  .extend({ password: PasswordString, passwordConfirm: z.string() })
   .refine((obj) => obj.password === obj.passwordConfirm, {
     error: 'Passwords do not match.',
     path: ['passwordConfirm'],
