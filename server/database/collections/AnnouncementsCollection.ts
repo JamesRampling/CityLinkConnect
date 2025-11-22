@@ -8,7 +8,10 @@ import { Announcement } from '#shared/models';
 import z from 'zod';
 
 export default {
-  getAll: queryAll(Announcement, /*sql*/ `SELECT * FROM Announcements;`),
+  getAll: queryAll(
+    Announcement,
+    /*sql*/ `SELECT * FROM Announcements ORDER BY sort_datetime DESC;`,
+  ),
   getFromId: queryUnique(
     z.int(),
     Announcement,
