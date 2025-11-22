@@ -37,6 +37,7 @@ const passwordFields = reactive({
   confirmPassword: '',
 });
 const passwordDialog = ref<HTMLDialogElement>();
+const passwordChanged = ref(false);
 const {
   fieldErrors: passwordErrors,
   submissionError: changePasswordError,
@@ -50,6 +51,7 @@ const {
     passwordFields.newPassword = '';
     passwordFields.confirmPassword = '';
     passwordDialog.value?.close();
+    passwordChanged.value = true;
   },
 );
 
@@ -131,6 +133,10 @@ async function getAndSortBookings() {
           Edit Account Details
         </button>
       </div>
+
+      <p v-if="passwordChanged" class="success-message">
+        Password changed successfully.
+      </p>
 
       <div class="content">
         <section>
