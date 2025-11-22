@@ -11,7 +11,6 @@ import InputCheckbox from '@/components/InputCheckbox.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
@@ -111,10 +110,6 @@ async function submit() {
       :action="() => api.services.single(props.id, token)"
       @ok="setFields($event)"
     >
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok>
         <form class="form" @submit.prevent="submit()">
           <template v-if="!editingXml">

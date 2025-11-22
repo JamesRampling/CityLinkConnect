@@ -6,7 +6,6 @@ import BookingCard from '@/components/BookingCard.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import InputText from '@/components/InputText.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { dateToMs, groupBy } from '@/utils';
@@ -212,10 +211,6 @@ async function getAndSortBookings() {
         </section>
 
         <LoadedData :action="getAndSortBookings">
-          <template #loading>
-            <LoadingSpinner />
-          </template>
-
           <template #ok="{ data: { upcoming, past } }">
             <section>
               <h2>My Upcoming Bookings</h2>

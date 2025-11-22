@@ -3,7 +3,6 @@ import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { formatDate } from '@/utils';
 </script>
 
@@ -17,10 +16,6 @@ import { formatDate } from '@/utils';
     <h1>CityLink Connect</h1>
 
     <LoadedData :action="() => api.announcements.all()">
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok="{ data: announcements }">
         <div class="announcements-wrapper">
           <router-link

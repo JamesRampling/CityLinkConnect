@@ -7,7 +7,6 @@ import IconDelete from '@/components/icons/IconDelete.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
 import { ref } from 'vue';
@@ -59,10 +58,6 @@ async function deleteAnnouncement() {
       ref="loadedData"
       :action="() => api.announcements.singleJs(props.id)"
     >
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok="{ data: announcement }">
         <div class="announcement">
           <hgroup>
