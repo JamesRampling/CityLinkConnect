@@ -12,7 +12,18 @@ if (process.env.NODE_ENV === 'production') {
   port ??= 8080;
 }
 
-app.use(express.static(path.join(process.cwd(), '/dist')));
+const webRootPath = path.join(process.cwd(), '/dist');
+
+app.use(express.static(webRootPath));
+
+// Allow any unknown URL to be handled by the client application.
+app.use((req, res, next) => {
+  if (req.accepts('html')) {
+    res.sendFile(path.join(webRootPath, 'index.html'));
+  } else {
+    next();
+  }
+});
 
 const server = http.createServer(app);
 
