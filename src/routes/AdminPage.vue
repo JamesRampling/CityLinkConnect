@@ -130,6 +130,14 @@ const page = ref('user');
               :key="service.service_id"
               class="card"
             >
+              <div class="button-row">
+                <router-link
+                  class="button-outlined"
+                  :to="`/announcement/edit/${service.service_id}`"
+                  ><IconEdit />Edit Announcement</router-link
+                >
+              </div>
+
               <h2>{{ service.config.name }}</h2>
               <p>{{ service.config.description }}</p>
               <div v-if="service?.config.fees" class="fees">
@@ -148,6 +156,28 @@ const page = ref('user');
                 </div>
               </div>
             </div>
+          </template>
+        </LoadedData>
+      </div>
+      <div v-else-if="page === 'feedback'" class="item-list">
+        <LoadedData :action="() => api.feedback.all(token)">
+          <template #ok="{ data: feedbacks }">
+            <div
+              v-for="feedback in feedbacks"
+              :key="feedback.feedback_id"
+              class="card"
+            >
+              <h3>
+                Feedback ID: {{ feedback.feedback_id }} email ({{
+                  feedback.email
+                }})
+              </h3>
+              <p>{{ feedback.message }}</p>
+            </div>
+          </template>
+
+          <template #error="{ error }">
+            <ApiErrorMessage :error />
           </template>
         </LoadedData>
       </div>
