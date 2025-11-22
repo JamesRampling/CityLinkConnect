@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T, E">
 import type { Result } from '#shared/utils/Result';
 import type { LoadedData } from '@/components/LoadedData';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { ref, watch } from 'vue';
-import LoadingSpinner from './LoadingSpinner.vue';
 
 const props = defineProps<{ action: () => Promise<Result<T, E>> }>();
 const emit = defineEmits<{ (e: 'ok', d: T): void; (e: 'err', d: E): void }>();
