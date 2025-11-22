@@ -102,8 +102,8 @@ const page = ref('user');
                   ><IconEdit />Edit Announcement</router-link
                 >
                 <button
-                  @click="api.announcements.delete(item.announcement_id, token)"
                   class="button-outlined"
+                  @click="api.announcements.delete(item.announcement_id, token)"
                 >
                   Delete
                 </button>
@@ -125,43 +125,32 @@ const page = ref('user');
         </button>
         <LoadedData :action="() => api.services.all()">
           <template #ok="{ data: services }">
-            <li v-for="(e, i) in services" :key="i" class="clickable card">
-              <button>Delete</button>
-              <strong>{{ e.config?.fees }}</strong> — {{ e.config?.name }}
-            </li>
+            <div
+              v-for="service in services"
+              :key="service.service_id"
+              class="card"
+            >
+              <h2>{{ service.config.name }}</h2>
+              <p>{{ service.config.description }}</p>
+              <div v-if="service?.config.fees" class="fees">
+                <div
+                  v-for="{ title, prices } of service.config.fees"
+                  :key="title"
+                  class="fee"
+                >
+                  <h3>{{ title }}</h3>
+                  <ul>
+                    <li v-for="{ variant, price } of prices" :key="variant">
+                      <strong class="fee-name">{{ variant }}</strong> &ndash;
+                      {{ price }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </template>
         </LoadedData>
       </div>
-      <!--
-      <div v-else-if="page === 'add_content'" id="ItemsDisplayColumn">
-        <h1>Add Announcement</h1>
-        <form class="form" action="" @submit.prevent="submit">
-          <InputText v-model="fields.title" name="title" label="Title" />
-
-          <InputTextarea
-            v-model="fields.content"
-            name="content"
-            label="Content"
-          />
-
-          <div class="button-row">
-            <button type="submit" class="button-filled">Submit</button>
-          </div>
-        </form>
-      </div>
-      <div v-else-if="page === 'add_service'" class="item-list">
-        <h1>Add Service</h1>
-        <form class="form" action="" @submit.prevent="submit">
-          <InputText v-model="fields.name" name="name" label="Name" />
-
-          <InputText v-model="fields.fees" name="fees" label="Fees" />
-
-          <div class="button-row">
-            <button type="submit" class="button-filled">Submit</button>
-          </div>
-        </form>
-      </div>
-      -->
     </div>
   </div>
 </template>
