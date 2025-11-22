@@ -95,14 +95,14 @@ const { submit, fieldErrors, submissionError } = useSubmission(
                 name="date-input"
                 label="Date"
               />
-              <ValidationErrorList :error="fieldErrors.booking_datetime" />
+              <ValidationErrorList :errors="fieldErrors.booking_datetime" />
 
               <InputTextarea
                 v-model="fields.notes"
                 name="service-notes"
                 label="Additional information"
               />
-              <ValidationErrorList :error="fieldErrors.notes" />
+              <ValidationErrorList :errors="fieldErrors.notes" />
 
               <div class="button-row">
                 <button type="submit" class="button-filled">Submit</button>
