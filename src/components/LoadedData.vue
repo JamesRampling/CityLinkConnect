@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T, E">
 import type { Result } from '#shared/utils/Result';
 import type { LoadedData } from '@/components/LoadedData';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { ref, watch } from 'vue';
 
 const props = defineProps<{ action: () => Promise<Result<T, E>> }>();
@@ -35,7 +36,9 @@ defineExpose<LoadedData<T, E>>({ update, execute });
 </script>
 
 <template>
-  <slot v-if="result === undefined" name="loading"></slot>
+  <slot v-if="result === undefined" name="loading"
+    ><LoadingSpinner aria-label="Loading..." />
+  </slot>
   <slot v-else-if="result.ok" name="ok" :data="result.data"></slot>
   <slot v-else name="error" :error="result.error" :retry="execute"></slot>
 </template>

@@ -69,6 +69,7 @@
   max-width: 90ch;
   margin-inline: auto;
   padding: 1rem;
+  width: 100%;
 }
 
 .form {
