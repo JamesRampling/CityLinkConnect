@@ -42,7 +42,7 @@ route.get(
 
 route.post(
   '/',
-  validate({ route: { id: 'int' }, body: Service.omit({ service_id: true }) }),
+  validate({ body: Service.omit({ service_id: true }) }),
   authenticate,
   authorizeAdmin,
   (req, res) => {

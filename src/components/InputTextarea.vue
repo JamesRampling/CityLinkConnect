@@ -15,12 +15,12 @@ withDefaults(
 
 const model = defineModel<string>();
 
-function onInput(event: Event) {
-  const textarea = event.target;
-
+function setTextAreaHeight(textarea: unknown) {
   if (textarea instanceof HTMLTextAreaElement) {
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    requestAnimationFrame(() => {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    });
   }
 }
 </script>
@@ -30,11 +30,11 @@ function onInput(event: Event) {
     <label :for="id">{{ label }}</label>
     <textarea
       :id="id"
-      ref="textareaElement"
+      :ref="setTextAreaHeight"
       v-model.lazy="model"
       :name="name"
       rows="4"
-      @input="onInput"
+      @input="setTextAreaHeight($event.target)"
     />
   </div>
 </template>

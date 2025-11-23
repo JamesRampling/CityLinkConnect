@@ -8,7 +8,6 @@ import IconRefresh from '@/components/icons/IconRefresh.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
@@ -36,9 +35,9 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 <template>
   <div class="page-wrapper">
     <div class="button-row">
-      <router-link to="/services" class="back-button button-filled">
+      <button class="back-button button-filled" @click="$router.back()">
         <IconBack />Back
-      </router-link>
+      </button>
 
       <template v-if="auth?.is_admin">
         <router-link class="button-outlined" :to="`/services/edit/${id}`">
@@ -49,10 +48,6 @@ const { submit, fieldErrors, submissionError } = useSubmission(
 
     <h1>Book a service</h1>
     <LoadedData :action="() => api.services.singleJs(id, token)">
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok="{ data: service }">
         <div class="content-wrapper">
           <section class="section-service-info">

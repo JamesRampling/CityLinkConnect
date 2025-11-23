@@ -13,6 +13,15 @@ export function formatDate(
   return date.toLocaleDateString(undefined, options);
 }
 
+export function formatDateTime(
+  isoDate?: string,
+  options?: Intl.DateTimeFormatOptions,
+) {
+  if (!isoDate) return '-';
+  const date = new Date(isoDate);
+  return date.toLocaleString(undefined, options);
+}
+
 export function dateToMs(isoDate: string) {
   if (!isoDate) return 0;
   const date = new Date(isoDate);
@@ -39,6 +48,30 @@ export function groupBy<T, Key extends string | symbol>(
   }
 
   return map;
+}
+
+export function removeIf<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => boolean,
+): T[];
+export function removeIf<T, S extends T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => value is S,
+): Exclude<T, S>[];
+export function removeIf<T>(
+  array: T[],
+  predicate: (value: T, index: number, array: T[]) => boolean,
+): T[] {
+  let filteredIndex = 0;
+
+  for (let i = 0; i < array.length; i++) {
+    if (!(i in array)) continue;
+    const val = array[i];
+    if (!predicate(val, i, array)) array[filteredIndex++] = val;
+  }
+
+  array.length = filteredIndex;
+  return array;
 }
 
 export function fallibleArray<I extends z.ZodType>(

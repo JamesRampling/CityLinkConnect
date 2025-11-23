@@ -3,7 +3,6 @@ import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 </script>
 
 <template>
@@ -11,10 +10,6 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
     <h1>Service Bookings</h1>
 
     <LoadedData :action="() => api.services.all()">
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok="{ data: services }">
         <div class="service-list">
           <router-link

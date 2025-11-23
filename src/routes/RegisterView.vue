@@ -79,7 +79,7 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       <ValidationErrorList :errors="fieldErrors.passwordConfirm" />
 
       <div class="button-row">
-        <button type="submit" class="button-filled">Submit</button>
+        <button type="submit" class="button-filled">Register</button>
       </div>
     </form>
 

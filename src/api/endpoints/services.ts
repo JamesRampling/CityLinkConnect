@@ -1,4 +1,4 @@
-import { Booking, Service, ServiceWithXML } from '#shared/models';
+import { Service, ServiceWithXML } from '#shared/models';
 import { requestIn, requestInOut, requestOut } from '@/api/factories';
 import { fallibleArray } from '@/utils';
 import z from 'zod';
@@ -14,6 +14,17 @@ export default {
     baseUrl,
     z.array(z.unknown()).transform(fallibleArray(ServiceWithXML)),
     false,
+  ),
+
+  /**
+   * Get a list of all the services, including hidden services, requires
+   * authentication with admin permissions.
+   */
+  allAdmin: requestOut(
+    'GET',
+    `${baseUrl}/all`,
+    z.array(z.unknown()).transform(fallibleArray(ServiceWithXML)),
+    true,
   ),
 
   /**
@@ -34,7 +45,7 @@ export default {
     'POST',
     baseUrl,
     Service.omit({ service_id: true }),
-    Booking,
+    Service,
     true,
   ),
 

@@ -7,7 +7,6 @@ import IconDelete from '@/components/icons/IconDelete.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
-import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
 import { ref } from 'vue';
@@ -23,7 +22,7 @@ const deleteError = ref<FetchError<undefined>>();
 async function deleteAnnouncement() {
   const { ok, error } = await api.announcements.delete(props.id, token.value);
   if (ok) {
-    await router.push('/');
+    router.back();
     deleteError.value = undefined;
   } else {
     deleteError.value = error;
@@ -34,9 +33,9 @@ async function deleteAnnouncement() {
 <template>
   <div class="page-wrapper">
     <div class="button-row">
-      <router-link to="/" class="back-button button-filled">
+      <button class="back-button button-filled" @click="$router.back()">
         <IconBack />Back
-      </router-link>
+      </button>
 
       <template v-if="auth?.is_admin">
         <router-link class="button-outlined" :to="`/announcement/edit/${id}`">
@@ -59,10 +58,6 @@ async function deleteAnnouncement() {
       ref="loadedData"
       :action="() => api.announcements.singleJs(props.id)"
     >
-      <template #loading>
-        <LoadingSpinner />
-      </template>
-
       <template #ok="{ data: announcement }">
         <div class="announcement">
           <hgroup>

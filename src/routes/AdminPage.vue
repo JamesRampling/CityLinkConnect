@@ -1,248 +1,144 @@
 <script setup lang="ts">
-import api from '@/api';
-import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
-import BookingCard from '@/components/BookingCard.vue';
-import IconEdit from '@/components/icons/IconEdit.vue';
-import LoadedData from '@/components/LoadedData.vue';
-import { useUser } from '@/user';
-import { formatDate } from '@/utils';
-import { ref } from 'vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { defineAsyncComponent, type ComponentPublicInstance } from 'vue';
 
-const { token } = useUser();
+defineProps<{ selectedPage: string }>();
 
-const page = ref('user');
+const UsersManagementView = defineAsyncComponent(
+  () => import('@/routes/admin/UsersManagementView.vue'),
+);
+const BookingsManagementView = defineAsyncComponent(
+  () => import('@/routes/admin/BookingsManagementView.vue'),
+);
+const AnnouncementsManagementView = defineAsyncComponent(
+  () => import('@/routes/admin/AnnouncementsManagementView.vue'),
+);
+const ServicesManagementView = defineAsyncComponent(
+  () => import('@/routes/admin/ServicesManagementView.vue'),
+);
+const FeedbackManagementView = defineAsyncComponent(
+  () => import('@/routes/admin/FeedbackManagementView.vue'),
+);
+
+const pages = [
+  { id: 'users', name: 'Users' },
+  { id: 'bookings', name: 'Bookings' },
+  { id: 'announcements', name: 'Announcements' },
+  { id: 'services', name: 'Services' },
+  { id: 'feedback', name: 'Feedback' },
+];
+
+// Ensure selected tab is in view when navigating to admin page.
+function scrollIntoView(element: Element | ComponentPublicInstance | null) {
+  if (element instanceof Element) {
+    const selected = element.querySelector('.selected');
+    requestAnimationFrame(() => {
+      selected?.scrollIntoView();
+    });
+  }
+}
 </script>
 
 <template>
-  <div class="sidebar-container">
-    <div id="SideBar">
-      <button
-        :class="{ squareButton: true, isSelected: page === 'user' }"
-        @click="page = 'user'"
+  <div class="title-wrapper page-wrapper">
+    <h1 class="title">Admin Options</h1>
+  </div>
+
+  <div class="tab-wrapper">
+    <div
+      :ref="(e) => scrollIntoView(e)"
+      class="tab-bar page-wrapper"
+      role="tablist"
+    >
+      <router-link
+        v-for="page in pages"
+        :id="selectedPage === page.id ? 'selected-tab' : undefined"
+        :key="page.id"
+        :to="`/admin/${page.id}`"
+        :class="{ tab: true, selected: selectedPage === page.id }"
+        role="tab"
+        :aria-selected="selectedPage === page.id"
+        :aria-expanded="selectedPage === page.id"
+        aria-controls="tab-panel"
       >
-        Users
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'booking' }"
-        @click="page = 'booking'"
-      >
-        Bookings
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'content' }"
-        @click="page = 'content'"
-      >
-        Content
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'service' }"
-        @click="page = 'service'"
-      >
-        Services
-      </button>
-      <button
-        :class="{ squareButton: true, isSelected: page === 'feedback' }"
-        @click="page = 'feedback'"
-      >
-        Feedback
-      </button>
+        {{ page.name }}
+      </router-link>
     </div>
-    <div id="MainContent" class="page-wrapper">
-      <h1>Good morning Admin</h1>
+  </div>
 
-      <div v-if="page === 'user'" class="item-list">
-        <LoadedData :action="() => api.account.all(token)">
-          <template #ok="{ data }">
-            <div
-              v-for="user in data"
-              :key="user.user_id"
-              class="clickable card"
-            >
-              <strong>{{ user.given_names }}</strong> — {{ user.email }}
-            </div>
-          </template>
+  <div
+    id="tab-panel"
+    class="page-wrapper"
+    role="tabpanel"
+    aria-labelledby="selected-tab"
+  >
+    <Suspense :key="selectedPage">
+      <UsersManagementView v-if="selectedPage === 'users'" />
+      <BookingsManagementView v-else-if="selectedPage === 'bookings'" />
+      <AnnouncementsManagementView
+        v-else-if="selectedPage === 'announcements'"
+      />
+      <ServicesManagementView v-else-if="selectedPage === 'services'" />
+      <FeedbackManagementView v-else-if="selectedPage === 'feedback'" />
 
-          <template #error="{ error }">
-            <ApiErrorMessage :error />
-          </template>
-        </LoadedData>
-      </div>
-      <div v-else-if="page === 'booking'" class="item-list">
-        <LoadedData :action="() => api.bookings.allAdmin(token)">
-          <template #ok="{ data: bookings }">
-            <BookingCard
-              v-for="b in bookings"
-              :key="b.booking_id"
-              :booking="b"
-            />
-          </template>
-
-          <template #error="{ error }">
-            <ApiErrorMessage :error />
-          </template>
-        </LoadedData>
-      </div>
-      <div v-else-if="page === 'content'" class="item-list">
-        <LoadedData :action="() => api.announcements.all()">
-          <template #ok="{ data: announcements }">
-            <div class="button-row">
-              <button class="button-filled" @click="page = 'add_content'">
-                Add Content
-              </button>
-            </div>
-            <article
-              v-for="(item, i) in announcements"
-              :key="i"
-              class="clickable card"
-            >
-              <div class="button-row">
-                <router-link
-                  class="button-outlined"
-                  :to="`/announcement/edit/${item.announcement_id}`"
-                  ><IconEdit />Edit Announcement</router-link
-                >
-                <button
-                  class="button-outlined"
-                  @click="api.announcements.delete(item.announcement_id, token)"
-                >
-                  Delete
-                </button>
-              </div>
-              <h2>{{ item.config?.title }}</h2>
-              <h3>{{ formatDate(item.config?.date) }}</h3>
-              <p>{{ item.config?.content }}</p>
-            </article>
-          </template>
-
-          <template #error="{ error }">
-            <ApiErrorMessage :error />
-          </template>
-        </LoadedData>
-      </div>
-      <div v-else-if="page === 'service'" class="item-list">
-        <button class="button-filled" @click="page = 'add_service'">
-          Add Services
-        </button>
-        <LoadedData :action="() => api.services.all()">
-          <template #ok="{ data: services }">
-            <div
-              v-for="service in services"
-              :key="service.service_id"
-              class="card"
-            >
-              <div class="button-row">
-                <router-link
-                  class="button-outlined"
-                  :to="`/announcement/edit/${service.service_id}`"
-                  ><IconEdit />Edit Announcement</router-link
-                >
-              </div>
-
-              <h2>{{ service.config.name }}</h2>
-              <p>{{ service.config.description }}</p>
-              <div v-if="service?.config.fees" class="fees">
-                <div
-                  v-for="{ title, prices } of service.config.fees"
-                  :key="title"
-                  class="fee"
-                >
-                  <h3>{{ title }}</h3>
-                  <ul>
-                    <li v-for="{ variant, price } of prices" :key="variant">
-                      <strong class="fee-name">{{ variant }}</strong> &ndash;
-                      {{ price }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </template>
-        </LoadedData>
-      </div>
-      <div v-else-if="page === 'feedback'" class="item-list">
-        <LoadedData :action="() => api.feedback.all(token)">
-          <template #ok="{ data: feedbacks }">
-            <div
-              v-for="feedback in feedbacks"
-              :key="feedback.feedback_id"
-              class="card"
-            >
-              <h3>
-                Feedback ID: {{ feedback.feedback_id }} email ({{
-                  feedback.email
-                }})
-              </h3>
-              <p>{{ feedback.message }}</p>
-            </div>
-          </template>
-
-          <template #error="{ error }">
-            <ApiErrorMessage :error />
-          </template>
-        </LoadedData>
-      </div>
-    </div>
+      <template #fallback>
+        <LoadingSpinner />
+      </template>
+    </Suspense>
   </div>
 </template>
 
 <style lang="css" scoped>
-#SideBar {
-  background-color: var(--bgcolor);
-  display: flex;
-  flex-direction: column;
+.title-wrapper {
+  padding-block-end: 0;
 
-  align-self: start;
+  .title {
+    margin-block: 1rem 1.5rem;
+  }
+}
+
+.tab-wrapper {
+  background-color: var(--bgcolor);
+  user-select: none;
+
   position: sticky;
   top: 3.5rem;
-  overflow: auto;
 
-  @media (width < 80ch) {
-    flex-direction: row;
+  .tab-bar {
+    display: flex;
+    padding: 0;
+    width: calc(100% - 2rem);
+    max-width: calc(90ch - 2rem);
+    overflow: auto;
+    border-bottom: 1px solid var(--border-color);
   }
-}
-.squareButton {
-  padding: 2rem;
 
-  text-align: center;
-  font-size: medium;
-  background: transparent;
-  line-height: 50%;
+  .tab {
+    padding: 1rem 1.5rem;
 
-  border: none;
-  border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    font-size: medium;
+    background-color: transparent;
 
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
-  font-weight: bold;
-  cursor: pointer;
-}
+    cursor: pointer;
 
-.squareButton:hover {
-  background-color: var(--button-outlined-hover-bgcolor);
-}
-.squareButton.isSelected {
-  background-color: var(--accent-color);
-  color: var(--on-accent-color);
-}
+    border: none;
 
-.sidebar-container {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 3fr;
+    color: inherit;
+    text-decoration: none;
+    position: relative;
 
-  @media (width < 80ch) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    &:hover,
+    &:focus-visible {
+      background-color: var(--button-outlined-hover-bgcolor);
+    }
+
+    &.selected::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 0;
+      border-bottom: 4px solid var(--accent-color);
+    }
   }
-}
-#MainContent {
-  display: block;
-  width: 100%;
-}
-
-.item-list {
-  display: grid;
-  gap: 1rem;
 }
 </style>

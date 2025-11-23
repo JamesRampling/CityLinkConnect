@@ -8,7 +8,13 @@ import { User } from '#shared/models';
 import z from 'zod';
 
 export default {
-  getAll: queryAll(User, /*sql*/ `SELECT * FROM Users;`),
+  getAll: queryAll(
+    User.extend({ is_admin: z.coerce.boolean() }),
+    /*sql*/ `
+    SELECT Users.*, Authentication.is_admin FROM Users
+      LEFT JOIN Authentication ON Users.user_id = Authentication.user_id;
+    `,
+  ),
 
   getFromId: queryUnique(
     z.int(),

@@ -66,7 +66,8 @@ export default {
     /*sql*/ `
     SELECT * FROM Bookings
       JOIN Services ON Bookings.service_id = Services.service_id
-      JOIN Users ON Bookings.user_id = Users.user_id;`,
+      JOIN Users ON Bookings.user_id = Users.user_id
+      ORDER BY Bookings.booking_datetime DESC;`,
   ),
 
   getAllByUserId: queryFiltered(

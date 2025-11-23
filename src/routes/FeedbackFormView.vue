@@ -2,6 +2,7 @@
 import { Feedback } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
+import IconSubmit from '@/components/icons/IconSubmit.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
@@ -32,7 +33,9 @@ const { submit, fieldErrors, submissionError } = useSubmission(
       <ValidationErrorList :errors="fieldErrors.message" />
 
       <div class="button-row">
-        <button type="submit" class="button-filled">Submit</button>
+        <button type="submit" class="button-filled">
+          <IconSubmit />Submit
+        </button>
       </div>
     </form>
     <p v-else class="success-message">

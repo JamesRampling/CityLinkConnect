@@ -108,6 +108,7 @@ dialog {
   height: 100%;
   width: min(100%, 40ch);
   z-index: 1000000000000;
+  overflow: auto;
 
   background-color: var(--dialog-bgcolor);
   color: var(--dialog-color);

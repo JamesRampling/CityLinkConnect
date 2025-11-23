@@ -24,6 +24,10 @@ const router = createRouter({
       component: () => import('@/routes/service/EditServiceView.vue'),
       props: convertProps({ id: Number }),
     },
+    {
+      path: '/services/create',
+      component: () => import('@/routes/service/EditServiceView.vue'),
+    },
 
     {
       path: '/announcement/view/:id',
@@ -35,8 +39,16 @@ const router = createRouter({
       component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
       props: convertProps({ id: Number }),
     },
+    {
+      path: '/announcement/create',
+      component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
+    },
 
-    { path: '/admin', component: () => import('@/routes/AdminPage.vue') },
+    {
+      path: '/admin/:selectedPage?',
+      component: () => import('@/routes/AdminPage.vue'),
+      props: convertProps({ selectedPage: (p) => p || 'users' }),
+    },
 
     { path: '/account', component: () => import('@/routes/MyProfile.vue') },
     { path: '/login', component: () => import('@/routes/LoginView.vue') },
