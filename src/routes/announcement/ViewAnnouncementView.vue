@@ -22,7 +22,7 @@ const deleteError = ref<FetchError<undefined>>();
 async function deleteAnnouncement() {
   const { ok, error } = await api.announcements.delete(props.id, token.value);
   if (ok) {
-    await router.push('/');
+    router.back();
     deleteError.value = undefined;
   } else {
     deleteError.value = error;
