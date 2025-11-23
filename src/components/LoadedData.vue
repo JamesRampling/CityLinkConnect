@@ -39,6 +39,6 @@ defineExpose<LoadedData<T, E>>({ update, execute });
   <slot v-if="result === undefined" name="loading"
     ><LoadingSpinner aria-label="Loading..." />
   </slot>
-  <slot v-else-if="result.ok" name="ok" :data="result.data"></slot>
+  <slot v-else-if="result.ok" name="ok" :data="result.data" :update></slot>
   <slot v-else name="error" :error="result.error" :retry="execute"></slot>
 </template>

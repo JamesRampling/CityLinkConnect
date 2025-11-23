@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import api from '@/api';
+import type { BookingWithUserAndService } from '@/api/endpoints/bookings';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconMail from '@/components/icons/IconMail.vue';
@@ -7,14 +8,23 @@ import IconPhone from '@/components/icons/IconPhone.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import { useUser } from '@/user';
 import { dateToMs, formatDateTime } from '@/utils';
+import type z from 'zod';
 
 const { token } = useUser();
+
+async function deleteBooking(
+  bookings: z.infer<typeof BookingWithUserAndService>[],
+  booking_id: number,
+) {
+  const result = await api.bookings.delete(booking_id, token.value);
+  return result.map(() => bookings.filter((b) => b.booking_id !== booking_id));
+}
 </script>
 
 <template>
   <div class="item-list">
     <LoadedData :action="() => api.bookings.allAdmin(token)">
-      <template #ok="{ data: bookings }">
+      <template #ok="{ data: bookings, update }">
         <article
           v-for="booking in bookings"
           :key="booking.booking_id"
@@ -25,7 +35,12 @@ const { token } = useUser();
           }"
         >
           <div class="card-actions button-row">
-            <button class="button-outlined">
+            <button
+              class="button-outlined"
+              @click.prevent="
+                update(deleteBooking(bookings, booking.booking_id))
+              "
+            >
               <IconDelete aria-hidden="true" />Delete
             </button>
           </div>

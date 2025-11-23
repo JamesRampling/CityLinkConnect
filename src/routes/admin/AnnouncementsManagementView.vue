@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AnnouncementWithXML } from '#shared/models';
 import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
@@ -7,14 +8,25 @@ import IconEdit from '@/components/icons/IconEdit.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import { useUser } from '@/user';
 import { formatDate } from '@/utils';
+import type z from 'zod';
 
 const { token } = useUser();
+
+async function deleteAnnouncement(
+  announcements: z.infer<typeof AnnouncementWithXML>[],
+  announcement_id: number,
+) {
+  const result = await api.announcements.delete(announcement_id, token.value);
+  return result.map(() =>
+    announcements.filter((a) => a.announcement_id !== announcement_id),
+  );
+}
 </script>
 
 <template>
   <div class="item-list">
     <LoadedData :action="() => api.announcements.all()">
-      <template #ok="{ data: announcements }">
+      <template #ok="{ data: announcements, update }">
         <div class="list-actions button-row">
           <router-link to="/announcement/create" class="button-filled"
             ><IconAdd />Add Announcement</router-link
@@ -35,8 +47,13 @@ const { token } = useUser();
             >
             <button
               class="button-outlined"
-              @click="
-                api.announcements.delete(announcement.announcement_id, token)
+              @click.prevent="
+                update(
+                  deleteAnnouncement(
+                    announcements,
+                    announcement.announcement_id,
+                  ),
+                )
               "
             >
               <IconDelete aria-hidden="true" />Delete

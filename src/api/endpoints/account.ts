@@ -72,5 +72,10 @@ export default {
    * Get all user accounts on the server, requires authentication with admin
    * permissions.
    */
-  all: requestOut('GET', baseUrl, User.array(), true),
+  all: requestOut(
+    'GET',
+    baseUrl,
+    User.extend({ is_admin: z.boolean() }).array(),
+    true,
+  ),
 };
