@@ -4,6 +4,7 @@ import api from '@/api';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import BookingCard from '@/components/BookingCard.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
+import IconSubmit from '@/components/icons/IconSubmit.vue';
 import InputText from '@/components/InputText.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
@@ -186,7 +187,9 @@ async function getAndSortBookings() {
             <ValidationErrorList :errors="detailsErrors.phone" />
 
             <div class="button-row">
-              <button type="submit" class="button-filled">Submit</button>
+              <button type="submit" class="button-filled">
+                <IconSubmit />Submit
+              </button>
               <button
                 type="button"
                 class="button-outlined"
@@ -282,7 +285,9 @@ async function getAndSortBookings() {
         <ValidationErrorList :errors="passwordErrors.confirmPassword" />
 
         <div class="button-row">
-          <button type="submit" class="button-filled">Submit</button>
+          <button type="submit" class="button-filled">
+            <IconSubmit />Submit
+          </button>
           <button
             type="button"
             class="button-outlined"

@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { Service } from '#shared/models';
+import { Result } from '#shared/utils/Result';
 import { ServiceContent, ServiceJs } from '#shared/xmlModels';
 import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
 import IconBack from '@/components/icons/IconBack.vue';
+import IconCode from '@/components/icons/IconCode.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
+import IconForm from '@/components/icons/IconForm.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
+import IconSubmit from '@/components/icons/IconSubmit.vue';
 import InputCheckbox from '@/components/InputCheckbox.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
@@ -14,15 +19,42 @@ import LoadedData from '@/components/LoadedData.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import z from 'zod';
 
-const props = defineProps<{ id: number }>();
+const props = defineProps<{ id?: number }>();
+
+const isCreating = computed(() => props.id === undefined);
 
 const router = useRouter();
 
 const { token } = useUser();
+
+async function loadData() {
+  return isCreating.value
+    ? Promise.resolve(Result.ok<object, FetchError<typeof Service>>({}))
+    : api.services.single(props.id, token.value);
+}
+
+async function submitService(
+  service: Omit<z.infer<typeof Service>, 'service_id'>,
+) {
+  if (isCreating.value) {
+    console.log('creating');
+    return await api.services.create(service, token.value);
+  } else {
+    return await api.services.update(props.id, service, token.value);
+  }
+}
+
+async function navigate(service: z.infer<typeof Service> | undefined) {
+  if (isCreating.value && service) {
+    await router.replace(`/services/book/${service.service_id}`);
+  } else {
+    router.back();
+  }
+}
 
 const EditServiceForm = ServiceJs.extend({ is_hidden: z.boolean() });
 
@@ -41,11 +73,9 @@ const {
   fields,
   ({ is_hidden, ...jsConfig }) => {
     const config = ServiceContent.encode(jsConfig);
-    return api.services.update(props.id, { config, is_hidden }, token.value);
+    return submitService({ config, is_hidden });
   },
-  () => {
-    router.back();
-  },
+  navigate,
 );
 
 const editingXml = ref(false);
@@ -54,14 +84,7 @@ const {
   submit: submitXml,
   fieldErrors: xmlErrors,
   submissionError: xmlSubmissionError,
-} = useSubmission(
-  Service,
-  xmlFields,
-  (form) => api.services.update(props.id, form, token.value),
-  () => {
-    router.back();
-  },
-);
+} = useSubmission(Service, xmlFields, (form) => submitService(form), navigate);
 
 function toggleXmlEditing(state: boolean) {
   submissionError.value = undefined;
@@ -69,10 +92,12 @@ function toggleXmlEditing(state: boolean) {
   editingXml.value = state;
 }
 
-function setFields(service: z.infer<typeof Service>) {
+function setFields(service: z.infer<typeof Service> | object) {
   try {
-    fields.is_hidden = service.is_hidden;
-    Object.assign(fields, ServiceContent.decode(service.config));
+    if ('is_hidden' in service && 'config' in service) {
+      fields.is_hidden = service.is_hidden;
+      Object.assign(fields, ServiceContent.decode(service.config));
+    }
   } catch {}
 
   Object.assign(xmlFields, service);
@@ -96,17 +121,18 @@ async function submit() {
         class="button-outlined"
         @click="toggleXmlEditing(true)"
       >
-        Edit as XML
+        <IconCode />
+        <template v-if="isCreating">Create using XML</template>
+        <template v-else>Edit as XML</template>
       </button>
       <button v-else class="button-outlined" @click="toggleXmlEditing(false)">
-        Edit as form
+        <IconForm />
+        <template v-if="isCreating">Create using form</template>
+        <template v-else>Edit as form</template>
       </button>
     </div>
 
-    <LoadedData
-      :action="() => api.services.single(props.id, token)"
-      @ok="setFields($event)"
-    >
+    <LoadedData :action="loadData" @ok="setFields($event)">
       <template #ok>
         <form class="form" @submit.prevent="submit()">
           <template v-if="!editingXml">
@@ -208,7 +234,9 @@ async function submit() {
           </template>
 
           <div class="button-row">
-            <button type="submit" class="button-filled">Submit</button>
+            <button type="submit" class="button-filled">
+              <IconSubmit />Submit
+            </button>
           </div>
 
           <ApiErrorMessage

@@ -1,25 +1,60 @@
 <script setup lang="ts">
-import { Announcement } from '#shared/models';
+import { Announcement, AnnouncementWithXML } from '#shared/models';
+import { Result } from '#shared/utils/Result';
 import { AnnouncementContent, AnnouncementJs } from '#shared/xmlModels';
 import api from '@/api';
+import type { FetchError } from '@/api/apiFetch';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconBack from '@/components/icons/IconBack.vue';
+import IconCode from '@/components/icons/IconCode.vue';
+import IconForm from '@/components/icons/IconForm.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
+import IconSubmit from '@/components/icons/IconSubmit.vue';
 import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
 import { useUser } from '@/user';
 import { useSubmission } from '@/utils/validation';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type z from 'zod';
 
-const props = defineProps<{ id: number }>();
+const props = defineProps<{ id?: number }>();
+
+const isCreating = computed(() => props.id === undefined);
 
 const router = useRouter();
 
 const { token } = useUser();
+
+async function loadData() {
+  return isCreating.value
+    ? Promise.resolve(
+        Result.ok<object, FetchError<typeof AnnouncementWithXML>>({}),
+      )
+    : api.announcements.single(props.id);
+}
+
+async function submitAnnouncement(
+  announcement: Omit<z.infer<typeof Announcement>, 'announcement_id'>,
+) {
+  if (isCreating.value) {
+    return await api.announcements.create(announcement, token.value);
+  } else {
+    return await api.announcements.update(props.id, announcement, token.value);
+  }
+}
+
+async function navigate(
+  announcement: z.infer<typeof Announcement> | undefined,
+) {
+  if (isCreating.value && announcement) {
+    await router.replace(`/announcement/view/${announcement.announcement_id}`);
+  } else {
+    router.back();
+  }
+}
 
 const fields = reactive({ title: '', date: '', content: '' });
 const {
@@ -32,15 +67,9 @@ const {
   (form) => {
     const config = AnnouncementContent.encode(form);
 
-    return api.announcements.update(
-      props.id,
-      { config, sort_datetime: form.date },
-      token.value,
-    );
+    return submitAnnouncement({ config, sort_datetime: form.date });
   },
-  () => {
-    router.back();
-  },
+  navigate,
 );
 
 const editingXml = ref(false);
@@ -52,10 +81,8 @@ const {
 } = useSubmission(
   Announcement,
   xmlFields,
-  (form) => api.announcements.update(props.id, form, token.value),
-  () => {
-    router.back();
-  },
+  (form) => submitAnnouncement(form),
+  navigate,
 );
 
 function toggleXmlEditing(state: boolean) {
@@ -64,9 +91,11 @@ function toggleXmlEditing(state: boolean) {
   editingXml.value = state;
 }
 
-function setFields(announcement: z.infer<typeof Announcement>) {
+function setFields(announcement: z.infer<typeof Announcement> | object) {
   try {
-    Object.assign(fields, AnnouncementContent.decode(announcement.config));
+    if ('config' in announcement) {
+      Object.assign(fields, AnnouncementContent.decode(announcement.config));
+    }
   } catch {}
 
   Object.assign(xmlFields, announcement);
@@ -90,17 +119,18 @@ async function submit() {
         class="button-outlined"
         @click="toggleXmlEditing(true)"
       >
-        Edit as XML
+        <IconCode />
+        <template v-if="isCreating">Create using XML</template>
+        <template v-else>Edit as XML</template>
       </button>
       <button v-else class="button-outlined" @click="toggleXmlEditing(false)">
-        Edit as form
+        <IconForm />
+        <template v-if="isCreating">Create using form</template>
+        <template v-else>Edit as form</template>
       </button>
     </div>
 
-    <LoadedData
-      :action="() => api.announcements.single(props.id)"
-      @ok="setFields($event)"
-    >
+    <LoadedData :action="loadData" @ok="setFields($event)">
       <template #ok>
         <form class="form" @submit.prevent>
           <template v-if="!editingXml">
@@ -141,7 +171,7 @@ async function submit() {
 
           <div class="button-row">
             <button type="submit" class="button-filled" @click="submit()">
-              Submit
+              <IconSubmit />Submit
             </button>
           </div>
 

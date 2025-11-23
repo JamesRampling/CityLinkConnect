@@ -24,6 +24,10 @@ const router = createRouter({
       component: () => import('@/routes/service/EditServiceView.vue'),
       props: convertProps({ id: Number }),
     },
+    {
+      path: '/services/create',
+      component: () => import('@/routes/service/EditServiceView.vue'),
+    },
 
     {
       path: '/announcement/view/:id',
@@ -34,6 +38,10 @@ const router = createRouter({
       path: '/announcement/edit/:id',
       component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
       props: convertProps({ id: Number }),
+    },
+    {
+      path: '/announcement/create',
+      component: () => import('@/routes/announcement/EditAnnouncementView.vue'),
     },
 
     {

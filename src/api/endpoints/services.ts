@@ -1,4 +1,4 @@
-import { Booking, Service, ServiceWithXML } from '#shared/models';
+import { Service, ServiceWithXML } from '#shared/models';
 import { requestIn, requestInOut, requestOut } from '@/api/factories';
 import { fallibleArray } from '@/utils';
 import z from 'zod';
@@ -34,7 +34,7 @@ export default {
     'POST',
     baseUrl,
     Service.omit({ service_id: true }),
-    Booking,
+    Service,
     true,
   ),
 

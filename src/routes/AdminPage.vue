@@ -78,7 +78,9 @@ function scrollIntoView(element: Element | ComponentPublicInstance | null) {
       <LoadedData :action="() => api.announcements.all()">
         <template #ok="{ data: announcements }">
           <div class="button-row">
-            <button class="button-filled"><IconAdd />Add Announcement</button>
+            <router-link to="/announcement/create" class="button-filled"
+              ><IconAdd />Add Announcement</router-link
+            >
           </div>
 
           <article
@@ -117,7 +119,9 @@ function scrollIntoView(element: Element | ComponentPublicInstance | null) {
       <LoadedData :action="() => api.services.all()">
         <template #ok="{ data: services }">
           <div class="button-row">
-            <button class="button-filled"><IconAdd />Add Service</button>
+            <router-link to="/services/create" class="button-filled"
+              ><IconAdd />Add Service</router-link
+            >
           </div>
 
           <div
