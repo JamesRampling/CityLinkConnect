@@ -17,6 +17,17 @@ export default {
   ),
 
   /**
+   * Get a list of all the services, including hidden services, requires
+   * authentication with admin permissions.
+   */
+  allAdmin: requestOut(
+    'GET',
+    `${baseUrl}/all`,
+    z.array(z.unknown()).transform(fallibleArray(ServiceWithXML)),
+    true,
+  ),
+
+  /**
    * Get a single service by its id.
    */
   single: requestOut('GET', `${baseUrl}/:id`, Service, true),

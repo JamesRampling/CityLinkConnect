@@ -13,6 +13,15 @@ export function formatDate(
   return date.toLocaleDateString(undefined, options);
 }
 
+export function formatDateTime(
+  isoDate?: string,
+  options?: Intl.DateTimeFormatOptions,
+) {
+  if (!isoDate) return '-';
+  const date = new Date(isoDate);
+  return date.toLocaleString(undefined, options);
+}
+
 export function dateToMs(isoDate: string) {
   if (!isoDate) return 0;
   const date = new Date(isoDate);

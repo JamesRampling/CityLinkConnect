@@ -3,6 +3,11 @@
   height: var(--icon-size);
 }
 
+.icon-link {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
 .button-filled,
 .button-outlined {
   display: flex;
@@ -70,6 +75,10 @@
   margin-inline: auto;
   padding: 1rem;
   width: 100%;
+
+  &.no-block-padding {
+    padding-block: 0;
+  }
 }
 
 .form {
@@ -80,6 +89,7 @@
 .button-row {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .card {
