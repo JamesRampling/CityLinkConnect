@@ -115,6 +115,19 @@
     color: var(--color-muted);
   }
 
+  .card-actions {
+    float: right;
+    justify-content: end;
+    max-width: 30%;
+
+    @media (width < 60ch) {
+      float: none;
+      max-width: none;
+      margin-bottom: 0.5rem;
+      justify-content: start;
+    }
+  }
+
   &.clickable {
     transition-property: box-shadow, background-color, color, border-color;
     transition: 200ms;
@@ -145,6 +158,15 @@
     outline: var(--card-focus-outline);
     border-color: var(--card-focus-border-color);
   }
+}
+
+.tag {
+  font-size: 1rem;
+  background-color: var(--accent-color);
+  color: var(--on-accent-color);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  margin-inline-start: 0.5rem;
 }
 
 .separator {
