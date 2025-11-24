@@ -4,7 +4,9 @@ import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import ZodErrorMessage from '@/components/ZodErrorMessage.vue';
 import { useUser } from '@/user';
+import { isZodError } from '@/utils';
 
 const { token } = useUser();
 </script>
@@ -30,34 +32,42 @@ const { token } = useUser();
             hidden: service.is_hidden,
           }"
         >
-          <div class="card-actions button-row">
-            <router-link
-              class="button-outlined"
-              :to="`/services/edit/${service.service_id}`"
-              ><IconEdit aria-hidden="true" />Edit</router-link
-            >
-          </div>
-
-          <h2 class="title">
-            <span class="title-text">{{ service.config.name }}</span>
-            <span class="tag hidden-tag" aria-label=" (hidden)">hidden</span>
-          </h2>
-          <p>{{ service.config.description }}</p>
-          <div v-if="service?.config.fees" class="fees">
-            <div
-              v-for="{ title, prices } of service.config.fees"
-              :key="title"
-              class="fee"
-            >
-              <h3>{{ title }}</h3>
-              <ul>
-                <li v-for="{ variant, price } of prices" :key="variant">
-                  <strong class="fee-name">{{ variant }}</strong> &ndash;
-                  {{ price }}
-                </li>
-              </ul>
+          <ZodErrorMessage
+            v-if="isZodError(service.config)"
+            :error="service.config"
+          >
+            <template #title>Malformed XML data</template>
+          </ZodErrorMessage>
+          <template v-else>
+            <div class="card-actions button-row">
+              <router-link
+                class="button-outlined"
+                :to="`/services/edit/${service.service_id}`"
+                ><IconEdit aria-hidden="true" />Edit</router-link
+              >
             </div>
-          </div>
+
+            <h2 class="title">
+              <span class="title-text">{{ service.config.name }}</span>
+              <span class="tag hidden-tag" aria-label=" (hidden)">hidden</span>
+            </h2>
+            <p>{{ service.config.description }}</p>
+            <div v-if="service?.config.fees" class="fees">
+              <div
+                v-for="{ title, prices } of service.config.fees"
+                :key="title"
+                class="fee"
+              >
+                <h3>{{ title }}</h3>
+                <ul>
+                  <li v-for="{ variant, price } of prices" :key="variant">
+                    <strong class="fee-name">{{ variant }}</strong> &ndash;
+                    {{ price }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </template>
         </router-link>
       </template>
 

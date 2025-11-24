@@ -14,7 +14,7 @@ interface FetchUnknownError {
 /**
  * The response body object failed to be parsed.
  */
-interface DataParseError<T extends z.ZodType | undefined> {
+interface DataParseError<T> {
   type: 'fetch-data-parse';
   status: number;
   error: Error | z.ZodError<T>;
@@ -26,19 +26,16 @@ interface DataParseError<T extends z.ZodType | undefined> {
 interface ErrorObjectParseError {
   type: 'fetch-error-obj-parse';
   status: number;
-  error: Error | z.ZodError<typeof ApiError>;
+  error: Error | z.ZodError<z.infer<typeof ApiError>>;
 }
 
-export type FetchError<T extends z.ZodType | undefined> =
+export type FetchError<T> =
   | z.output<typeof ApiError>
   | FetchUnknownError
   | DataParseError<T>
   | ErrorObjectParseError;
 
-export type FetchResult<T extends z.ZodType | undefined> = Result<
-  T extends undefined ? undefined : z.output<T>,
-  FetchError<T>
->;
+export type FetchResult<T> = Result<T, FetchError<T>>;
 
 export function apiFetch(
   route: string,
@@ -66,7 +63,7 @@ export function apiFetch(
 export async function checkResponseWithBody<Output extends z.ZodType>(
   res: Promise<Response>,
   outputSchema: Output,
-): Promise<FetchResult<Output>> {
+): Promise<FetchResult<z.infer<Output>>> {
   let status: number | undefined;
 
   try {
@@ -77,8 +74,6 @@ export async function checkResponseWithBody<Output extends z.ZodType>(
       const { ok, data, error } = await parseResultBody(response, outputSchema);
 
       if (ok) {
-        // @ts-expect-error Cannot assign to conditional type that allows
-        // undefined or zod type.
         return Result.ok(data);
       }
 
@@ -124,7 +119,7 @@ export async function parseResultBody<T extends z.ZodType>(
   response: Response,
   schema: T,
 ): Promise<
-  Result<z.infer<T>, z.ZodError<T> | SyntaxError | TypeError | Error>
+  Result<z.infer<T>, z.ZodError<z.infer<T>> | SyntaxError | TypeError | Error>
 > {
   if (!response.headers.get('Content-Type')?.startsWith('application/json')) {
     return Result.err(TypeError('Content-Type is not application/json.'));

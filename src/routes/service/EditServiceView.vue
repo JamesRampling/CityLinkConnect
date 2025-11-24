@@ -98,7 +98,9 @@ function setFields(service: z.infer<typeof Service> | object) {
       fields.is_hidden = service.is_hidden;
       Object.assign(fields, ServiceContent.decode(service.config));
     }
-  } catch {}
+  } catch {
+    toggleXmlEditing(true);
+  }
 
   Object.assign(xmlFields, service);
 }

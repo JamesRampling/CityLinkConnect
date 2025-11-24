@@ -1,4 +1,9 @@
-import { XMLBuilder, XMLParser, type X2jOptions } from 'fast-xml-parser';
+import {
+  XMLBuilder,
+  XMLParser,
+  XMLValidator,
+  type X2jOptions,
+} from 'fast-xml-parser';
 import z from 'zod';
 
 const xmlOptions = {
@@ -21,6 +26,19 @@ const xml = <T extends z.ZodObject>(schema: T) =>
   z.codec(z.string(), schema, {
     decode: (value, ctx) => {
       try {
+        const error = XMLValidator.validate(value);
+
+        if (error !== true) {
+          ctx.issues.push({
+            code: 'invalid_format',
+            format: 'xml',
+            input: value,
+            message: error.err.msg,
+            path: [`Line ${error.err.line}`, `Column ${error.err.col}`],
+          });
+          return;
+        }
+
         return parser.parse(value);
       } catch (e) {
         ctx.issues.push({
@@ -115,7 +133,7 @@ export const ServiceJs = z.object({
  * Zod Codec that can convert to and from the XML object and JavaScript object
  * forms of announcements.
  */
-const announcementXmlToJs = z.codec(announcementXmlObject, AnnouncementJs, {
+const AnnouncementXmlToJs = z.codec(announcementXmlObject, AnnouncementJs, {
   decode: (value) => value.announcement,
   encode: (value) => ({ announcement: value }),
 });
@@ -124,7 +142,7 @@ const announcementXmlToJs = z.codec(announcementXmlObject, AnnouncementJs, {
  * Zod Codec that can convert to and from the XML object and JavaScript object
  * forms of services.
  */
-const serviceXmlToJs = z.codec(serviceXmlObject, ServiceJs, {
+const ServiceXmlToJs = z.codec(serviceXmlObject, ServiceJs, {
   decode: (value) => {
     const { name, description, fees: feesObj } = value.service;
 
@@ -167,7 +185,7 @@ const serviceXmlToJs = z.codec(serviceXmlObject, ServiceJs, {
  * XML string to the JavaScript object with the type: {@link ServiceJs}, and use
  * {@link ServiceContent.encode} to convert the object to an XML string.
  */
-export const ServiceContent = xml(serviceXmlObject).pipe(serviceXmlToJs);
+export const ServiceContent = xml(serviceXmlObject).pipe(ServiceXmlToJs);
 
 /**
  * The contents of services, use {@link AnnouncementContent.decode} to convert the XML
@@ -175,5 +193,5 @@ export const ServiceContent = xml(serviceXmlObject).pipe(serviceXmlToJs);
  * use {@link AnnouncementContent.encode} to convert the object to an XML string.
  */
 export const AnnouncementContent = xml(announcementXmlObject).pipe(
-  announcementXmlToJs,
+  AnnouncementXmlToJs,
 );

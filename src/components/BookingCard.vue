@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BookingWithService } from '@/api/endpoints/bookings';
-import { formatDate } from '@/utils';
+import { formatDate, isZodError } from '@/utils';
 import type z from 'zod';
 
 defineProps<{ booking: z.infer<typeof BookingWithService> }>();
@@ -9,7 +9,14 @@ defineProps<{ booking: z.infer<typeof BookingWithService> }>();
 <template>
   <article :key="booking.booking_id" class="card booking-card">
     <hgroup>
-      <h3>{{ booking.service.config.name }}</h3>
+      <router-link :to="`/services/book/${booking.service_id}`">
+        <template v-if="isZodError(booking.service.config)">
+          <h3 class="error">Unknown Service Name</h3>
+        </template>
+        <template v-else>
+          <h3>{{ booking.service.config.name }}</h3>
+        </template>
+      </router-link>
       <p>
         <time :datetime="booking.booking_datetime">{{
           formatDate(booking.booking_datetime, { dateStyle: 'full' })
@@ -33,5 +40,9 @@ defineProps<{ booking: z.infer<typeof BookingWithService> }>();
   time {
     color: var(--color-muted);
   }
+}
+
+.error {
+  color: var(--error-color);
 }
 </style>

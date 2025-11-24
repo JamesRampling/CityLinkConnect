@@ -7,7 +7,7 @@ import IconMail from '@/components/icons/IconMail.vue';
 import IconPhone from '@/components/icons/IconPhone.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import { useUser } from '@/user';
-import { dateToMs, formatDateTime } from '@/utils';
+import { dateToMs, formatDateTime, isZodError } from '@/utils';
 import type z from 'zod';
 
 const { token } = useUser();
@@ -45,10 +45,19 @@ async function deleteBooking(
             </button>
           </div>
           <hgroup>
-            <h2 class="title">
-              <span class="title-text">{{ booking.service.config.name }}</span
-              ><span class="tag past-tag" aria-label=" (past)">past</span>
-            </h2>
+            <router-link :to="`/services/book/${booking.service_id}`">
+              <h2 class="title">
+                <template v-if="isZodError(booking.service.config)">
+                  <span class="title-text error">Unknown Service Name</span>
+                </template>
+                <template v-else>
+                  <span class="title-text">{{
+                    booking.service.config.name
+                  }}</span>
+                </template>
+                <span class="tag past-tag" aria-label=" (past)">past</span>
+              </h2>
+            </router-link>
             <p class="subtitle">
               <time :datetime="booking.booking_datetime">{{
                 formatDateTime(booking.booking_datetime, {
@@ -115,5 +124,9 @@ async function deleteBooking(
   &.past {
     opacity: 0.75;
   }
+}
+
+.error {
+  color: var(--error-color);
 }
 </style>

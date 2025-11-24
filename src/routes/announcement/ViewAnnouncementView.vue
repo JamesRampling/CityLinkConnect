@@ -7,8 +7,9 @@ import IconDelete from '@/components/icons/IconDelete.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconRefresh from '@/components/icons/IconRefresh.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import ZodErrorMessage from '@/components/ZodErrorMessage.vue';
 import { useUser } from '@/user';
-import { formatDate } from '@/utils';
+import { formatDate, isZodError } from '@/utils';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -77,6 +78,17 @@ async function deleteAnnouncement() {
           <button class="button-filled" @click="retry()">
             <IconRefresh />Retry
           </button>
+
+          <template
+            v-if="
+              auth?.is_admin &&
+              error.type === 'fetch-data-parse' &&
+              isZodError(error.error)
+            "
+            #error
+          >
+            <ZodErrorMessage :error="error.error" />
+          </template>
         </ApiErrorMessage>
       </template>
     </LoadedData>

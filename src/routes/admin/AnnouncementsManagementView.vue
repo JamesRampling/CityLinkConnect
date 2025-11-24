@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import type { AnnouncementWithXML } from '#shared/models';
 import api from '@/api';
+import type { AnnouncementOrError } from '@/api/endpoints/announcements';
 import ApiErrorMessage from '@/components/ApiErrorMessage.vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import LoadedData from '@/components/LoadedData.vue';
+import ZodErrorMessage from '@/components/ZodErrorMessage.vue';
 import { useUser } from '@/user';
-import { formatDate } from '@/utils';
-import type z from 'zod';
+import { formatDate, isZodError } from '@/utils';
+import z from 'zod';
 
 const { token } = useUser();
 
 async function deleteAnnouncement(
-  announcements: z.infer<typeof AnnouncementWithXML>[],
+  announcements: z.infer<typeof AnnouncementOrError>[],
   announcement_id: number,
 ) {
   const result = await api.announcements.delete(announcement_id, token.value);
@@ -25,7 +26,7 @@ async function deleteAnnouncement(
 
 <template>
   <div class="item-list">
-    <LoadedData :action="() => api.announcements.all()">
+    <LoadedData :action="() => api.announcements.allWithXmlErrors()">
       <template #ok="{ data: announcements, update }">
         <div class="list-actions button-row">
           <router-link to="/announcement/create" class="button-filled"
@@ -59,13 +60,22 @@ async function deleteAnnouncement(
               <IconDelete aria-hidden="true" />Delete
             </button>
           </div>
-          <hgroup>
-            <h2 class="title">{{ announcement.config?.title }}</h2>
-            <p class="subtitle">
-              {{ formatDate(announcement.config?.date) }}
-            </p>
-          </hgroup>
-          <p>{{ announcement.config?.content }}</p>
+
+          <ZodErrorMessage
+            v-if="isZodError(announcement.config)"
+            :error="announcement.config"
+          >
+            <template #title>Malformed XML data</template>
+          </ZodErrorMessage>
+          <template v-else>
+            <hgroup>
+              <h2 class="title">{{ announcement.config.title }}</h2>
+              <p class="subtitle">
+                {{ formatDate(announcement.config.date) }}
+              </p>
+            </hgroup>
+            <p>{{ announcement.config.content }}</p>
+          </template>
         </router-link>
       </template>
 

@@ -96,7 +96,9 @@ function setFields(announcement: z.infer<typeof Announcement> | object) {
     if ('config' in announcement) {
       Object.assign(fields, AnnouncementContent.decode(announcement.config));
     }
-  } catch {}
+  } catch {
+    toggleXmlEditing(true);
+  }
 
   Object.assign(xmlFields, announcement);
 }

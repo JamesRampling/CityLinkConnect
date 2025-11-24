@@ -1,9 +1,14 @@
 import { Announcement, AnnouncementWithXML } from '#shared/models';
+import { AnnouncementContent } from '#shared/xmlModels';
 import { request, requestIn, requestInOut, requestOut } from '@/api/factories';
-import { fallibleArray } from '@/utils';
+import { fallibleArray, parseOrError } from '@/utils';
 import z from 'zod';
 
 const baseUrl = `/api/announcements`;
+
+export const AnnouncementOrError = Announcement.extend({
+  config: parseOrError(AnnouncementContent),
+});
 
 export default {
   /**
@@ -13,6 +18,13 @@ export default {
     `GET`,
     baseUrl,
     z.array(z.unknown()).transform(fallibleArray(AnnouncementWithXML)),
+    false,
+  ),
+
+  allWithXmlErrors: requestOut(
+    `GET`,
+    baseUrl,
+    AnnouncementOrError.array(),
     false,
   ),
 

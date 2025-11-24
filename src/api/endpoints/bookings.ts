@@ -1,12 +1,13 @@
-import { Booking, ServiceWithXML, User } from '#shared/models';
+import { Booking, User } from '#shared/models';
+import { ServiceOrError } from '@/api/endpoints/services';
 import { request, requestInOut, requestOut } from '@/api/factories';
 
 const baseUrl = '/api/bookings';
 
-export const BookingWithService = Booking.extend({ service: ServiceWithXML });
+export const BookingWithService = Booking.extend({ service: ServiceOrError });
 
 export const BookingWithUserAndService = Booking.extend({
-  service: ServiceWithXML,
+  service: ServiceOrError,
   user: User,
 });
 

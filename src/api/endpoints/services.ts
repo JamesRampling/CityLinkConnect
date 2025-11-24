@@ -1,9 +1,14 @@
 import { Service, ServiceWithXML } from '#shared/models';
+import { ServiceContent } from '#shared/xmlModels';
 import { requestIn, requestInOut, requestOut } from '@/api/factories';
-import { fallibleArray } from '@/utils';
+import { fallibleArray, parseOrError } from '@/utils';
 import z from 'zod';
 
 const baseUrl = '/api/services';
+
+export const ServiceOrError = Service.extend({
+  config: parseOrError(ServiceContent),
+});
 
 export default {
   /**
@@ -20,12 +25,7 @@ export default {
    * Get a list of all the services, including hidden services, requires
    * authentication with admin permissions.
    */
-  allAdmin: requestOut(
-    'GET',
-    `${baseUrl}/all`,
-    z.array(z.unknown()).transform(fallibleArray(ServiceWithXML)),
-    true,
-  ),
+  allAdmin: requestOut('GET', `${baseUrl}/all`, ServiceOrError.array(), true),
 
   /**
    * Get a single service by its id.

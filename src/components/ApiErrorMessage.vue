@@ -51,13 +51,15 @@ function defaultContent() {
 <template>
   <div class="error-wrapper">
     <div class="error">
-      <h2 class="error-title">
-        <slot name="title" :error>{{ defaultTitle() }}</slot>
-      </h2>
+      <slot name="error">
+        <h2 class="error-title">
+          <slot name="title" :error>{{ defaultTitle() }}</slot>
+        </h2>
 
-      <p class="error-content">
-        <slot name="content" :error>{{ defaultContent() }}</slot>
-      </p>
+        <p class="error-content">
+          <slot name="content" :error>{{ defaultContent() }}</slot>
+        </p>
+      </slot>
     </div>
     <slot></slot>
   </div>

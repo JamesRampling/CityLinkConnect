@@ -9,7 +9,9 @@ import InputText from '@/components/InputText.vue';
 import InputTextarea from '@/components/InputTextarea.vue';
 import LoadedData from '@/components/LoadedData.vue';
 import ValidationErrorList from '@/components/ValidationErrorList.vue';
+import ZodErrorMessage from '@/components/ZodErrorMessage.vue';
 import { useUser } from '@/user';
+import { isZodError } from '@/utils';
 import { useSubmission } from '@/utils/validation';
 import { reactive, ref } from 'vue';
 
@@ -124,6 +126,17 @@ const { submit, fieldErrors, submissionError } = useSubmission(
           <button class="button-filled" @click="retry()">
             <IconRefresh />Retry
           </button>
+
+          <template
+            v-if="
+              auth?.is_admin &&
+              error.type === 'fetch-data-parse' &&
+              isZodError(error.error)
+            "
+            #error
+          >
+            <ZodErrorMessage :error="error.error" />
+          </template>
         </ApiErrorMessage>
       </template>
     </LoadedData>

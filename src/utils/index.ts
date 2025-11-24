@@ -1,4 +1,4 @@
-import type z from 'zod';
+import z from 'zod';
 
 export function generateRandomId(): string {
   return Math.trunc(Math.random() * 0xffffffff).toString(16);
@@ -87,4 +87,17 @@ export function fallibleArray<I extends z.ZodType>(
     }
     return items;
   };
+}
+
+export function isZodError(thing: unknown): thing is z.ZodError {
+  return thing instanceof z.ZodError;
+}
+
+export function parseOrError<I extends z.ZodType>(
+  schema: I,
+): z.ZodTransform<z.output<I> | z.ZodError<z.output<I>>> {
+  return z.transform((data) => {
+    const parsed = schema.safeParse(data);
+    return parsed.success ? parsed.data : parsed.error;
+  });
 }
