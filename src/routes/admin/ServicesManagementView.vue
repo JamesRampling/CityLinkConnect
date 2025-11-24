@@ -32,6 +32,13 @@ const { token } = useUser();
             hidden: service.is_hidden,
           }"
         >
+          <div class="card-actions button-row">
+            <router-link
+              class="button-outlined"
+              :to="`/services/edit/${service.service_id}`"
+              ><IconEdit aria-hidden="true" />Edit</router-link
+            >
+          </div>
           <ZodErrorMessage
             v-if="isZodError(service.config)"
             :error="service.config"
@@ -39,14 +46,6 @@ const { token } = useUser();
             <template #title>Malformed XML data</template>
           </ZodErrorMessage>
           <template v-else>
-            <div class="card-actions button-row">
-              <router-link
-                class="button-outlined"
-                :to="`/services/edit/${service.service_id}`"
-                ><IconEdit aria-hidden="true" />Edit</router-link
-              >
-            </div>
-
             <h2 class="title">
               <span class="title-text">{{ service.config.name }}</span>
               <span class="tag hidden-tag" aria-label=" (hidden)">hidden</span>
