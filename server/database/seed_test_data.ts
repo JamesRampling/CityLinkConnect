@@ -1,5 +1,8 @@
 export default /*sql*/ `
 -- Seed with some example data
+
+BEGIN TRANSACTION;
+
 INSERT INTO Services (config) VALUES
   ('<?xml version="1.0" encoding="UTF-8"?>
 <service>
@@ -33,13 +36,14 @@ INSERT INTO Services (config) VALUES
 </service>');
 
 INSERT INTO Users (given_names, last_name, email, phone) VALUES
-  ('John', 'Doe', 'j.doe@example.com', '0123456789'),
-  ('Jane', 'Smith', 'j.smith@example.com', '0412345678');
+  ('Alice Marie', 'Johnson', 'alice.johnson@example.com', '0447392658'),
+  ('Brian', 'Smith', 'brian.smith@example.com', '0492659371'),
+  ('Cynthia', 'Lee', 'cynthia.lee@example.com', '0418259327');
 
 INSERT INTO Bookings (user_id, service_id, booking_datetime, notes) VALUES
-  (1, 1, '2024-06-15T10:00:00Z', 'First booking'),
-  (2, 2, '2024-06-16T14:30:00Z', 'Second booking'),
-  (2, 3, '2024-06-16T14:30:00Z', 'Third booking');
+  (1, 1, '2025-11-15T10:00:00Z', 'New residential building.'),
+  (2, 2, '2025-11-16T14:30:00Z', NULL),
+  (2, 3, '2025-11-16T14:30:00Z', 'Need another bin.');
 
 INSERT INTO Announcements (sort_datetime, config) VALUES
   ('2025-09-25', '<?xml version="1.0" encoding="UTF-8"?>
@@ -64,6 +68,14 @@ INSERT INTO Announcements (sort_datetime, config) VALUES
 </announcement>');
 
 INSERT INTO Feedback (email, subject, message) VALUES
-  ('example@example.com', 'Feedback Subject', 'This is a feedback message.'),
-  ('example2@example.com', 'Feedback Subject 2', 'This is a feedback message 2.');
+  ('visitor@example.com', 'Website Navigation', 'The services list was easy to navigate.'),
+  ('someone@example.org', 'Booking Issue', 'I had trouble selecting a time slot earlier today.');
+
+-- Password for all example users is 'asdasdasdA1'. alice.johnson@example.com is an admin.
+INSERT INTO Authentication (user_id, argon2_hash, is_admin) VALUES
+  (1, '$argon2id$v=19$m=65536,t=3,p=4$ToSMXtMgbEfJC/Zm3bAWIQ$DNqsOeXpF3rwlylB9fzyaYF575LpPaXs6MaPC7p3X5I', TRUE),
+  (2, '$argon2id$v=19$m=65536,t=3,p=4$K3SgzxaeCLnHZ2p5CnV+tA$MIXk2NjJJb5HapF4Q7c1L7ozM2H7bciaMi6vxmiQM3k', FALSE),
+  (3, '$argon2id$v=19$m=65536,t=3,p=4$V76ai1IJM6WZkI/H3lK0qQ$hZPevN8lwpuprfcgyrGe1j8PyixYxLSryqjvsVOUmkw', FALSE);
+
+COMMIT;
 `;
